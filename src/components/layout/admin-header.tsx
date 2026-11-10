@@ -71,13 +71,14 @@ export function AdminHeader({
 
       {/* Right Controls: Switch to Student Portal, Live indicator, User */}
       <div className="flex items-center gap-2.5 sm:gap-3">
-        <Link href="/dashboard" className="hidden sm:inline-block">
+        <Link href="/dashboard" className="inline-block">
           <Button
             size="sm"
-            className="h-9 text-xs font-bold gap-1.5 bg-[#004B87] hover:bg-[#003866] text-white rounded-xl shadow-xs"
+            className="h-8.5 sm:h-9 text-xs font-bold gap-1.5 bg-[#004B87] hover:bg-[#003866] text-white rounded-xl shadow-xs px-2.5 sm:px-3.5"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>Switch to Student Portal</span>
+            <span className="hidden sm:inline">Switch to Student Portal</span>
+            <span className="sm:hidden">Student</span>
           </Button>
         </Link>
 

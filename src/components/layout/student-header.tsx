@@ -120,11 +120,12 @@ export function StudentHeader({
           {/* One-Click Guaranteed Admin Panel Button */}
           <button
             onClick={handleAdminClick}
-            className="h-8.5 px-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-black text-xs rounded-lg shadow-sm gap-1.5 border border-amber-400 flex items-center cursor-pointer transition-transform active:scale-95"
+            className="h-8.5 px-2.5 sm:px-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-black text-xs rounded-lg shadow-sm gap-1.5 border border-amber-400 flex items-center cursor-pointer transition-transform active:scale-95 shrink-0"
             title="Open Admin Management Portal"
           >
-            <ShieldCheck className="w-4 h-4 text-gray-950" />
-            <span>Admin Panel</span>
+            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-950 shrink-0" />
+            <span className="hidden xs:inline">Admin Panel</span>
+            <span className="inline xs:hidden">Admin</span>
           </button>
 
           {/* Explore Courses Button */}

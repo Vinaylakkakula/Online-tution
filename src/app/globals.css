@@ -105,3 +105,9 @@ html {
   background-size: 200% 100%;
   animation: shimmer 2s linear infinite;
 }
+
+/* Mobile Touch & Safe Area */
+html, body {
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
