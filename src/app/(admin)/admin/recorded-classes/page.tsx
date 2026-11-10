@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,12 +29,23 @@ import {
   CheckCircle2,
   ExternalLink,
   BookOpen,
+  UploadCloud,
+  FileVideo,
+  Link as LinkIcon,
+  X,
+  Check,
 } from "lucide-react";
 import { useLMSData, LMSRecordedClass } from "@/lib/lms-store";
+import { saveLocalVideo, deleteLocalVideo } from "@/lib/video-storage";
 
 export default function AdminRecordedClassesPage() {
   const { recordedClasses, courses, store } = useLMSData();
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Upload Source Mode: "local" (From Computer) vs "url" (YouTube/Vimeo/Cloud Link)
+  const [sourceMode, setSourceMode] = useState<"local" | "url">("local");
+
+  // Form States
   const [title, setTitle] = useState("");
   const [courseTitle, setCourseTitle] = useState(
     courses[0]?.title || "IIT-JEE Comprehensive Mastery 2026-27"
@@ -45,31 +56,100 @@ export default function AdminRecordedClassesPage() {
   const [duration, setDuration] = useState("45 mins");
   const [videoUrl, setVideoUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 
-  const handleCreate = (e: React.FormEvent) => {
+  // Local Video File States
+  const [localVideoFile, setLocalVideoFile] = useState<File | null>(null);
+  const [localFileSize, setLocalFileSize] = useState<string>("");
+  const [isDragging, setIsDragging] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleVideoFile = (file: File) => {
+    setLocalVideoFile(file);
+
+    // Readable size
+    const sizeInMB = file.size / (1024 * 1024);
+    if (sizeInMB < 1) {
+      setLocalFileSize(`${Math.round(file.size / 1024)} KB`);
+    } else {
+      setLocalFileSize(`${sizeInMB.toFixed(1)} MB`);
+    }
+
+    // Auto-fill Title if empty
+    if (!title.trim()) {
+      const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+      setTitle(cleanName.charAt(0).toUpperCase() + cleanName.slice(1));
+    }
+
+    // Attempt to determine duration if possible
+    try {
+      const tempVideo = document.createElement("video");
+      tempVideo.preload = "metadata";
+      tempVideo.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(tempVideo.src);
+        const mins = Math.floor(tempVideo.duration / 60);
+        const secs = Math.floor(tempVideo.duration % 60);
+        if (mins > 0 || secs > 0) {
+          setDuration(`${mins} mins ${secs}s`);
+        }
+      };
+      tempVideo.src = URL.createObjectURL(file);
+    } catch {
+      // Ignore duration probing error
+    }
+  };
+
+  const handleClearLocalVideo = () => {
+    setLocalVideoFile(null);
+    setLocalFileSize("");
+    if (videoInputRef.current) videoInputRef.current.value = "";
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
 
+    setIsProcessing(true);
+    let resolvedVideoUrl = videoUrl.trim();
+
+    const videoId = `rec-${Date.now()}`;
+
+    // If local file is selected, store into IndexedDB
+    if (sourceMode === "local" && localVideoFile) {
+      try {
+        resolvedVideoUrl = await saveLocalVideo(videoId, localVideoFile);
+      } catch (err) {
+        console.error("Local video storage error:", err);
+        resolvedVideoUrl = URL.createObjectURL(localVideoFile);
+      }
+    }
+
     const newClass: LMSRecordedClass = {
-      id: `rec-${Date.now()}`,
+      id: videoId,
       title: title.trim(),
       course: courseTitle || courses[0]?.title || "General",
       subject,
       chapter: chapter.trim() || "General Topic",
       faculty,
-      duration,
-      videoUrl: videoUrl.trim() || "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      duration: duration || "45 mins",
+      videoUrl: resolvedVideoUrl,
       viewsCount: 0,
       isPublished: true,
       date: "Just now",
     };
 
     store.addRecordedClass(newClass);
+    setIsProcessing(false);
     setModalOpen(false);
     setTitle("");
+    handleClearLocalVideo();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, videoUrl: string) => {
     if (confirm("Delete this recorded class?")) {
+      if (videoUrl.startsWith("localvideo://")) {
+        const vidId = videoUrl.replace("localvideo://", "");
+        deleteLocalVideo(vidId);
+      }
       store.deleteRecordedClass(id);
     }
   };
@@ -84,14 +164,14 @@ export default function AdminRecordedClassesPage() {
               Video Lectures Hub
             </Badge>
             <span className="text-xs text-gray-500 font-semibold">
-              HD Video On Demand
+              HD Video On Demand & Local Storage
             </span>
           </div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">
             Recorded Video Lectures
           </h1>
           <p className="text-xs text-gray-500 font-medium mt-0.5">
-            Upload chapter-wise video classes and lecture recordings. Students can view them immediately on their portal.
+            Attach local video files from your computer (.mp4, .mov, .webm) or link external videos. Students can watch them instantly.
           </p>
         </div>
 
@@ -100,7 +180,7 @@ export default function AdminRecordedClassesPage() {
           className="bg-[#004B87] hover:bg-[#003866] text-white font-extrabold text-xs h-10 px-5 rounded-xl shadow-sm flex items-center gap-2 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
-          Upload New Lecture
+          Upload / Attach Lecture
         </Button>
       </div>
 
@@ -121,6 +201,12 @@ export default function AdminRecordedClassesPage() {
                 {item.subject}
               </Badge>
 
+              {item.videoUrl.startsWith("localvideo://") && (
+                <Badge className="absolute top-3 right-3 bg-emerald-600 text-white text-[10px] font-bold border-0">
+                  Local Video File
+                </Badge>
+              )}
+
               <Badge className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white text-[10px] font-medium border-0 flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {item.duration}
@@ -134,7 +220,7 @@ export default function AdminRecordedClassesPage() {
                     {item.course}
                   </span>
                   <button
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => handleDelete(item.id, item.videoUrl)}
                     className="p-1 text-gray-400 hover:text-red-600 rounded-md transition-colors"
                     title="Delete"
                   >
@@ -158,12 +244,10 @@ export default function AdminRecordedClassesPage() {
                 </div>
 
                 <a
-                  href={item.videoUrl}
-                  target="_blank"
-                  rel="noreferrer"
+                  href="/dashboard/recorded-classes"
                   className="flex items-center gap-1 text-[#004B87] hover:underline font-bold"
                 >
-                  <span>Watch</span>
+                  <span>Student Player</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
@@ -172,17 +256,155 @@ export default function AdminRecordedClassesPage() {
         ))}
       </div>
 
-      {/* Add Lecture Modal */}
+      {/* Add / Attach Lecture Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl p-6">
+        <DialogContent className="sm:max-w-lg rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
               <Video className="w-5 h-5 text-[#004B87]" />
-              Add Recorded Lecture
+              Attach Video Lecture
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleCreate} className="space-y-4 pt-2">
+            {/* Source Selection Tabs: Local File vs Web Link */}
+            <div>
+              <Label className="text-xs font-bold text-gray-700 block mb-1.5">
+                Video Source Mode
+              </Label>
+              <div className="grid grid-cols-2 gap-2 bg-gray-100 p-1 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setSourceMode("local")}
+                  className={`py-2 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    sourceMode === "local"
+                      ? "bg-white text-[#004B87] shadow-xs"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  <FileVideo className="w-4 h-4" />
+                  From Local Computer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSourceMode("url")}
+                  className={`py-2 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    sourceMode === "url"
+                      ? "bg-white text-[#004B87] shadow-xs"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  <LinkIcon className="w-4 h-4" />
+                  Online URL (YouTube / Drive)
+                </button>
+              </div>
+            </div>
+
+            {/* MODE 1: LOCAL COMPUTER VIDEO FILE PICKER */}
+            {sourceMode === "local" ? (
+              <div>
+                <Label className="text-xs font-bold text-gray-700 block mb-1">
+                  Choose Video File from Computer *
+                </Label>
+
+                <input
+                  type="file"
+                  ref={videoInputRef}
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleVideoFile(e.target.files[0]);
+                    }
+                  }}
+                  accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-matroska,.mp4,.mov,.webm,.mkv"
+                  className="hidden"
+                />
+
+                {!localVideoFile ? (
+                  <div
+                    onClick={() => videoInputRef.current?.click()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragging(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        handleVideoFile(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                    }}
+                    onDragLeave={() => setIsDragging(false)}
+                    className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
+                      isDragging
+                        ? "border-[#004B87] bg-blue-50/80 scale-[0.99]"
+                        : "border-gray-300 hover:border-[#004B87] hover:bg-gray-50/70 bg-gray-50/30"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-blue-50 text-[#004B87] flex items-center justify-center mx-auto mb-2">
+                      <UploadCloud className="w-6 h-6" />
+                    </div>
+                    <span className="text-xs font-black text-[#004B87] block">
+                      Click to browse your local video or drag & drop here
+                    </span>
+                    <span className="text-[11px] text-gray-500 block mt-0.5 font-medium">
+                      Supports MP4, MOV, WebM, and MKV video files (Any file size)
+                    </span>
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                        <FileVideo className="w-5 h-5" />
+                      </div>
+                      <div className="overflow-hidden">
+                        <span className="text-xs font-black text-gray-900 block truncate">
+                          {localVideoFile.name}
+                        </span>
+                        <span className="text-[11px] text-emerald-700 font-bold block">
+                          {localFileSize} • Ready to Attach & Play Locally
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => videoInputRef.current?.click()}
+                        className="text-xs font-bold text-[#004B87] hover:bg-white h-8 px-2.5 rounded-lg"
+                      >
+                        Change
+                      </Button>
+                      <button
+                        type="button"
+                        onClick={handleClearLocalVideo}
+                        className="p-1 text-gray-400 hover:text-red-600 rounded-md"
+                        title="Remove file"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* MODE 2: WEB VIDEO URL */
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Video Link / URL *</Label>
+                <Input
+                  required
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=... or direct MP4 URL"
+                  className="mt-1 text-xs rounded-xl h-10"
+                />
+                <span className="text-[10px] text-gray-400 block mt-1">
+                  Supports YouTube, Vimeo, Google Drive preview links, or cloud CDN MP4 URLs.
+                </span>
+              </div>
+            )}
+
             <div>
               <Label className="text-xs font-bold text-gray-700">Lecture Title *</Label>
               <Input
@@ -248,17 +470,6 @@ export default function AdminRecordedClassesPage() {
             </div>
 
             <div>
-              <Label className="text-xs font-bold text-gray-700">Video Link / Embed URL *</Label>
-              <Input
-                required
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="https://www.youtube.com/watch?v=... or direct MP4/Mux"
-                className="mt-1 text-xs rounded-xl h-10"
-              />
-            </div>
-
-            <div>
               <Label className="text-xs font-bold text-gray-700">Faculty / Instructor</Label>
               <Input
                 value={faculty}
@@ -279,9 +490,10 @@ export default function AdminRecordedClassesPage() {
               </Button>
               <Button
                 type="submit"
+                disabled={isProcessing || (sourceMode === "local" && !localVideoFile)}
                 className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-extrabold rounded-xl h-10 px-5 shadow-sm"
               >
-                Publish Lecture
+                {isProcessing ? "Saving Video..." : "Publish Lecture to Students"}
               </Button>
             </div>
           </form>

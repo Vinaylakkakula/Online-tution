@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import {
   Video,
 } from "lucide-react";
 import { useLMSData, LMSRecordedClass } from "@/lib/lms-store";
+import { getLocalVideoUrl } from "@/lib/video-storage";
 
 function getYouTubeEmbedUrl(url: string) {
   if (!url) return "";
@@ -60,8 +61,36 @@ export default function StudentRecordedClassesPage() {
     }));
   };
 
-  const embedUrl = activeLecture
-    ? getYouTubeEmbedUrl(activeLecture.videoUrl)
+  const [resolvedPlayerUrl, setResolvedPlayerUrl] = useState<string>("");
+  const [isLocalVideo, setIsLocalVideo] = useState(false);
+
+  useEffect(() => {
+    if (!activeLecture) return;
+    const rawUrl = activeLecture.videoUrl || "";
+
+    if (rawUrl.startsWith("localvideo://")) {
+      const vidId = rawUrl.replace("localvideo://", "");
+      setIsLocalVideo(true);
+      getLocalVideoUrl(vidId).then((url) => {
+        setResolvedPlayerUrl(url || "");
+      });
+    } else if (
+      rawUrl.startsWith("blob:") ||
+      rawUrl.startsWith("data:video") ||
+      rawUrl.endsWith(".mp4") ||
+      rawUrl.endsWith(".webm") ||
+      rawUrl.endsWith(".mov")
+    ) {
+      setIsLocalVideo(true);
+      setResolvedPlayerUrl(rawUrl);
+    } else {
+      setIsLocalVideo(false);
+      setResolvedPlayerUrl(rawUrl);
+    }
+  }, [activeLecture]);
+
+  const embedUrl = !isLocalVideo && resolvedPlayerUrl
+    ? getYouTubeEmbedUrl(resolvedPlayerUrl)
     : "";
 
   return (
@@ -108,7 +137,20 @@ export default function StudentRecordedClassesPage() {
         <div className="lg:col-span-2 space-y-4">
           <Card className="rounded-2xl border-gray-200/90 shadow-md bg-black overflow-hidden">
             <div className="relative aspect-video w-full bg-black flex items-center justify-center">
-              {embedUrl && embedUrl.includes("http") ? (
+              {isLocalVideo && resolvedPlayerUrl ? (
+                /* Native HTML5 Video Player for Local Uploaded Videos */
+                <video
+                  key={resolvedPlayerUrl}
+                  controls
+                  controlsList="nodownload"
+                  className="w-full h-full object-contain"
+                  src={resolvedPlayerUrl}
+                  autoPlay
+                >
+                  Your browser does not support HTML5 video playback.
+                </video>
+              ) : embedUrl && embedUrl.includes("http") ? (
+                /* Embed Player for YouTube / Vimeo */
                 <iframe
                   src={embedUrl}
                   title={activeLecture?.title || "Video lecture"}
