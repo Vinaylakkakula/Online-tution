@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useLMSData, LMSMaterial } from "@/lib/lms-store";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,192 +16,182 @@ import {
 import {
   FileText,
   Plus,
-  Download,
   Trash2,
   UploadCloud,
-  CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
-
-interface AdminMaterial {
-  id: string;
-  title: string;
-  subject: string;
-  chapter: string;
-  fileSize: string;
-  downloadsCount: number;
-}
-
-const mockAdminMaterials: AdminMaterial[] = [
-  {
-    id: "mat-1",
-    title: "Rotational Dynamics: Complete Comprehensive Formula Sheet & Shortcut Map",
-    subject: "Physics",
-    chapter: "Chapter 4: Rotational Mechanics",
-    fileSize: "2.4 MB",
-    downloadsCount: 1420,
-  },
-  {
-    id: "mat-2",
-    title: "Master Handwritten Notes: Parallel Axis Theorem & Rolling Bodies",
-    subject: "Physics",
-    chapter: "Chapter 4: Rotational Mechanics",
-    fileSize: "6.8 MB",
-    downloadsCount: 2190,
-  },
-  {
-    id: "mat-3",
-    title: "Organic Chemistry Reaction Mechanism Map (45 Conversions)",
-    subject: "Chemistry",
-    chapter: "Chapter 3: Reaction Mechanisms",
-    fileSize: "4.1 MB",
-    downloadsCount: 3840,
-  },
-  {
-    id: "mat-4",
-    title: "Calculus & Coordinate Geometry 200 Advanced Numerical Problem Bank",
-    subject: "Mathematics",
-    chapter: "Calculus Mastery",
-    fileSize: "8.5 MB",
-    downloadsCount: 1820,
-  },
-];
+import Link from "next/link";
 
 export default function AdminMaterialsPage() {
-  const [materials, setMaterials] = useState<AdminMaterial[]>(mockAdminMaterials);
+  const { materials, store } = useLMSData();
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [subject, setSubject] = useState("Physics");
+  const [subject, setSubject] = useState<"Physics" | "Chemistry" | "Mathematics" | "General">("Physics");
   const [chapter, setChapter] = useState("");
+  const [fileType, setFileType] = useState<"PDF" | "Notes" | "Formula Sheet" | "DPP">("PDF");
+  const [fileSize, setFileSize] = useState("3.8 MB");
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title) return;
 
-    const newMat: AdminMaterial = {
+    store.addMaterial({
       id: `mat-${Date.now()}`,
       title,
       subject,
-      chapter: chapter || "General Chapter",
-      fileSize: "3.2 MB",
+      chapter: chapter || "General Mechanics",
+      fileSize: fileSize || "3.2 MB",
+      fileType,
       downloadsCount: 0,
-    };
+      dateUploaded: "Just now",
+    });
 
-    setMaterials([newMat, ...materials]);
     setModalOpen(false);
     setTitle("");
     setChapter("");
   };
 
-  const deleteMat = (id: string) => {
-    setMaterials(materials.filter((m) => m.id !== id));
-  };
-
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/90 shadow-xs">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Study Materials Repository</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Publish educator notes, formula sheets, practice DPPs, and problem banks to student library.
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 text-xs font-black">
+              Repository
+            </span>
+            <span className="text-xs text-gray-500 font-medium">• Study Materials & Notes</span>
+          </div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+            Study Materials Repository ({materials.length})
+          </h1>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Uploaded materials immediately sync to the student library and course pages.
           </p>
         </div>
 
-        <Button
-          onClick={() => setModalOpen(true)}
-          className="bg-[#163B65] hover:bg-[#122e50] text-white text-xs font-semibold rounded-xl h-10 px-4 gap-2 shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Upload Study Material
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/materials">
+            <Button variant="outline" size="sm" className="h-10 text-xs font-bold text-[#004B87] rounded-xl gap-1.5">
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Student View</span>
+            </Button>
+          </Link>
+
+          <Button
+            onClick={() => setModalOpen(true)}
+            className="h-10 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl gap-1.5 shadow-sm"
+          >
+            <UploadCloud className="w-4 h-4" />
+            <span>Upload Material</span>
+          </Button>
+        </div>
       </div>
 
-      {/* Grid */}
-      <div className="space-y-4">
+      {/* Materials List */}
+      <div className="space-y-3">
         {materials.map((mat) => (
-          <Card key={mat.id} className="rounded-2xl border-gray-100 shadow-sm bg-white p-5">
+          <Card key={mat.id} className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs hover:shadow-md transition-shadow">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 flex-1">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-teal-400 text-teal-800 bg-teal-50 text-[10px]">
+                  <Badge className="bg-[#EAF4FF] text-[#004B87] text-[10px] font-bold">
                     {mat.subject} • {mat.chapter}
                   </Badge>
-                  <span className="text-[10px] text-gray-400">{mat.fileSize}</span>
+                  <Badge variant="outline" className="text-[10px] text-gray-500 font-medium">
+                    {mat.fileType} • {mat.fileSize}
+                  </Badge>
+                  <span className="text-[10px] text-gray-400">Uploaded: {mat.dateUploaded}</span>
                 </div>
 
-                <h3 className="text-base font-bold text-gray-900">{mat.title}</h3>
+                <h3 className="text-base font-black text-gray-900">{mat.title}</h3>
 
-                <span className="text-xs text-gray-500 font-semibold text-teal-700">
-                  {mat.downloadsCount.toLocaleString()} Total Student Downloads
+                <span className="text-xs text-emerald-700 font-bold block">
+                  {mat.downloadsCount.toLocaleString()} Total Student Downloads Logged
                 </span>
               </div>
 
               <Button
                 size="sm"
-                variant="ghost"
-                onClick={() => deleteMat(mat.id)}
-                className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0 rounded-xl"
+                variant="outline"
+                onClick={() => store.deleteMaterial(mat.id)}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 text-xs font-bold rounded-xl h-9 px-3 gap-1"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete</span>
               </Button>
             </div>
           </Card>
         ))}
       </div>
 
-      {/* Upload Dialog */}
+      {/* Upload Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-[480px] p-6 rounded-3xl bg-white border-0 shadow-2xl space-y-4">
+        <DialogContent className="sm:max-w-md rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#163B65]">
-              Upload Study Material
+            <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
+              <UploadCloud className="w-5 h-5 text-[#004B87]" />
+              Upload Study Material (PDF / DPP / Notes)
             </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleCreate} className="space-y-4 text-xs">
+          <form onSubmit={handleCreate} className="space-y-4 pt-2">
             <div>
-              <Label className="text-xs font-semibold text-gray-700">Document Title *</Label>
+              <Label className="text-xs font-bold text-gray-700">Material Title *</Label>
               <Input
                 required
+                placeholder="e.g. Master Handwritten Notes: Optics & Lens Formula"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Thermodynamics Practice Problem Bank"
-                className="mt-1 h-10 border-gray-200"
+                className="mt-1 text-xs rounded-xl"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Subject</Label>
-                <Input
+                <Label className="text-xs font-bold text-gray-700">Subject</Label>
+                <select
                   value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className="mt-1 h-10 border-gray-200"
-                />
+                  onChange={(e) => setSubject(e.target.value as any)}
+                  className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
+                >
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="General">General</option>
+                </select>
               </div>
 
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Chapter</Label>
-                <Input
-                  value={chapter}
-                  onChange={(e) => setChapter(e.target.value)}
-                  placeholder="Chapter 2: Heat"
-                  className="mt-1 h-10 border-gray-200"
-                />
+                <Label className="text-xs font-bold text-gray-700">Document Type</Label>
+                <select
+                  value={fileType}
+                  onChange={(e) => setFileType(e.target.value as any)}
+                  className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
+                >
+                  <option value="PDF">PDF eBook</option>
+                  <option value="Notes">Handwritten Notes</option>
+                  <option value="Formula Sheet">Formula Sheet</option>
+                  <option value="DPP">Daily Practice Problem (DPP)</option>
+                </select>
               </div>
             </div>
 
-            <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer">
-              <UploadCloud className="w-7 h-7 text-[#16A6A1] mx-auto mb-1.5" />
-              <span className="text-xs font-bold text-gray-700 block">Select PDF Document to Upload</span>
-              <span className="text-[10px] text-gray-400 block">Max file size 25 MB</span>
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Chapter / Topic</Label>
+              <Input
+                placeholder="e.g. Chapter 4: Ray Optics"
+                value={chapter}
+                onChange={(e) => setChapter(e.target.value)}
+                className="mt-1 text-xs rounded-xl"
+              />
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="rounded-xl">
+            <div className="pt-2 flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="text-xs rounded-xl">
                 Cancel
               </Button>
-              <Button type="submit" className="bg-[#163B65] text-white rounded-xl">
+              <Button type="submit" className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl">
                 Upload & Publish
               </Button>
             </div>

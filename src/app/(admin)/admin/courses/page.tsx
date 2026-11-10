@@ -1,19 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useLMSData, LMSCourse } from "@/lib/lms-store";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -23,245 +16,158 @@ import {
 import {
   BookOpen,
   Plus,
-  Edit,
   Trash2,
-  CheckCircle2,
   Eye,
   EyeOff,
   Users,
   Clock,
+  ExternalLink,
   Sparkles,
 } from "lucide-react";
-
-interface AdminCourse {
-  id: string;
-  title: string;
-  category: string;
-  targetClass: string;
-  faculty: string;
-  price: number;
-  discountedPrice: number;
-  totalLessons: number;
-  duration: string;
-  isPublished: boolean;
-  enrolledCount: number;
-}
-
-const mockCourses: AdminCourse[] = [
-  {
-    id: "c-1",
-    title: "IIT-JEE Comprehensive Mastery 2026-27",
-    category: "IIT-JEE",
-    targetClass: "Class 11 & 12",
-    faculty: "Dr. Rahul Sharma & Er. Amit Verma",
-    price: 49999,
-    discountedPrice: 34999,
-    totalLessons: 240,
-    duration: "24 Months",
-    isPublished: true,
-    enrolledCount: 420,
-  },
-  {
-    id: "c-2",
-    title: "JEE Fast-Track Revision & Crash Course",
-    category: "IIT-JEE",
-    targetClass: "Class 12 & Dropper",
-    faculty: "Dr. Rahul Sharma",
-    price: 19999,
-    discountedPrice: 14999,
-    totalLessons: 80,
-    duration: "3 Months",
-    isPublished: true,
-    enrolledCount: 185,
-  },
-  {
-    id: "c-3",
-    title: "Physics Olympiad Advanced Sprint (NSEP & INPhO)",
-    category: "Olympiad",
-    targetClass: "Class 10 & 11",
-    faculty: "Dr. Rahul Sharma",
-    price: 24999,
-    discountedPrice: 18999,
-    totalLessons: 80,
-    duration: "6 Months",
-    isPublished: true,
-    enrolledCount: 94,
-  },
-  {
-    id: "c-4",
-    title: "National Talent Search (NTSE) Stage 1 & 2 Prep",
-    category: "NTSE",
-    targetClass: "Class 9 & 10",
-    faculty: "Er. Vivek Rathore",
-    price: 15999,
-    discountedPrice: 11999,
-    totalLessons: 60,
-    duration: "6 Months",
-    isPublished: true,
-    enrolledCount: 143,
-  },
-];
+import Link from "next/link";
 
 export default function AdminCoursesPage() {
-  const [courses, setCourses] = useState<AdminCourse[]>(mockCourses);
+  const { courses, store } = useLMSData();
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingCourse, setEditingCourse] = useState<AdminCourse | null>(null);
 
-  const [formTitle, setFormTitle] = useState("");
-  const [formCategory, setFormCategory] = useState("IIT-JEE");
-  const [formClass, setFormClass] = useState("Class 11");
-  const [formFaculty, setFormFaculty] = useState("Dr. Rahul Sharma");
-  const [formPrice, setFormPrice] = useState("34999");
-  const [formLessons, setFormLessons] = useState("120");
+  // Form States
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<"IIT-JEE" | "Olympiad" | "NTSE" | "Foundation">("IIT-JEE");
+  const [targetClass, setTargetClass] = useState("Class 11 – 12");
+  const [faculty, setFaculty] = useState("Dr. Rahul Sharma");
+  const [price, setPrice] = useState("34999");
+  const [totalLessons, setTotalLessons] = useState("120");
+  const [duration, setDuration] = useState("12 Months");
+  const [description, setDescription] = useState("");
 
-  const openCreateModal = () => {
-    setEditingCourse(null);
-    setFormTitle("");
-    setFormCategory("IIT-JEE");
-    setFormClass("Class 11");
-    setFormFaculty("Dr. Rahul Sharma");
-    setFormPrice("29999");
-    setFormLessons("100");
-    setModalOpen(true);
-  };
-
-  const openEditModal = (c: AdminCourse) => {
-    setEditingCourse(c);
-    setFormTitle(c.title);
-    setFormCategory(c.category);
-    setFormClass(c.targetClass);
-    setFormFaculty(c.faculty);
-    setFormPrice(c.discountedPrice.toString());
-    setFormLessons(c.totalLessons.toString());
-    setModalOpen(true);
-  };
-
-  const handleSave = (e: React.FormEvent) => {
+  const handleCreateCourse = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formTitle) return;
+    if (!title) return;
 
-    if (editingCourse) {
-      setCourses(
-        courses.map((c) =>
-          c.id === editingCourse.id
-            ? {
-                ...c,
-                title: formTitle,
-                category: formCategory,
-                targetClass: formClass,
-                faculty: formFaculty,
-                discountedPrice: Number(formPrice),
-                totalLessons: Number(formLessons),
-              }
-            : c
-        )
-      );
-    } else {
-      const newCourse: AdminCourse = {
-        id: `c-${Date.now()}`,
-        title: formTitle,
-        category: formCategory,
-        targetClass: formClass,
-        faculty: formFaculty,
-        price: Number(formPrice) * 1.3,
-        discountedPrice: Number(formPrice),
-        totalLessons: Number(formLessons),
-        duration: "12 Months",
-        isPublished: true,
-        enrolledCount: 0,
-      };
-      setCourses([newCourse, ...courses]);
-    }
+    store.addCourse({
+      id: `crs-${Date.now()}`,
+      title,
+      category,
+      targetClass,
+      faculty,
+      price: Math.round(Number(price) * 1.3),
+      discountedPrice: Number(price) || 34999,
+      totalLessons: Number(totalLessons) || 120,
+      duration: duration || "12 Months",
+      isPublished: true,
+      enrolledCount: 0,
+      description: description || "Complete structured syllabus covering foundational and advanced concepts.",
+    });
+
+    setTitle("");
+    setDescription("");
     setModalOpen(false);
   };
 
-  const togglePublish = (id: string) => {
-    setCourses(
-      courses.map((c) => (c.id === id ? { ...c, isPublished: !c.isPublished } : c))
-    );
-  };
-
-  const deleteCourse = (id: string) => {
-    setCourses(courses.filter((c) => c.id !== id));
-  };
-
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 pb-12">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/90 shadow-xs">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Course Curriculum & Catalog</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Create structured courses, configure pricing, manage curriculum subjects, and publish programs to public portal.
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-[#004B87] text-xs font-black">
+              Academics
+            </span>
+            <span className="text-xs text-gray-500 font-medium">• Curriculum Manager</span>
+          </div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+            Academic Courses & Programs ({courses.length})
+          </h1>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Any course created or updated here instantly reflects in the Student Portal and website.
           </p>
         </div>
 
-        <Button
-          onClick={openCreateModal}
-          className="bg-[#163B65] hover:bg-[#122e50] text-white text-xs font-semibold rounded-xl h-10 px-4 gap-2 shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Create New Course
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/my-courses">
+            <Button variant="outline" size="sm" className="h-10 text-xs font-bold text-[#004B87] rounded-xl gap-1.5">
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Student View</span>
+            </Button>
+          </Link>
+
+          <Button
+            onClick={() => setModalOpen(true)}
+            className="h-10 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl gap-1.5 shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create New Course</span>
+          </Button>
+        </div>
       </div>
 
-      {/* Courses List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {courses.map((c) => (
+      {/* Course Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {courses.map((course) => (
           <Card
-            key={c.id}
-            className="rounded-3xl border-gray-100 shadow-md bg-white p-6 space-y-4 hover:shadow-lg transition-all flex flex-col justify-between"
+            key={course.id}
+            className="rounded-2xl border-gray-200/90 bg-white shadow-2xs hover:shadow-md transition-shadow p-5 flex flex-col justify-between space-y-4"
           >
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Badge className="bg-[#163B65] text-white text-[10px]">
-                  {c.category}
+              <div className="flex justify-between items-start gap-2">
+                <Badge className="bg-[#EAF4FF] text-[#004B87] font-black text-[10px]">
+                  {course.category} • {course.targetClass}
                 </Badge>
-                <button
-                  onClick={() => togglePublish(c.id)}
-                  className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-                    c.isPublished
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
+                <Badge
+                  className={
+                    course.isPublished
+                      ? "bg-emerald-100 text-emerald-800 font-bold text-[10px]"
+                      : "bg-gray-100 text-gray-600 font-bold text-[10px]"
+                  }
                 >
-                  {c.isPublished ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-                  <span>{c.isPublished ? "Live Published" : "Draft Hidden"}</span>
-                </button>
+                  {course.isPublished ? "Published" : "Draft"}
+                </Badge>
               </div>
 
-              <h3 className="text-base font-bold text-gray-900 leading-snug">{c.title}</h3>
-
-              <div className="space-y-1 text-xs text-gray-500">
-                <p>Lead Faculty: <strong className="text-gray-800">{c.faculty}</strong></p>
-                <p>Target: <strong className="text-gray-800">{c.targetClass}</strong> • Duration: {c.duration}</p>
-                <p>Total Curriculum: <strong className="text-gray-800">{c.totalLessons} Lessons</strong></p>
+              <div>
+                <h3 className="text-base font-black text-gray-900 leading-snug">{course.title}</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Faculty: {course.faculty}</p>
+                {course.description && (
+                  <p className="text-xs text-gray-600 line-clamp-2 mt-2 leading-relaxed">
+                    {course.description}
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-              <div>
-                <span className="text-xs text-gray-400 block line-through">₹{Math.round(c.price).toLocaleString()}</span>
-                <span className="text-lg font-black text-[#16A6A1]">₹{c.discountedPrice.toLocaleString()}</span>
+            <div className="space-y-3 pt-3 border-t border-gray-100">
+              <div className="grid grid-cols-3 gap-2 p-2.5 bg-gray-50 rounded-xl text-center text-xs">
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-medium">Price</span>
+                  <span className="font-black text-gray-900">₹{course.discountedPrice.toLocaleString()}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-medium">Lessons</span>
+                  <span className="font-black text-gray-900">{course.totalLessons}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-medium">Enrolled</span>
+                  <span className="font-black text-emerald-600">{course.enrolledCount}</span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openEditModal(c)}
-                  className="h-9 text-xs rounded-xl border-gray-200"
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => store.togglePublishCourse(course.id)}
+                  className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1.5"
                 >
-                  <Edit className="w-3.5 h-3.5 text-gray-600 mr-1" />
-                  Edit
-                </Button>
+                  {course.isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span>{course.isPublished ? "Unpublish" : "Publish"}</span>
+                </button>
+
                 <Button
-                  variant="outline"
                   size="sm"
-                  onClick={() => deleteCourse(c.id)}
-                  className="h-9 text-xs rounded-xl border-red-200 text-red-600 hover:bg-red-50"
+                  variant="ghost"
+                  onClick={() => store.deleteCourse(course.id)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-8 px-2.5 gap-1"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete</span>
                 </Button>
               </div>
             </div>
@@ -269,89 +175,93 @@ export default function AdminCoursesPage() {
         ))}
       </div>
 
-      {/* Course Edit/Create Dialog */}
+      {/* Create Course Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-[560px] p-6 rounded-3xl bg-white border-0 shadow-2xl space-y-4">
+        <DialogContent className="sm:max-w-md rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#163B65]">
-              {editingCourse ? "Edit Course Details" : "Create New Course"}
+            <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-[#004B87]" />
+              Create & Publish New Course
             </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleSave} className="space-y-4 text-xs">
+          <form onSubmit={handleCreateCourse} className="space-y-4 pt-2">
             <div>
-              <Label className="text-xs font-semibold text-gray-700">Course Title *</Label>
+              <Label className="text-xs font-bold text-gray-700">Course Title *</Label>
               <Input
                 required
-                value={formTitle}
-                onChange={(e) => setFormTitle(e.target.value)}
-                placeholder="e.g. IIT-JEE Main & Advanced 2-Year Program"
-                className="mt-1 h-10 border-gray-200"
+                placeholder="e.g. IIT-JEE Sprint 2027 Comprehensive"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="mt-1 text-xs rounded-xl"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Category *</Label>
-                <Select value={formCategory} onValueChange={setFormCategory}>
-                  <SelectTrigger className="mt-1 h-10 border-gray-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="IIT-JEE">IIT-JEE</SelectItem>
-                    <SelectItem value="Olympiad">Olympiad</SelectItem>
-                    <SelectItem value="NTSE">NTSE</SelectItem>
-                    <SelectItem value="Foundation">Foundation</SelectItem>
-                    <SelectItem value="Other Courses">Other Courses</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label className="text-xs font-bold text-gray-700">Category</Label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as any)}
+                  className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
+                >
+                  <option value="IIT-JEE">IIT-JEE</option>
+                  <option value="Olympiad">Olympiad</option>
+                  <option value="NTSE">NTSE</option>
+                  <option value="Foundation">Foundation</option>
+                </select>
               </div>
 
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Target Class *</Label>
+                <Label className="text-xs font-bold text-gray-700">Target Class</Label>
                 <Input
-                  value={formClass}
-                  onChange={(e) => setFormClass(e.target.value)}
-                  placeholder="e.g. Class 11-12"
-                  className="mt-1 h-10 border-gray-200"
+                  value={targetClass}
+                  onChange={(e) => setTargetClass(e.target.value)}
+                  placeholder="Class 11 – 12"
+                  className="mt-1 text-xs rounded-xl"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Lead Faculty</Label>
+                <Label className="text-xs font-bold text-gray-700">Lead Faculty</Label>
                 <Input
-                  value={formFaculty}
-                  onChange={(e) => setFormFaculty(e.target.value)}
+                  value={faculty}
+                  onChange={(e) => setFaculty(e.target.value)}
                   placeholder="Dr. Rahul Sharma"
-                  className="mt-1 h-10 border-gray-200"
+                  className="mt-1 text-xs rounded-xl"
                 />
               </div>
 
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Offer Price (₹) *</Label>
+                <Label className="text-xs font-bold text-gray-700">Fee (₹)</Label>
                 <Input
-                  type="number"
-                  value={formPrice}
-                  onChange={(e) => setFormPrice(e.target.value)}
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                   placeholder="34999"
-                  className="mt-1 h-10 border-gray-200"
+                  className="mt-1 text-xs rounded-xl"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setModalOpen(false)}
-                className="rounded-xl"
-              >
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Course Description</Label>
+              <textarea
+                rows={2}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief curriculum overview..."
+                className="w-full mt-1 p-2.5 text-xs bg-white border border-gray-200 rounded-xl"
+              />
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="text-xs rounded-xl">
                 Cancel
               </Button>
-              <Button type="submit" className="bg-[#163B65] text-white rounded-xl">
-                {editingCourse ? "Save Changes" : "Create Course"}
+              <Button type="submit" className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl">
+                Create & Publish
               </Button>
             </div>
           </form>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useLMSData, LMSCourse, LMSMaterial, LMSLiveClass, LMSTest, LMSAnnouncement, LMSStudent, LMSBatch } from "@/lib/lms-store";
+import { useLMSData, LMSCourse } from "@/lib/lms-store";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,11 +37,9 @@ import {
   ShieldCheck,
   ExternalLink,
   Trash2,
-  Edit,
   Eye,
   EyeOff,
   RotateCcw,
-  Search,
   Bell,
   Check,
 } from "lucide-react";
@@ -78,7 +76,14 @@ export default function AdminOverviewPage() {
 
   // Active Main Tab
   const [activeTab, setActiveTab] = useState("overview");
-  const [searchQuery, setSearchQuery] = useState("");
+
+  // Success Feedback Message banner
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const showSuccess = (msg: string) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(null), 4000);
+  };
 
   // Modals
   const [materialModal, setMaterialModal] = useState(false);
@@ -101,6 +106,7 @@ export default function AdminOverviewPage() {
   const [crsFaculty, setCrsFaculty] = useState("Dr. Rahul Sharma");
   const [crsPrice, setCrsPrice] = useState("34999");
   const [crsLessons, setCrsLessons] = useState("120");
+  const [crsDesc, setCrsDesc] = useState("");
 
   // Form States: Live Class
   const [liveTitle, setLiveTitle] = useState("");
@@ -130,7 +136,7 @@ export default function AdminOverviewPage() {
       id: `mat-${Date.now()}`,
       title: matTitle,
       subject: matSubject,
-      chapter: matChapter || "Core Concepts",
+      chapter: matChapter || "Core Mechanics",
       fileSize: matSize || "4.2 MB",
       fileType: matType,
       downloadsCount: 0,
@@ -139,6 +145,7 @@ export default function AdminOverviewPage() {
     setMatTitle("");
     setMatChapter("");
     setMaterialModal(false);
+    showSuccess("Material uploaded successfully! It is now live in the Student Library.");
   };
 
   const handleAddCourse = (e: React.FormEvent) => {
@@ -150,16 +157,18 @@ export default function AdminOverviewPage() {
       category: crsCategory,
       targetClass: crsClass,
       faculty: crsFaculty,
-      price: Number(crsPrice) * 1.3 || 45000,
+      price: Math.round(Number(crsPrice) * 1.3),
       discountedPrice: Number(crsPrice) || 34999,
       totalLessons: Number(crsLessons) || 120,
       duration: "12 Months",
       isPublished: true,
       enrolledCount: 0,
-      description: "Comprehensive structured curriculum with live classes and complete books.",
+      description: crsDesc || "Structured comprehensive course with live classes and study books.",
     });
     setCrsTitle("");
+    setCrsDesc("");
     setCourseModal(false);
+    showSuccess(`Course "${crsTitle}" created successfully! Check the Courses tab or Student Portal.`);
   };
 
   const handleAddLiveClass = (e: React.FormEvent) => {
@@ -177,11 +186,12 @@ export default function AdminOverviewPage() {
       meetingProvider: "zoom",
       meetingUrl: liveUrl,
       passcode: livePasscode,
-      description: "Interactive problem-solving lecture.",
+      description: "Interactive lecture and live problem-solving.",
       enrolledStudentsCount: 45,
     });
     setLiveTitle("");
     setLiveModal(false);
+    showSuccess("Live class scheduled! The Live indicator is now pulsing for students.");
   };
 
   const handleAddTest = (e: React.FormEvent) => {
@@ -199,6 +209,7 @@ export default function AdminOverviewPage() {
     });
     setTestTitle("");
     setTestModal(false);
+    showSuccess("CBT Examination created! It is now playable by students.");
   };
 
   const handleAddAnnouncement = (e: React.FormEvent) => {
@@ -215,43 +226,62 @@ export default function AdminOverviewPage() {
     setAnnTitle("");
     setAnnMsg("");
     setAnnouncementModal(false);
+    showSuccess("Announcement broadcasted! It is now showing on all student dashboards.");
   };
 
   return (
     <div className="space-y-6 pb-16">
-      {/* Top Header with Quick Switch to Student View */}
+      {/* Toast Alert Banner */}
+      {successMessage && (
+        <div className="p-4 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-between shadow-lg animate-slide-down">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+            <span>{successMessage}</span>
+          </div>
+          <Link href="/dashboard/my-courses">
+            <Button size="sm" className="bg-white text-emerald-800 hover:bg-emerald-50 text-xs font-black h-8 px-3 rounded-lg">
+              View in Student Portal →
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {/* Top Banner with Clean Action Buttons */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/90 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-black flex items-center gap-1.5 shadow-2xs">
-              <ShieldCheck className="w-4 h-4 text-amber-800" />
-              Master Control Center
+            <span className="px-3 py-1 rounded-full bg-blue-100 text-[#004B87] text-xs font-black flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-[#004B87]" />
+              Super Admin Console
             </span>
-            <span className="text-xs text-gray-500 font-semibold">• DeepSiddhi Engine</span>
+            <span className="text-xs text-gray-400 font-semibold">• DeepSiddhi Engine</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-            Centralized LMS Management Portal
+            Admin Management Portal
           </h1>
           <p className="text-xs sm:text-sm text-gray-500">
-            Manage every course, material, live session, mock test, and student announcement from one unified screen.
+            Create courses, upload PDFs, schedule live classes, and manage student enrollments in real time.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           <Button
             variant="outline"
-            onClick={() => store.resetAll()}
-            className="text-xs font-bold text-gray-700 hover:text-red-700 border-gray-200 h-10 px-3.5 rounded-xl gap-1.5 shadow-2xs"
-            title="Restore default sample materials and courses"
+            onClick={() => {
+              store.resetAll();
+              showSuccess("Reset to initial sample data completed!");
+            }}
+            className="text-xs font-bold text-gray-600 hover:text-red-700 border-gray-200 h-10 px-3.5 rounded-xl gap-1.5 shadow-2xs"
+            title="Restore default sample data"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Demo Data</span>
           </Button>
 
-          <Link href="/dashboard">
+          <Link href="/dashboard/my-courses">
             <Button className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl h-10 px-4 gap-1.5 shadow-sm">
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>Preview Student Portal</span>
+              <span>Preview Student Courses</span>
             </Button>
           </Link>
         </div>
@@ -262,15 +292,15 @@ export default function AdminOverviewPage() {
         <div className="bg-white p-2 rounded-2xl border border-gray-200/90 shadow-2xs overflow-x-auto scrollbar-none">
           <TabsList className="bg-gray-100/80 p-1 rounded-xl flex items-center min-w-max gap-1">
             <TabsTrigger value="overview" className="text-xs font-black px-4 py-2 rounded-lg">
-              📊 Overview & KPIs
-            </TabsTrigger>
-            <TabsTrigger value="materials" className="text-xs font-black px-4 py-2 rounded-lg gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-[#004B87]" />
-              Study Materials ({materials.length})
+              📊 Master Dashboard
             </TabsTrigger>
             <TabsTrigger value="courses" className="text-xs font-black px-4 py-2 rounded-lg gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
+              <BookOpen className="w-3.5 h-3.5 text-[#004B87]" />
               Courses ({courses.length})
+            </TabsTrigger>
+            <TabsTrigger value="materials" className="text-xs font-black px-4 py-2 rounded-lg gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-teal-600" />
+              Study Materials ({materials.length})
             </TabsTrigger>
             <TabsTrigger value="live" className="text-xs font-black px-4 py-2 rounded-lg gap-1.5">
               <Radio className="w-3.5 h-3.5 text-red-500 animate-pulse" />
@@ -278,7 +308,7 @@ export default function AdminOverviewPage() {
             </TabsTrigger>
             <TabsTrigger value="tests" className="text-xs font-black px-4 py-2 rounded-lg gap-1.5">
               <FileCheck2 className="w-3.5 h-3.5 text-purple-600" />
-              Tests & Exams ({tests.length})
+              Tests ({tests.length})
             </TabsTrigger>
             <TabsTrigger value="announcements" className="text-xs font-black px-4 py-2 rounded-lg gap-1.5">
               <Bell className="w-3.5 h-3.5 text-amber-500" />
@@ -295,88 +325,102 @@ export default function AdminOverviewPage() {
             TAB 1: OVERVIEW & KEY PERFORMANCE METRICS
            ========================================================================= */}
         <TabsContent value="overview" className="space-y-6">
-          {/* Quick Metrics Cards */}
+          {/* 4 Professional Metric Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Card className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1">
+            <div
+              onClick={() => setActiveTab("courses")}
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 cursor-pointer hover:shadow-md transition-shadow"
+            >
               <div className="flex justify-between items-start">
                 <span className="text-xs text-gray-500 font-bold">Total Courses</span>
                 <BookOpen className="w-4 h-4 text-[#004B87]" />
               </div>
               <span className="text-2xl font-black text-[#004B87]">{courses.length} Active</span>
-              <span className="text-[11px] text-emerald-600 font-bold block">100% Published</span>
-            </Card>
+              <span className="text-[11px] text-emerald-600 font-bold block">
+                {courses.filter((c) => c.isPublished).length} Published to Students
+              </span>
+            </div>
 
-            <Card className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1">
+            <div
+              onClick={() => setActiveTab("materials")}
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 cursor-pointer hover:shadow-md transition-shadow"
+            >
               <div className="flex justify-between items-start">
                 <span className="text-xs text-gray-500 font-bold">Study Materials</span>
                 <FileText className="w-4 h-4 text-teal-600" />
               </div>
               <span className="text-2xl font-black text-teal-700">{materials.length} Files</span>
-              <span className="text-[11px] text-gray-400 block">PDFs, DPPs & Notes</span>
-            </Card>
+              <span className="text-[11px] text-gray-400 block">Notes, Formulae & DPPs</span>
+            </div>
 
-            <Card className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1">
+            <div
+              onClick={() => setActiveTab("live")}
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 cursor-pointer hover:shadow-md transition-shadow"
+            >
               <div className="flex justify-between items-start">
-                <span className="text-xs text-gray-500 font-bold">Live Classes</span>
+                <span className="text-xs text-gray-500 font-bold">Live Sessions</span>
                 <Radio className="w-4 h-4 text-red-500 animate-pulse" />
               </div>
               <span className="text-2xl font-black text-red-600">{liveClasses.length} Scheduled</span>
-              <span className="text-[11px] text-red-500 font-bold block">
+              <span className="text-[11px] text-red-600 font-bold block">
                 {liveClasses.filter((l) => l.status === "live").length} Live Right Now
               </span>
-            </Card>
+            </div>
 
-            <Card className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1">
+            <div
+              onClick={() => setActiveTab("students")}
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 cursor-pointer hover:shadow-md transition-shadow"
+            >
               <div className="flex justify-between items-start">
-                <span className="text-xs text-gray-500 font-bold">Total Students</span>
+                <span className="text-xs text-gray-500 font-bold">Enrolled Students</span>
                 <Users className="w-4 h-4 text-purple-600" />
               </div>
               <span className="text-2xl font-black text-purple-900">842 Students</span>
               <span className="text-[11px] text-purple-600 font-bold block">Pratham 2026 Batch</span>
-            </Card>
+            </div>
           </div>
 
-          {/* Quick Management Launchpad Tiles */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-200/90 shadow-xs space-y-3">
-            <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>One-Click Content Creation</span>
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              <Button
-                onClick={() => setMaterialModal(true)}
-                className="h-12 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl shadow-xs gap-1.5"
-              >
-                <UploadCloud className="w-4 h-4" />
-                Upload Material
-              </Button>
+          {/* Clean Unified Action Strip */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#004B87]" />
+                <span>Quick Actions</span>
+              </h3>
+              <p className="text-xs text-gray-500">Add content directly to your LMS with one click.</p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
               <Button
                 onClick={() => setCourseModal(true)}
-                className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-xs gap-1.5"
+                className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black h-10 px-4 rounded-xl shadow-xs gap-1.5"
               >
                 <Plus className="w-4 h-4" />
-                Create Course
+                Add Course
+              </Button>
+              <Button
+                onClick={() => setMaterialModal(true)}
+                variant="outline"
+                className="text-[#004B87] border-[#004B87]/30 hover:bg-[#EAF4FF] text-xs font-bold h-10 px-4 rounded-xl gap-1.5"
+              >
+                <UploadCloud className="w-4 h-4" />
+                Upload PDF
               </Button>
               <Button
                 onClick={() => setLiveModal(true)}
-                className="h-12 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-xl shadow-xs gap-1.5"
+                variant="outline"
+                className="text-red-600 border-red-200 hover:bg-red-50 text-xs font-bold h-10 px-4 rounded-xl gap-1.5"
               >
                 <Radio className="w-4 h-4" />
                 Schedule Live
               </Button>
               <Button
-                onClick={() => setTestModal(true)}
-                className="h-12 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black rounded-xl shadow-xs gap-1.5"
-              >
-                <FileCheck2 className="w-4 h-4" />
-                Add Mock Test
-              </Button>
-              <Button
                 onClick={() => setAnnouncementModal(true)}
-                className="h-12 bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-xs rounded-xl shadow-xs gap-1.5"
+                variant="outline"
+                className="text-amber-800 border-amber-300 hover:bg-amber-50 text-xs font-bold h-10 px-4 rounded-xl gap-1.5"
               >
                 <Bell className="w-4 h-4" />
-                Post Alert
+                Post Notice
               </Button>
             </div>
           </div>
@@ -385,7 +429,7 @@ export default function AdminOverviewPage() {
           <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-6 space-y-4">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-base font-black text-gray-900">Student Intake & Revenue Growth</h3>
+                <h3 className="text-base font-black text-gray-900">Student Intake & Revenue Run-Rate</h3>
                 <p className="text-xs text-gray-400">Monthly gross fee run-rate (in Lakhs INR)</p>
               </div>
               <Badge className="bg-[#EAF4FF] text-[#004B87] font-bold text-xs">FY 2026-27</Badge>
@@ -396,8 +440,8 @@ export default function AdminOverviewPage() {
                 <AreaChart data={revenueData}>
                   <defs>
                     <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#16A6A1" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#16A6A1" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#004B87" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#004B87" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -426,14 +470,119 @@ export default function AdminOverviewPage() {
         </TabsContent>
 
         {/* =========================================================================
-            TAB 2: STUDY MATERIALS MANAGEMENT (Upload, View, Delete)
+            TAB 2: COURSES & CURRICULUM MANAGEMENT
            ========================================================================= */}
+        <TabsContent value="courses" className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/90 shadow-2xs">
+            <div>
+              <h2 className="text-lg font-black text-gray-900">Academic Courses ({courses.length})</h2>
+              <p className="text-xs text-gray-500">
+                Newly created courses appear in the student portal (<code className="font-mono text-[#004B87]">/dashboard/my-courses</code>) instantly.
+              </p>
+            </div>
+
+            <Button
+              onClick={() => setCourseModal(true)}
+              className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl h-10 px-4 gap-1.5 shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Create New Course</span>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {courses.map((course) => (
+              <Card
+                key={course.id}
+                className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="bg-[#FDB813] text-gray-950 font-black text-[10px] px-2 py-0.5 rounded-full">
+                        {course.category}
+                      </span>
+                      <span className="bg-gray-100 text-gray-700 font-bold text-[10px] px-2 py-0.5 rounded-full">
+                        {course.targetClass}
+                      </span>
+                    </div>
+
+                    <Badge
+                      className={
+                        course.isPublished
+                          ? "bg-emerald-100 text-emerald-800 font-bold text-[10px]"
+                          : "bg-gray-100 text-gray-600 font-bold text-[10px]"
+                      }
+                    >
+                      {course.isPublished ? "Live" : "Draft"}
+                    </Badge>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-black text-gray-900 leading-snug">{course.title}</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">Faculty: <strong>{course.faculty}</strong></p>
+                    {course.description && (
+                      <p className="text-xs text-gray-600 line-clamp-2 mt-1.5">{course.description}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-3 border-t border-gray-100">
+                  <div className="grid grid-cols-3 gap-2 p-2.5 bg-gray-50 rounded-xl text-center text-xs">
+                    <div>
+                      <span className="text-[10px] text-gray-400 block font-medium">Price</span>
+                      <span className="font-black text-gray-900">₹{course.discountedPrice.toLocaleString()}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-400 block font-medium">Lessons</span>
+                      <span className="font-black text-gray-900">{course.totalLessons}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-400 block font-medium">Enrolled</span>
+                      <span className="font-black text-emerald-600">{course.enrolledCount}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => {
+                        store.togglePublishCourse(course.id);
+                        showSuccess(`Course status toggled for "${course.title}".`);
+                      }}
+                      className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1.5"
+                    >
+                      {course.isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{course.isPublished ? "Unpublish" : "Publish Live"}</span>
+                    </button>
+
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        store.deleteCourse(course.id);
+                        showSuccess(`Course "${course.title}" removed.`);
+                      }}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-8 px-2.5 gap-1"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete</span>
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* =========================================================================
+            TAB 3: STUDY MATERIALS MANAGEMENT
+           ========================================================= */}
         <TabsContent value="materials" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/90 shadow-2xs">
             <div>
-              <h2 className="text-lg font-black text-gray-900">Study Materials Repository</h2>
+              <h2 className="text-lg font-black text-gray-900">Study Materials Repository ({materials.length})</h2>
               <p className="text-xs text-gray-500">
-                Uploaded files immediately appear in the Student Portal under Materials & DPPs.
+                Uploaded PDFs and notes sync to <code className="font-mono text-[#004B87]">/dashboard/materials</code>.
               </p>
             </div>
 
@@ -463,101 +612,19 @@ export default function AdminOverviewPage() {
 
                     <h3 className="text-base font-black text-gray-900">{mat.title}</h3>
 
-                    <p className="text-xs text-emerald-700 font-semibold">
-                      {mat.downloadsCount.toLocaleString()} total student downloads logged
+                    <p className="text-xs text-emerald-700 font-bold">
+                      {mat.downloadsCount.toLocaleString()} Total Student Downloads
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => store.deleteMaterial(mat.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 text-xs font-bold rounded-xl h-9 px-3 gap-1"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Delete</span>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* =========================================================================
-            TAB 3: COURSES & CURRICULUM MANAGEMENT
-           ========================================================================= */}
-        <TabsContent value="courses" className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/90 shadow-2xs">
-            <div>
-              <h2 className="text-lg font-black text-gray-900">Course Offerings & Pricing</h2>
-              <p className="text-xs text-gray-500">
-                Created courses immediately reflect on the public website and student course list.
-              </p>
-            </div>
-
-            <Button
-              onClick={() => setCourseModal(true)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl h-10 px-4 gap-1.5 shadow-sm"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Create New Course</span>
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {courses.map((course) => (
-              <Card key={course.id} className="p-6 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-4">
-                <div className="flex justify-between items-start gap-3">
-                  <div>
-                    <Badge className="bg-[#EAF4FF] text-[#004B87] font-black text-[10px] mb-1">
-                      {course.category} • {course.targetClass}
-                    </Badge>
-                    <h3 className="text-base font-black text-gray-900 leading-snug">{course.title}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Faculty: {course.faculty}</p>
-                  </div>
-
-                  <Badge
-                    className={
-                      course.isPublished
-                        ? "bg-emerald-100 text-emerald-800 font-bold text-[10px]"
-                        : "bg-gray-100 text-gray-600 font-bold text-[10px]"
-                    }
-                  >
-                    {course.isPublished ? "Published" : "Draft"}
-                  </Badge>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-xl text-center text-xs">
-                  <div>
-                    <span className="text-[10px] text-gray-400 block">Fee</span>
-                    <span className="font-black text-gray-900">₹{course.discountedPrice.toLocaleString()}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-gray-400 block">Lessons</span>
-                    <span className="font-black text-gray-900">{course.totalLessons}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-gray-400 block">Enrolled</span>
-                    <span className="font-black text-emerald-600">{course.enrolledCount} Students</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <button
-                    onClick={() => store.togglePublishCourse(course.id)}
-                    className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
-                  >
-                    {course.isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    <span>{course.isPublished ? "Unpublish" : "Publish"}</span>
-                  </button>
-
                   <Button
                     size="sm"
-                    variant="ghost"
-                    onClick={() => store.deleteCourse(course.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-8 px-2.5 gap-1"
+                    variant="outline"
+                    onClick={() => {
+                      store.deleteMaterial(mat.id);
+                      showSuccess(`Deleted "${mat.title}".`);
+                    }}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 text-xs font-bold rounded-xl h-9 px-3 gap-1"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Delete</span>
@@ -569,14 +636,14 @@ export default function AdminOverviewPage() {
         </TabsContent>
 
         {/* =========================================================================
-            TAB 4: LIVE CLASSROOM SESSIONS
+            TAB 4: LIVE CLASSROOMS
            ========================================================================= */}
         <TabsContent value="live" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/90 shadow-2xs">
             <div>
-              <h2 className="text-lg font-black text-gray-900">Live Virtual Classrooms</h2>
+              <h2 className="text-lg font-black text-gray-900">Live Virtual Classrooms ({liveClasses.length})</h2>
               <p className="text-xs text-gray-500">
-                Scheduled live sessions trigger the red pulse indicator on the student dashboard.
+                Toggle "Go Live Now" to broadcast live indicators directly to students.
               </p>
             </div>
 
@@ -611,8 +678,8 @@ export default function AdminOverviewPage() {
 
                     <h3 className="text-base font-black text-gray-900">{cls.title}</h3>
                     <p className="text-xs text-gray-600">
-                      Instructor: <strong>{cls.faculty}</strong> • Zoom Meeting Passcode:{" "}
-                      <code className="bg-gray-100 px-1 py-0.5 rounded font-mono font-bold text-gray-900">
+                      Instructor: <strong>{cls.faculty}</strong> • Zoom Passcode:{" "}
+                      <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono font-bold text-gray-900">
                         {cls.passcode}
                       </code>
                     </p>
@@ -621,7 +688,10 @@ export default function AdminOverviewPage() {
                   <div className="flex items-center gap-2">
                     <Button
                       size="sm"
-                      onClick={() => store.toggleLiveStatus(cls.id)}
+                      onClick={() => {
+                        store.toggleLiveStatus(cls.id);
+                        showSuccess(`Live status updated for "${cls.title}".`);
+                      }}
                       className={`text-xs font-bold rounded-xl h-9 px-3 ${
                         cls.status === "live"
                           ? "bg-gray-200 hover:bg-gray-300 text-gray-800"
@@ -647,15 +717,13 @@ export default function AdminOverviewPage() {
         </TabsContent>
 
         {/* =========================================================================
-            TAB 5: TESTS & EXAMINATIONS
+            TAB 5: TESTS & EXAMS
            ========================================================================= */}
         <TabsContent value="tests" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/90 shadow-2xs">
             <div>
-              <h2 className="text-lg font-black text-gray-900">Examinations & Mock Tests</h2>
-              <p className="text-xs text-gray-500">
-                Created tests are instantly available on the Oliveboard-style student test portal.
-              </p>
+              <h2 className="text-lg font-black text-gray-900">Tests & CBT Examinations ({tests.length})</h2>
+              <p className="text-xs text-gray-500">Exams immediately load into the student exam portal.</p>
             </div>
 
             <Button
@@ -689,7 +757,10 @@ export default function AdminOverviewPage() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => store.deleteTest(t.id)}
+                    onClick={() => {
+                      store.deleteTest(t.id);
+                      showSuccess(`Deleted test "${t.title}".`);
+                    }}
                     className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold rounded-xl h-9 px-2.5"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -701,14 +772,14 @@ export default function AdminOverviewPage() {
         </TabsContent>
 
         {/* =========================================================================
-            TAB 6: ANNOUNCEMENTS BROADCAST
+            TAB 6: ANNOUNCEMENTS
            ========================================================================= */}
         <TabsContent value="announcements" className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/90 shadow-2xs">
             <div>
-              <h2 className="text-lg font-black text-gray-900">Student Broadcasts & Notices</h2>
+              <h2 className="text-lg font-black text-gray-900">Broadcast Notices ({announcements.length})</h2>
               <p className="text-xs text-gray-500">
-                Announcements immediately display on the student dashboard notices widget.
+                Notices immediately appear on all student dashboards.
               </p>
             </div>
 
@@ -738,7 +809,10 @@ export default function AdminOverviewPage() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => store.deleteAnnouncement(ann.id)}
+                  onClick={() => {
+                    store.deleteAnnouncement(ann.id);
+                    showSuccess(`Announcement deleted.`);
+                  }}
                   className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold rounded-xl h-9 px-2.5"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -766,7 +840,7 @@ export default function AdminOverviewPage() {
                 <h3 className="font-black text-base text-gray-900">{batch.name}</h3>
                 <p className="text-xs text-gray-500">Timing: {batch.timing}</p>
                 <div className="pt-2 border-t border-gray-100 flex justify-between text-xs font-bold">
-                  <span className="text-gray-500">Instructor: {batch.faculty}</span>
+                  <span className="text-gray-500">Faculty: {batch.faculty}</span>
                   <span className="text-emerald-600">{batch.studentsCount} Students</span>
                 </div>
               </Card>
@@ -776,109 +850,25 @@ export default function AdminOverviewPage() {
       </Tabs>
 
       {/* =========================================================================
-          MODALS FOR UPLOADING & CREATING CONTENT
+          MODALS FOR CREATING & UPLOADING CONTENT
          ========================================================================= */}
 
-      {/* 1. Upload Material Modal */}
-      <Dialog open={materialModal} onOpenChange={setMaterialModal}>
-        <DialogContent className="sm:max-w-md rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
-              <UploadCloud className="w-5 h-5 text-[#004B87]" />
-              Upload Study Material (PDF / DPP / Notes)
-            </DialogTitle>
-          </DialogHeader>
-
-          <form onSubmit={handleAddMaterial} className="space-y-4 pt-2">
-            <div>
-              <Label className="text-xs font-bold text-gray-700">Material Title *</Label>
-              <Input
-                required
-                placeholder="e.g. Rotational Dynamics Comprehensive Notes"
-                value={matTitle}
-                onChange={(e) => setMatTitle(e.target.value)}
-                className="mt-1 text-xs rounded-xl"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs font-bold text-gray-700">Subject</Label>
-                <select
-                  value={matSubject}
-                  onChange={(e) => setMatSubject(e.target.value as any)}
-                  className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
-                >
-                  <option value="Physics">Physics</option>
-                  <option value="Chemistry">Chemistry</option>
-                  <option value="Mathematics">Mathematics</option>
-                  <option value="General">General</option>
-                </select>
-              </div>
-
-              <div>
-                <Label className="text-xs font-bold text-gray-700">Document Type</Label>
-                <select
-                  value={matType}
-                  onChange={(e) => setMatType(e.target.value as any)}
-                  className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
-                >
-                  <option value="PDF">PDF eBook</option>
-                  <option value="Notes">Handwritten Notes</option>
-                  <option value="Formula Sheet">Formula Sheet</option>
-                  <option value="DPP">Daily Practice Problem (DPP)</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-xs font-bold text-gray-700">Chapter / Topic</Label>
-              <Input
-                placeholder="e.g. Chapter 4: Rotational Mechanics"
-                value={matChapter}
-                onChange={(e) => setMatChapter(e.target.value)}
-                className="mt-1 text-xs rounded-xl"
-              />
-            </div>
-
-            <div>
-              <Label className="text-xs font-bold text-gray-700">File Size Simulation</Label>
-              <Input
-                placeholder="e.g. 4.8 MB"
-                value={matSize}
-                onChange={(e) => setMatSize(e.target.value)}
-                className="mt-1 text-xs rounded-xl"
-              />
-            </div>
-
-            <div className="pt-2 flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setMaterialModal(false)} className="text-xs rounded-xl">
-                Cancel
-              </Button>
-              <Button type="submit" className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl">
-                Upload & Publish
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* 2. Create Course Modal */}
+      {/* 1. Create Course Modal */}
       <Dialog open={courseModal} onOpenChange={setCourseModal}>
         <DialogContent className="sm:max-w-md rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-emerald-600" />
-              Create & Publish New Academic Course
+              <BookOpen className="w-5 h-5 text-[#004B87]" />
+              Create & Publish New Course
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleAddCourse} className="space-y-4 pt-2">
             <div>
-              <Label className="text-xs font-bold text-gray-700">Course Name *</Label>
+              <Label className="text-xs font-bold text-gray-700">Course Title *</Label>
               <Input
                 required
-                placeholder="e.g. IIT-JEE Sprint 2027 Mastery"
+                placeholder="e.g. IIT-JEE Foundation & Advanced Sprint 2027"
                 value={crsTitle}
                 onChange={(e) => setCrsTitle(e.target.value)}
                 className="mt-1 text-xs rounded-xl"
@@ -933,12 +923,97 @@ export default function AdminOverviewPage() {
               </div>
             </div>
 
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Course Description</Label>
+              <textarea
+                rows={2}
+                value={crsDesc}
+                onChange={(e) => setCrsDesc(e.target.value)}
+                placeholder="Brief course curriculum overview..."
+                className="w-full mt-1 p-2.5 text-xs bg-white border border-gray-200 rounded-xl"
+              />
+            </div>
+
             <div className="pt-2 flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setCourseModal(false)} className="text-xs rounded-xl">
                 Cancel
               </Button>
-              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl">
-                Publish Course
+              <Button type="submit" className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl">
+                Create & Publish Live
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* 2. Upload Material Modal */}
+      <Dialog open={materialModal} onOpenChange={setMaterialModal}>
+        <DialogContent className="sm:max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
+              <UploadCloud className="w-5 h-5 text-[#004B87]" />
+              Upload Study Material (PDF / DPP / Notes)
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleAddMaterial} className="space-y-4 pt-2">
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Material Title *</Label>
+              <Input
+                required
+                placeholder="e.g. Rotational Dynamics Comprehensive Formula Map"
+                value={matTitle}
+                onChange={(e) => setMatTitle(e.target.value)}
+                className="mt-1 text-xs rounded-xl"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Subject</Label>
+                <select
+                  value={matSubject}
+                  onChange={(e) => setMatSubject(e.target.value as any)}
+                  className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
+                >
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Document Type</Label>
+                <select
+                  value={matType}
+                  onChange={(e) => setMatType(e.target.value as any)}
+                  className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
+                >
+                  <option value="PDF">PDF eBook</option>
+                  <option value="Notes">Handwritten Notes</option>
+                  <option value="Formula Sheet">Formula Sheet</option>
+                  <option value="DPP">Daily Practice Problem (DPP)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Chapter / Topic</Label>
+              <Input
+                placeholder="e.g. Chapter 4: Rotational Mechanics"
+                value={matChapter}
+                onChange={(e) => setMatChapter(e.target.value)}
+                className="mt-1 text-xs rounded-xl"
+              />
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setMaterialModal(false)} className="text-xs rounded-xl">
+                Cancel
+              </Button>
+              <Button type="submit" className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl">
+                Upload & Publish
               </Button>
             </div>
           </form>
@@ -960,7 +1035,7 @@ export default function AdminOverviewPage() {
               <Label className="text-xs font-bold text-gray-700">Session Topic *</Label>
               <Input
                 required
-                placeholder="e.g. Magnetism & Ampere's Law Practice"
+                placeholder="e.g. Magnetism & Ampere's Law Practice Drill"
                 value={liveTitle}
                 onChange={(e) => setLiveTitle(e.target.value)}
                 className="mt-1 text-xs rounded-xl"
@@ -968,7 +1043,7 @@ export default function AdminOverviewPage() {
             </div>
 
             <div>
-              <Label className="text-xs font-bold text-gray-700">Batch</Label>
+              <Label className="text-xs font-bold text-gray-700">Batch Name</Label>
               <Input
                 value={liveBatch}
                 onChange={(e) => setLiveBatch(e.target.value)}
@@ -997,7 +1072,7 @@ export default function AdminOverviewPage() {
             </div>
 
             <div>
-              <Label className="text-xs font-bold text-gray-700">Meeting Link (Zoom / Meet)</Label>
+              <Label className="text-xs font-bold text-gray-700">Zoom / Meet Link</Label>
               <Input
                 value={liveUrl}
                 onChange={(e) => setLiveUrl(e.target.value)}
