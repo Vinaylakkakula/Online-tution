@@ -1,17 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
 import {
   Bell,
   Search,
   Menu,
-  Radio,
-  BookOpen,
-  Calendar,
-  Sparkles,
   ChevronDown,
   User,
   LogOut,
+  Sparkles,
+  BookOpen,
+  ShoppingBag,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,101 +34,152 @@ export function StudentHeader({
 }) {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const [selectedExamCategory, setSelectedExamCategory] = useState("IIT-JEE & Foundation");
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 lg:px-8">
-      {/* Left: Mobile Menu Button + Quick Info */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onMenuClick}
-          className="lg:hidden p-2 rounded-xl text-gray-600 hover:bg-gray-100"
-          aria-label="Open sidebar"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+    <header className="sticky top-0 z-30 bg-white border-b border-gray-200/80 shadow-xs">
+      <div className="h-16 px-4 sm:px-6 flex items-center justify-between gap-4">
+        {/* Left: Mobile Toggle + Category Dropdown (Oliveboard Style) */}
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors"
+            aria-label="Open sidebar"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
 
-        <div className="hidden md:flex items-center gap-2">
-          <span className="text-xs font-semibold px-2.5 py-1 bg-[#EAF4FF] text-[#163B65] rounded-lg">
-            Batch: Pratham 2026
-          </span>
-          <span className="text-xs text-gray-500">
-            {new Date().toLocaleDateString("en-IN", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            })}
-          </span>
+          {/* Oliveboard-Style Category Selector Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 bg-gray-50/80 hover:bg-white text-xs font-bold text-gray-800 transition-all shadow-2xs">
+                <span>{selectedExamCategory}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52 p-1.5 rounded-xl shadow-lg border border-gray-100">
+              <DropdownMenuItem
+                onClick={() => setSelectedExamCategory("IIT-JEE & Foundation")}
+                className="text-xs font-medium cursor-pointer rounded-lg py-2"
+              >
+                IIT-JEE & Foundation
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setSelectedExamCategory("Olympiad (Classes 6-12)")}
+                className="text-xs font-medium cursor-pointer rounded-lg py-2"
+              >
+                Olympiad (Classes 6-12)
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setSelectedExamCategory("NTSE & Scholarship")}
+                className="text-xs font-medium cursor-pointer rounded-lg py-2"
+              >
+                NTSE & Scholarship
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setSelectedExamCategory("Class 6 - 10 Foundation")}
+                className="text-xs font-medium cursor-pointer rounded-lg py-2"
+              >
+                Class 6 - 10 Foundation
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </div>
 
-      {/* Middle: Search bar */}
-      <div className="hidden sm:block flex-1 max-w-md mx-4">
-        <div className="relative">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <Input
-            placeholder="Search lessons, tests, faculty notes..."
-            className="pl-9 h-9 text-xs bg-gray-50 border-gray-200 rounded-xl focus:bg-white"
-          />
-        </div>
-      </div>
-
-      {/* Right: Live Notification + Bell + Profile */}
-      <div className="flex items-center gap-3">
-        {/* Live Class alert badge */}
-        <Link href="/dashboard/live-classes" className="hidden sm:flex">
-          <div className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-full border border-red-200 text-xs font-semibold cursor-pointer transition-colors">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span>Physics Live (Join Now)</span>
+        {/* Center: Search Bar (Rounded Pill like Oliveboard) */}
+        <div className="flex-1 max-w-lg hidden md:block">
+          <div className="relative">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Input
+              placeholder="Search courses, exams, tests or study materials..."
+              className="pl-10 pr-4 h-9.5 text-xs bg-gray-50/90 hover:bg-white focus:bg-white border-gray-200 rounded-full transition-all focus:ring-1 focus:ring-[#004B87] shadow-inner"
+            />
           </div>
-        </Link>
+        </div>
 
-        {/* Notifications */}
-        <Link href="/dashboard/notifications" className="relative p-2 text-gray-600 hover:text-[#163B65] rounded-xl hover:bg-gray-100">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-        </Link>
+        {/* Right: Urgent Promo Banner Pill + Buy Now + Profile */}
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          {/* Celebrating banner badge like Oliveboard */}
+          <Link
+            href="/courses"
+            className="hidden xl:flex items-center gap-2 bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs transition-colors"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>Celebrating Excellence</span>
+            <span className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-mono">
+              Offer: 03:26:48
+            </span>
+          </Link>
 
-        {/* User Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-100 transition-colors">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#163B65] to-[#16A6A1] text-white text-xs font-bold flex items-center justify-center">
-                {user?.full_name?.charAt(0) || "A"}
-              </div>
-              <ChevronDown className="w-4 h-4 text-gray-500 hidden sm:block" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-xl">
-            <DropdownMenuLabel className="p-2">
-              <p className="text-xs font-bold text-gray-900">{user?.full_name || "Student"}</p>
-              <p className="text-[11px] text-gray-500 truncate">{user?.email || "student@deepsiddhi.org"}</p>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/profile" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
-                <User className="w-4 h-4 text-gray-500" />
-                My Profile
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/my-courses" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
-                <BookOpen className="w-4 h-4 text-gray-500" />
-                My Enrolled Courses
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                logout();
-                router.push("/");
-              }}
-              className="text-red-600 flex items-center gap-2 text-xs py-2 cursor-pointer"
+          {/* Buy Now / Explore Courses Button */}
+          <Link href="/courses">
+            <Button
+              size="sm"
+              className="h-8.5 px-3.5 sm:px-4 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-bold rounded-lg shadow-sm"
             >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <ShoppingBag className="w-3.5 h-3.5 mr-1" />
+              <span>Explore Courses</span>
+            </Button>
+          </Link>
+
+          {/* Notifications */}
+          <Link
+            href="/dashboard/notifications"
+            className="relative p-2 text-gray-600 hover:text-[#004B87] rounded-full hover:bg-gray-100 transition-colors"
+            title="Notifications"
+          >
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+          </Link>
+
+          {/* User Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-[#004B87]/20 transition-all">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#004B87] to-[#16A6A1] text-white text-xs font-bold flex items-center justify-center shadow-xs">
+                  {user?.full_name?.charAt(0).toUpperCase() || "A"}
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-xl border border-gray-100">
+              <DropdownMenuLabel className="p-2">
+                <p className="text-xs font-bold text-gray-900 truncate">
+                  {user?.full_name || "Aryan Sharma"}
+                </p>
+                <p className="text-[11px] text-gray-500 truncate">
+                  {user?.email || "student@deepsiddhi.org"}
+                </p>
+                <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
+                  Active Enrollment
+                </span>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/profile" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
+                  <User className="w-4 h-4 text-gray-500" />
+                  My Profile & Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/my-courses" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
+                  <BookOpen className="w-4 h-4 text-gray-500" />
+                  My Enrolled Courses
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  logout();
+                  router.push("/");
+                }}
+                className="text-red-600 flex items-center gap-2 text-xs py-2 cursor-pointer font-medium"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </header>
   );

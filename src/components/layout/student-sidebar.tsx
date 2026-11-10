@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import {
-  GraduationCap,
   LayoutDashboard,
   BookOpen,
-  Video,
-  Radio,
-  Calendar,
   FileCheck2,
+  Users2,
+  Bookmark,
+  CreditCard,
+  Radio,
+  Video,
   FileText,
   BarChart3,
   Trophy,
@@ -19,25 +20,37 @@ import {
   User,
   HelpCircle,
   LogOut,
-  ChevronRight,
+  ChevronDown,
+  Sparkles,
   ShieldAlert,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const navItems = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  isLive?: boolean;
+}
+
+const mainNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/my-courses", label: "My Courses", icon: BookOpen },
-  { href: "/dashboard/recorded-classes", label: "Recorded Classes", icon: Video },
-  { href: "/dashboard/live-classes", label: "Live Classes", icon: Radio, live: true },
-  { href: "/dashboard/upcoming-classes", label: "Upcoming Classes", icon: Calendar },
-  { href: "/dashboard/tests", label: "Tests & Assignments", icon: FileCheck2 },
-  { href: "/dashboard/materials", label: "Study Materials", icon: FileText },
-  { href: "/dashboard/progress", label: "Learning Progress", icon: BarChart3 },
-  { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/dashboard/my-courses", label: "Courses", icon: BookOpen },
+  { href: "/dashboard/tests", label: "Tests", icon: FileCheck2 },
+  { href: "/dashboard/live-classes", label: "Live Classes", icon: Radio, isLive: true },
+  { href: "/dashboard/recorded-classes", label: "Recorded", icon: Video },
+  { href: "/dashboard/materials", label: "Materials", icon: FileText },
+  { href: "/dashboard/progress", label: "Progress", icon: BarChart3 },
+  { href: "/dashboard/leaderboard", label: "Rankings", icon: Trophy },
   { href: "/dashboard/community", label: "Community", icon: Users },
-  { href: "/dashboard/notifications", label: "Notifications", icon: Bell, badge: "3" },
-  { href: "/dashboard/profile", label: "My Profile", icon: User },
-  { href: "/dashboard/support", label: "Help & Support", icon: HelpCircle },
+  { href: "/dashboard/notifications", label: "Alerts", icon: Bell, badge: "3" },
+  { href: "/dashboard/support", label: "Help & FAQ", icon: HelpCircle },
 ];
 
 export function StudentSidebar({
@@ -62,46 +75,38 @@ export function StudentSidebar({
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen?.(false)}
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-xs transition-opacity"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-xs transition-opacity"
         />
       )}
 
+      {/* Oliveboard-Style Deep Blue Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#163B65] text-white flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-24 sm:w-28 lg:w-28 bg-[#004B87] text-white flex flex-col justify-between transition-transform duration-300 ease-in-out border-r border-[#003866] shadow-xl lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Brand Header */}
-        <div className="h-16 flex items-center px-6 border-b border-white/10 gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#16A6A1] to-[#EAF4FF] flex items-center justify-center text-[#163B65] shadow-md font-bold">
-            <GraduationCap className="w-5 h-5 text-[#163B65]" />
-          </div>
-          <div>
-            <span className="font-bold text-sm tracking-wide block">DeepSiddhi</span>
-            <span className="text-[10px] text-[#16A6A1] font-semibold tracking-wider uppercase block">
-              Student Portal
+        {/* Top: Logo & Exam Category */}
+        <div className="flex flex-col items-center pt-4 pb-2 border-b border-white/10 px-2 text-center">
+          <Link
+            href="/dashboard"
+            onClick={() => setMobileOpen?.(false)}
+            className="flex flex-col items-center group"
+          >
+            {/* Spiral / Ring Logo Icon like Oliveboard */}
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#16A6A1] via-[#0099FF] to-[#EAF4FF] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform p-0.5">
+              <div className="w-full h-full bg-[#004B87] rounded-[14px] flex items-center justify-center">
+                <span className="font-black text-white text-base tracking-tighter">DS</span>
+              </div>
+            </div>
+            <span className="text-[11px] font-extrabold text-white mt-1.5 tracking-tight leading-none">
+              DeepSiddhi
             </span>
-          </div>
+          </Link>
         </div>
 
-        {/* User Card */}
-        <div className="p-4 mx-3 my-3 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#16A6A1] to-[#243247] flex items-center justify-center text-white font-bold text-sm shrink-0">
-            {user?.full_name?.charAt(0) || "S"}
-          </div>
-          <div className="overflow-hidden">
-            <h4 className="text-xs font-semibold text-white truncate">
-              {user?.full_name || "Enrolled Student"}
-            </h4>
-            <p className="text-[10px] text-white/60 truncate">
-              {user?.class_level || "Class 11"} • {user?.role || "Student"}
-            </p>
-          </div>
-        </div>
-
-        {/* Navigation Items (Scrollable) */}
-        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 text-xs">
-          {navItems.map((item) => {
+        {/* Middle Navigation - Stack of Icon + Label Buttons */}
+        <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1.5 scrollbar-none flex flex-col items-center">
+          {mainNavItems.map((item) => {
             const isActive =
               item.href === "/dashboard"
                 ? pathname === "/dashboard"
@@ -112,58 +117,67 @@ export function StudentSidebar({
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen?.(false)}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-xl font-medium transition-all ${
+                className={`w-full py-2.5 px-1 rounded-xl flex flex-col items-center justify-center text-center transition-all group relative ${
                   isActive
-                    ? "bg-[#16A6A1] text-white shadow-sm font-semibold"
-                    : "text-white/75 hover:bg-white/10 hover:text-white"
+                    ? "bg-white text-[#004B87] shadow-md font-bold"
+                    : "text-white/80 hover:bg-white/10 hover:text-white font-medium"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <item.icon
-                    className={`w-4 h-4 ${
-                      isActive ? "text-white" : "text-white/70"
-                    }`}
-                  />
-                  <span>{item.label}</span>
-                </div>
+                {/* Live pulsing dot */}
+                {item.isLive && (
+                  <span className="absolute top-1.5 right-2 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </span>
+                )}
 
-                <div className="flex items-center gap-1.5">
-                  {item.live && (
-                    <span className="flex h-2 w-2 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                    </span>
-                  )}
-                  {item.badge && (
-                    <Badge className="bg-red-500 text-white text-[10px] h-4 px-1.5 rounded-full font-bold">
-                      {item.badge}
-                    </Badge>
-                  )}
-                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/70" />}
-                </div>
+                {/* Badge count */}
+                {item.badge && !isActive && (
+                  <span className="absolute top-1 right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                    {item.badge}
+                  </span>
+                )}
+
+                <item.icon
+                  className={`w-5 h-5 mb-1 transition-transform group-hover:scale-110 ${
+                    isActive ? "text-[#004B87]" : "text-white/90"
+                  }`}
+                />
+                <span className="text-[10px] leading-tight line-clamp-1">
+                  {item.label}
+                </span>
               </Link>
             );
           })}
         </div>
 
-        {/* Admin Quick Switch (if applicable) & Logout */}
-        <div className="p-3 border-t border-white/10 space-y-1">
+        {/* Bottom Actions: Admin switch (if eligible), Profile, Logout */}
+        <div className="p-2 border-t border-white/10 space-y-1 flex flex-col items-center w-full">
           {(user?.role === "admin" || user?.role === "super_admin" || user?.role === "faculty") && (
             <Link
               href="/admin"
-              className="flex items-center gap-3 px-3 py-2 rounded-xl text-amber-300 hover:bg-white/10 text-xs font-semibold"
+              className="w-full py-1.5 rounded-lg bg-amber-400/20 text-amber-200 hover:bg-amber-400/30 text-[9px] font-bold flex flex-col items-center justify-center"
             >
-              <ShieldAlert className="w-4 h-4 text-amber-400" />
-              <span>Switch to Admin Panel</span>
+              <ShieldAlert className="w-3.5 h-3.5 mb-0.5 text-amber-300" />
+              <span>Admin</span>
             </Link>
           )}
 
+          <Link
+            href="/dashboard/profile"
+            onClick={() => setMobileOpen?.(false)}
+            className="w-full py-1.5 rounded-lg text-white/80 hover:bg-white/10 flex flex-col items-center text-[10px]"
+          >
+            <User className="w-4 h-4 mb-0.5" />
+            <span>Profile</span>
+          </Link>
+
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-red-300 hover:bg-red-500/20 text-xs font-medium transition-colors"
+            className="w-full py-1.5 rounded-lg text-red-200 hover:bg-red-500/20 flex flex-col items-center text-[10px] transition-colors"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Sign Out</span>
+            <LogOut className="w-4 h-4 mb-0.5" />
+            <span>Logout</span>
           </button>
         </div>
       </aside>
