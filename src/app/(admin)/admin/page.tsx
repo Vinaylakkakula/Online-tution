@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,12 @@ import {
   CheckCircle2,
   AlertCircle,
   Plus,
+  UploadCloud,
+  FileCheck2,
+  FileText,
+  CalendarDays,
+  ShieldCheck,
+  ExternalLink,
 } from "lucide-react";
 import {
   BarChart,
@@ -82,116 +88,195 @@ const recentRegistrations = [
 
 export default function AdminOverviewPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-12">
       {/* Top Welcome & Quick Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Admin Overview & Control</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Real-time enrollment metrics, classroom broadcasts, revenue reconciliation, and student lifecycle management.
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-black flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Super Admin Console
+            </span>
+            <span className="text-xs text-gray-400">• DeepSiddhi Engine</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+            Academic Management & Operations
+          </h1>
+          <p className="text-xs text-gray-500">
+            Upload study materials, manage courses, broadcast live classrooms, and monitor student intake.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link href="/admin/live-classes">
-            <Button className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl h-10 px-4 gap-2 shadow-sm">
-              <Radio className="w-4 h-4 animate-pulse" />
-              Schedule Live Class
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link href="/dashboard">
+            <Button variant="outline" className="text-xs font-bold text-[#004B87] border-gray-200 h-10 px-4 rounded-xl gap-1.5 shadow-2xs">
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Student Portal View</span>
             </Button>
           </Link>
           <Link href="/admin/courses">
-            <Button className="bg-[#163B65] hover:bg-[#122e50] text-white text-xs font-semibold rounded-xl h-10 px-4 gap-2 shadow-sm">
+            <Button className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl h-10 px-4 gap-1.5 shadow-sm">
               <Plus className="w-4 h-4" />
-              Add New Course
+              <span>Create Course</span>
             </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* QUICK UPLOAD & MANAGEMENT ACTION TILES (What the user specifically requested) */}
+      <div className="space-y-3">
+        <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#16A6A1]" />
+          <span>Content Upload & Quick Operations</span>
+        </h2>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+          {/* Tile 1: Upload Study Material */}
+          <Link
+            href="/admin/materials"
+            className="p-4 rounded-2xl bg-white hover:bg-[#EAF4FF] border border-gray-200/80 hover:border-[#004B87]/30 transition-all shadow-2xs hover:shadow-md flex flex-col items-center text-center justify-center gap-2 group"
+          >
+            <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#004B87] flex items-center justify-center group-hover:scale-110 transition-transform">
+              <UploadCloud className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <div>
+              <span className="font-extrabold text-xs text-gray-900 block leading-tight">
+                Upload Material
+              </span>
+              <span className="text-[10px] text-gray-400">PDFs, DPPs & Notes</span>
+            </div>
+          </Link>
+
+          {/* Tile 2: Create Course */}
+          <Link
+            href="/admin/courses"
+            className="p-4 rounded-2xl bg-white hover:bg-emerald-50 border border-gray-200/80 hover:border-emerald-300 transition-all shadow-2xs hover:shadow-md flex flex-col items-center text-center justify-center gap-2 group"
+          >
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <BookOpen className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <div>
+              <span className="font-extrabold text-xs text-gray-900 block leading-tight">
+                Manage Courses
+              </span>
+              <span className="text-[10px] text-gray-400">Add & Edit Curricula</span>
+            </div>
+          </Link>
+
+          {/* Tile 3: Schedule Live Class */}
+          <Link
+            href="/admin/live-classes"
+            className="p-4 rounded-2xl bg-white hover:bg-red-50 border border-gray-200/80 hover:border-red-300 transition-all shadow-2xs hover:shadow-md flex flex-col items-center text-center justify-center gap-2 group"
+          >
+            <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Radio className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <span className="font-extrabold text-xs text-gray-900 block leading-tight">
+                Schedule Live
+              </span>
+              <span className="text-[10px] text-gray-400">Zoom / Meet Class</span>
+            </div>
+          </Link>
+
+          {/* Tile 4: Upload Recorded Video */}
+          <Link
+            href="/admin/recorded-classes"
+            className="p-4 rounded-2xl bg-white hover:bg-purple-50 border border-gray-200/80 hover:border-purple-300 transition-all shadow-2xs hover:shadow-md flex flex-col items-center text-center justify-center gap-2 group"
+          >
+            <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Video className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <div>
+              <span className="font-extrabold text-xs text-gray-900 block leading-tight">
+                Recorded Video
+              </span>
+              <span className="text-[10px] text-gray-400">Upload Lectures</span>
+            </div>
+          </Link>
+
+          {/* Tile 5: Build Tests & Exams */}
+          <Link
+            href="/admin/tests"
+            className="p-4 rounded-2xl bg-white hover:bg-amber-50 border border-gray-200/80 hover:border-amber-300 transition-all shadow-2xs hover:shadow-md flex flex-col items-center text-center justify-center gap-2 group"
+          >
+            <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FileCheck2 className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <div>
+              <span className="font-extrabold text-xs text-gray-900 block leading-tight">
+                Tests & Exams
+              </span>
+              <span className="text-[10px] text-gray-400">CBT Mock Tests</span>
+            </div>
+          </Link>
+
+          {/* Tile 6: Academic Batches */}
+          <Link
+            href="/admin/batches"
+            className="p-4 rounded-2xl bg-white hover:bg-teal-50 border border-gray-200/80 hover:border-teal-300 transition-all shadow-2xs hover:shadow-md flex flex-col items-center text-center justify-center gap-2 group"
+          >
+            <div className="w-11 h-11 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <CalendarDays className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <div>
+              <span className="font-extrabold text-xs text-gray-900 block leading-tight">
+                Batches & Timing
+              </span>
+              <span className="text-[10px] text-gray-400">Assign Schedules</span>
+            </div>
           </Link>
         </div>
       </div>
 
       {/* Top 8 Key Metrics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
+        <Card className="rounded-2xl border-gray-200/80 shadow-2xs bg-white p-5 space-y-1">
           <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">Registered Students</span>
-            <Users className="w-4 h-4 text-[#163B65]" />
+            <span className="text-xs text-gray-500 font-bold">Registered Students</span>
+            <Users className="w-4 h-4 text-[#004B87]" />
           </div>
-          <span className="text-2xl font-black text-[#163B65]">842</span>
-          <span className="text-[11px] text-teal-600 font-semibold block">780 Active Accounts</span>
+          <span className="text-2xl font-black text-[#004B87]">842</span>
+          <span className="text-[11px] text-teal-600 font-bold block">780 Active Accounts</span>
         </Card>
 
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
+        <Card className="rounded-2xl border-gray-200/80 shadow-2xs bg-white p-5 space-y-1">
           <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">New This Week</span>
+            <span className="text-xs text-gray-500 font-bold">New This Week</span>
             <UserPlus className="w-4 h-4 text-teal-600" />
           </div>
           <span className="text-2xl font-black text-teal-700">+64</span>
-          <span className="text-[11px] text-emerald-600 font-semibold block">+22% vs last week</span>
+          <span className="text-[11px] text-emerald-600 font-bold block">+22% vs last week</span>
         </Card>
 
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
+        <Card className="rounded-2xl border-gray-200/80 shadow-2xs bg-white p-5 space-y-1">
           <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">Live Classes Today</span>
+            <span className="text-xs text-gray-500 font-bold">Live Classes Today</span>
             <Radio className="w-4 h-4 text-red-500 animate-pulse" />
           </div>
           <span className="text-2xl font-black text-red-600">4 Scheduled</span>
-          <span className="text-[11px] text-red-500 font-semibold block">1 Live Now</span>
+          <span className="text-[11px] text-red-500 font-bold block">1 Live Now</span>
         </Card>
 
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
+        <Card className="rounded-2xl border-gray-200/80 shadow-2xs bg-white p-5 space-y-1">
           <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">Gross Course Revenue</span>
+            <span className="text-xs text-gray-500 font-bold">Gross Course Revenue</span>
             <CreditCard className="w-4 h-4 text-emerald-600" />
           </div>
           <span className="text-2xl font-black text-emerald-700">₹2.48 Cr</span>
           <span className="text-[11px] text-gray-500 block">FY 2026-27</span>
         </Card>
-
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
-          <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">Total Courses</span>
-            <BookOpen className="w-4 h-4 text-[#163B65]" />
-          </div>
-          <span className="text-2xl font-black text-gray-900">12 Programs</span>
-          <span className="text-[11px] text-teal-600 font-semibold block">All Batches Active</span>
-        </Card>
-
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
-          <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">Faculty Educators</span>
-            <GraduationCap className="w-4 h-4 text-purple-600" />
-          </div>
-          <span className="text-2xl font-black text-purple-900">18 Master Faculty</span>
-          <span className="text-[11px] text-gray-500 block">Ex-IIT/AIIMS Mentors</span>
-        </Card>
-
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
-          <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">Recorded Lectures</span>
-            <Video className="w-4 h-4 text-blue-600" />
-          </div>
-          <span className="text-2xl font-black text-blue-900">540+ Lessons</span>
-          <span className="text-[11px] text-blue-600 font-semibold block">Mux Streaming DRM</span>
-        </Card>
-
-        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-5 space-y-1">
-          <div className="flex justify-between items-start">
-            <span className="text-xs text-gray-500 font-semibold">New Enquiries</span>
-            <AlertCircle className="w-4 h-4 text-amber-500" />
-          </div>
-          <span className="text-2xl font-black text-amber-600">18 Leads</span>
-          <span className="text-[11px] text-amber-700 font-semibold block">Requires Counselor Call</span>
-        </Card>
       </div>
 
       {/* Revenue & Growth Chart (Recharts) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2 rounded-3xl border-gray-100 shadow-md bg-white p-6 sm:p-8 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2 rounded-2xl border-gray-200/80 shadow-2xs bg-white p-6 space-y-4">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-base font-bold text-[#163B65]">Enrollment Growth & Revenue Run-Rate</h3>
+              <h3 className="text-base font-black text-gray-900">Enrollment Growth & Revenue Run-Rate</h3>
               <p className="text-xs text-gray-400">Monthly student intake and fee collections in Lakhs (INR)</p>
             </div>
-            <Badge className="bg-[#EAF4FF] text-[#163B65] text-xs">Last 6 Months</Badge>
+            <Badge className="bg-[#EAF4FF] text-[#004B87] font-bold text-xs">Last 6 Months</Badge>
           </div>
 
           <div className="h-72 w-full pt-4">
@@ -208,7 +293,7 @@ export default function AdminOverviewPage() {
                 <YAxis stroke="#888888" fontSize={11} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#163B65",
+                    backgroundColor: "#004B87",
                     borderRadius: "12px",
                     color: "#fff",
                     fontSize: "12px",
@@ -217,8 +302,8 @@ export default function AdminOverviewPage() {
                 <Area
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#163B65"
-                  strokeWidth={3}
+                  stroke="#004B87"
+                  strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#colorRev)"
                 />
@@ -227,89 +312,38 @@ export default function AdminOverviewPage() {
           </div>
         </Card>
 
-        {/* Live Operations Widget */}
-        <Card className="rounded-3xl border-gray-100 shadow-md bg-white p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-            <h3 className="font-bold text-sm text-[#163B65]">Classroom Schedule Today</h3>
-            <span className="text-[10px] text-gray-400">4 Sessions</span>
+        {/* Recent Registrations Table */}
+        <Card className="rounded-2xl border-gray-200/80 shadow-2xs bg-white p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-base font-black text-gray-900">Recent Registrations</h3>
+            <Link href="/admin/students" className="text-xs font-bold text-[#004B87] hover:underline">
+              View All
+            </Link>
           </div>
 
-          <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-2xl bg-red-50 border border-red-200 space-y-1">
-              <div className="flex justify-between items-center">
-                <span className="font-bold text-red-700">🔴 Live Streaming</span>
-                <span className="font-mono text-[10px] text-red-600">Zoom Room 1</span>
+          <div className="space-y-3">
+            {recentRegistrations.map((student) => (
+              <div
+                key={student.id}
+                className="p-3 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between text-xs"
+              >
+                <div>
+                  <span className="font-bold text-gray-900 block">{student.name}</span>
+                  <span className="text-[11px] text-gray-500">
+                    {student.course} • {student.class}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <Badge variant="outline" className="border-emerald-300 text-emerald-700 bg-emerald-50 text-[10px] font-bold">
+                    {student.status}
+                  </Badge>
+                  <span className="text-[10px] text-gray-400 block mt-0.5">{student.date}</span>
+                </div>
               </div>
-              <p className="font-semibold text-gray-900">Physics: Magnetism & Biot-Savart</p>
-              <span className="text-[11px] text-gray-500">Dr. Rahul Sharma • 142 Active Attendees</span>
-            </div>
-
-            <div className="p-3 rounded-2xl bg-gray-50 border border-gray-100 space-y-1">
-              <span className="text-[10px] text-teal-700 font-bold uppercase">7:00 AM Tomorrow</span>
-              <p className="font-semibold text-gray-900">Chemistry: Carbocation Mechanisms</p>
-              <span className="text-[11px] text-gray-500">Prof. Priya Saxena • Pratham Batch</span>
-            </div>
-
-            <div className="p-3 rounded-2xl bg-gray-50 border border-gray-100 space-y-1">
-              <span className="text-[10px] text-teal-700 font-bold uppercase">6:00 PM Wednesday</span>
-              <p className="font-semibold text-gray-900">Olympiad Math: Diophantine Proofs</p>
-              <span className="text-[11px] text-gray-500">Er. Amit Verma • Aryabhata Batch</span>
-            </div>
+            ))}
           </div>
         </Card>
       </div>
-
-      {/* Recent Registrations Table */}
-      <Card className="rounded-3xl border-gray-100 shadow-md bg-white p-6 sm:p-8 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-base font-bold text-[#163B65]">Recent Student Registrations</h3>
-            <p className="text-xs text-gray-400">Latest students onboarded via website popup and admissions form</p>
-          </div>
-          <Link href="/admin/students" className="text-xs font-semibold text-[#16A6A1] hover:underline flex items-center gap-1">
-            View All Students <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-gray-50 text-gray-500 uppercase tracking-wider font-semibold border-y border-gray-100">
-              <tr>
-                <th className="py-3 px-4">Student ID</th>
-                <th className="py-3 px-4">Full Name</th>
-                <th className="py-3 px-4">Mobile</th>
-                <th className="py-3 px-4">Course Track</th>
-                <th className="py-3 px-4">Class</th>
-                <th className="py-3 px-4">Time</th>
-                <th className="py-3 px-4">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {recentRegistrations.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50/60">
-                  <td className="py-3 px-4 font-mono font-bold text-gray-700">{row.id}</td>
-                  <td className="py-3 px-4 font-bold text-[#163B65]">{row.name}</td>
-                  <td className="py-3 px-4 text-gray-600">{row.phone}</td>
-                  <td className="py-3 px-4 text-gray-700">{row.course}</td>
-                  <td className="py-3 px-4 text-gray-500">{row.class}</td>
-                  <td className="py-3 px-4 text-gray-400">{row.date}</td>
-                  <td className="py-3 px-4">
-                    <Badge
-                      className={`text-[10px] ${
-                        row.status === "Verified"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-amber-100 text-amber-800"
-                      }`}
-                    >
-                      {row.status}
-                    </Badge>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
     </div>
   );
 }

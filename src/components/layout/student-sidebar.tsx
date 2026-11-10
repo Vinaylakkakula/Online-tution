@@ -20,16 +20,9 @@ import {
   User,
   HelpCircle,
   LogOut,
-  ChevronDown,
+  ShieldCheck,
   Sparkles,
-  ShieldAlert,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface NavItem {
   href: string;
@@ -85,7 +78,7 @@ export function StudentSidebar({
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Top: Logo & Exam Category */}
+        {/* Top: Logo */}
         <div className="flex flex-col items-center pt-4 pb-2 border-b border-white/10 px-2 text-center">
           <Link
             href="/dashboard"
@@ -151,17 +144,18 @@ export function StudentSidebar({
           })}
         </div>
 
-        {/* Bottom Actions: Admin switch (if eligible), Profile, Logout */}
-        <div className="p-2 border-t border-white/10 space-y-1 flex flex-col items-center w-full">
-          {(user?.role === "admin" || user?.role === "super_admin" || user?.role === "faculty") && (
-            <Link
-              href="/admin"
-              className="w-full py-1.5 rounded-lg bg-amber-400/20 text-amber-200 hover:bg-amber-400/30 text-[9px] font-bold flex flex-col items-center justify-center"
-            >
-              <ShieldAlert className="w-3.5 h-3.5 mb-0.5 text-amber-300" />
-              <span>Admin</span>
-            </Link>
-          )}
+        {/* Bottom Actions: Admin Panel Button, Profile, Logout */}
+        <div className="p-2 border-t border-white/10 space-y-1.5 flex flex-col items-center w-full">
+          {/* Always-visible Prominent Admin Panel Button */}
+          <Link
+            href="/admin"
+            onClick={() => setMobileOpen?.(false)}
+            className="w-full py-2 px-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-gray-950 font-black text-[10px] flex flex-col items-center justify-center shadow-md transition-all group"
+            title="Open Admin Panel"
+          >
+            <ShieldCheck className="w-4 h-4 mb-0.5 text-gray-950 group-hover:scale-110 transition-transform" />
+            <span>Admin Panel</span>
+          </Link>
 
           <Link
             href="/dashboard/profile"

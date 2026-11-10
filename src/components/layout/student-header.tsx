@@ -12,7 +12,8 @@ import {
   Sparkles,
   BookOpen,
   ShoppingBag,
-  ExternalLink,
+  ShieldCheck,
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,12 +98,12 @@ export function StudentHeader({
           </div>
         </div>
 
-        {/* Right: Urgent Promo Banner Pill + Buy Now + Profile */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          {/* Celebrating banner badge like Oliveboard */}
+        {/* Right: Admin Panel Pill + Buy Now + Profile */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          {/* Celebrating banner badge */}
           <Link
             href="/courses"
-            className="hidden xl:flex items-center gap-2 bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs transition-colors"
+            className="hidden xl:flex items-center gap-1.5 bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>Celebrating Excellence</span>
@@ -111,14 +112,26 @@ export function StudentHeader({
             </span>
           </Link>
 
-          {/* Buy Now / Explore Courses Button */}
-          <Link href="/courses">
+          {/* Direct One-Click Admin Panel Button */}
+          <Link href="/admin">
             <Button
               size="sm"
-              className="h-8.5 px-3.5 sm:px-4 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-bold rounded-lg shadow-sm"
+              className="h-8.5 px-3 sm:px-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-black text-xs rounded-lg shadow-sm gap-1.5 border border-amber-400"
+            >
+              <ShieldCheck className="w-4 h-4 text-gray-950" />
+              <span>Admin Panel</span>
+            </Button>
+          </Link>
+
+          {/* Explore Courses Button */}
+          <Link href="/courses" className="hidden sm:inline-block">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8.5 px-3 text-[#004B87] border-[#004B87]/30 hover:bg-[#EAF4FF] text-xs font-bold rounded-lg shadow-2xs"
             >
               <ShoppingBag className="w-3.5 h-3.5 mr-1" />
-              <span>Explore Courses</span>
+              <span>Courses</span>
             </Button>
           </Link>
 
@@ -144,16 +157,28 @@ export function StudentHeader({
             <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-xl border border-gray-100">
               <DropdownMenuLabel className="p-2">
                 <p className="text-xs font-bold text-gray-900 truncate">
-                  {user?.full_name || "Aryan Sharma"}
+                  {user?.full_name || "Academic Director"}
                 </p>
                 <p className="text-[11px] text-gray-500 truncate">
-                  {user?.email || "student@deepsiddhi.org"}
+                  {user?.email || "admin@deepsiddhi.org"}
                 </p>
                 <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
-                  Active Enrollment
+                  Director / Admin Access
                 </span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/admin" className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-[#004B87]">
+                  <ShieldCheck className="w-4 h-4 text-amber-500" />
+                  Open Admin Console
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
+                  <LayoutDashboard className="w-4 h-4 text-gray-500" />
+                  Student Dashboard
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/profile" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
                   <User className="w-4 h-4 text-gray-500" />
