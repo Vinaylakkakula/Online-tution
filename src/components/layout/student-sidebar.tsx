@@ -55,11 +55,17 @@ export function StudentSidebar({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, loginWithDemo, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
     router.push("/");
+  };
+
+  const handleAdminClick = () => {
+    setMobileOpen?.(false);
+    loginWithDemo("admin");
+    router.push("/admin");
   };
 
   return (
@@ -147,15 +153,14 @@ export function StudentSidebar({
         {/* Bottom Actions: Admin Panel Button, Profile, Logout */}
         <div className="p-2 border-t border-white/10 space-y-1.5 flex flex-col items-center w-full">
           {/* Always-visible Prominent Admin Panel Button */}
-          <Link
-            href="/admin"
-            onClick={() => setMobileOpen?.(false)}
-            className="w-full py-2 px-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-gray-950 font-black text-[10px] flex flex-col items-center justify-center shadow-md transition-all group"
+          <button
+            onClick={handleAdminClick}
+            className="w-full py-2 px-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-gray-950 font-black text-[10px] flex flex-col items-center justify-center shadow-md transition-all group cursor-pointer active:scale-95"
             title="Open Admin Panel"
           >
             <ShieldCheck className="w-4 h-4 mb-0.5 text-gray-950 group-hover:scale-110 transition-transform" />
             <span>Admin Panel</span>
-          </Link>
+          </button>
 
           <Link
             href="/dashboard/profile"

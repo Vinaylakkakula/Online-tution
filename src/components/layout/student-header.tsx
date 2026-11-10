@@ -33,9 +33,14 @@ export function StudentHeader({
 }: {
   onMenuClick: () => void;
 }) {
-  const { user, logout } = useAuth();
+  const { user, loginWithDemo, logout } = useAuth();
   const router = useRouter();
   const [selectedExamCategory, setSelectedExamCategory] = useState("IIT-JEE & Foundation");
+
+  const handleAdminClick = () => {
+    loginWithDemo("admin");
+    router.push("/admin");
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200/80 shadow-xs">
@@ -98,7 +103,7 @@ export function StudentHeader({
           </div>
         </div>
 
-        {/* Right: Admin Panel Pill + Buy Now + Profile */}
+        {/* Right: Direct Admin Panel Button + Buy Now + Profile */}
         <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           {/* Celebrating banner badge */}
           <Link
@@ -112,16 +117,15 @@ export function StudentHeader({
             </span>
           </Link>
 
-          {/* Direct One-Click Admin Panel Button */}
-          <Link href="/admin">
-            <Button
-              size="sm"
-              className="h-8.5 px-3 sm:px-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-black text-xs rounded-lg shadow-sm gap-1.5 border border-amber-400"
-            >
-              <ShieldCheck className="w-4 h-4 text-gray-950" />
-              <span>Admin Panel</span>
-            </Button>
-          </Link>
+          {/* One-Click Guaranteed Admin Panel Button */}
+          <button
+            onClick={handleAdminClick}
+            className="h-8.5 px-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-black text-xs rounded-lg shadow-sm gap-1.5 border border-amber-400 flex items-center cursor-pointer transition-transform active:scale-95"
+            title="Open Admin Management Portal"
+          >
+            <ShieldCheck className="w-4 h-4 text-gray-950" />
+            <span>Admin Panel</span>
+          </button>
 
           {/* Explore Courses Button */}
           <Link href="/courses" className="hidden sm:inline-block">
@@ -163,15 +167,16 @@ export function StudentHeader({
                   {user?.email || "admin@deepsiddhi.org"}
                 </p>
                 <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
-                  Director / Admin Access
+                  Active Access
                 </span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/admin" className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-[#004B87]">
-                  <ShieldCheck className="w-4 h-4 text-amber-500" />
-                  Open Admin Console
-                </Link>
+              <DropdownMenuItem
+                onClick={handleAdminClick}
+                className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-[#004B87]"
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-500" />
+                Open Admin Console
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
