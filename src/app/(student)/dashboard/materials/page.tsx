@@ -29,12 +29,21 @@ export default function MaterialsPage() {
     return matchSubject && matchSearch;
   });
 
-  const handleDownload = (id: string, title: string) => {
-    setDownloadingId(id);
+  const handleDownload = (mat: any) => {
+    setDownloadingId(mat.id);
     setTimeout(() => {
       setDownloadingId(null);
-      alert(`Downloading "${title}"... In production this opens the secure PDF.`);
-    }, 700);
+      if (mat.downloadUrl) {
+        const a = document.createElement("a");
+        a.href = mat.downloadUrl;
+        a.download = `${mat.title.replace(/[^a-zA-Z0-9_-]/g, "_")}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        alert(`Downloading "${mat.title}"... Sample material preview generated.`);
+      }
+    }, 400);
   };
 
   return (
@@ -104,7 +113,7 @@ export default function MaterialsPage() {
               </div>
 
               <Button
-                onClick={() => handleDownload(mat.id, mat.title)}
+                onClick={() => handleDownload(mat)}
                 disabled={downloadingId === mat.id}
                 className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl h-10 px-5 gap-1.5 shadow-sm shrink-0"
               >
