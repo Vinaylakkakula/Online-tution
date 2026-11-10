@@ -250,6 +250,7 @@ export default function AdminOverviewPage() {
     store.addTest({
       id: `test-${Date.now()}`,
       title: testTitle,
+      courseTitle: courses[0]?.title || "IIT-JEE Comprehensive Mastery 2026-27",
       category: testCategory,
       questionsCount: Number(testQuestions) || 50,
       duration: testDuration,
@@ -891,7 +892,7 @@ export default function AdminOverviewPage() {
                 <p className="text-xs text-gray-500">Timing: {batch.timing}</p>
                 <div className="pt-2 border-t border-gray-100 flex justify-between text-xs font-bold">
                   <span className="text-gray-500">Faculty: {batch.faculty}</span>
-                  <span className="text-emerald-600">{batch.studentsCount} Students</span>
+                  <span className="text-emerald-600">{(batch.currentEnrolled ?? batch.studentsCount ?? 0)} Students</span>
                 </div>
               </Card>
             ))}

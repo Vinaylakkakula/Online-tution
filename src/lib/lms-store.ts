@@ -37,6 +37,7 @@ export interface LMSLiveClass {
   course: string;
   batch: string;
   faculty: string;
+  facultyTitle?: string;
   scheduledAt: string;
   duration: string;
   status: "live" | "upcoming" | "completed";
@@ -72,7 +73,7 @@ export interface LMSTestQuestion {
 export interface LMSTest {
   id: string;
   title: string;
-  courseTitle: string;
+  courseTitle?: string;
   category: "Sectional" | "Topic" | "Mock" | "Grand";
   questionsCount: number;
   duration: string;
@@ -113,6 +114,7 @@ export interface LMSBatch {
   faculty: string;
   maxStudents: number;
   currentEnrolled: number;
+  studentsCount?: number;
   status: "active" | "filling" | "completed";
 }
 

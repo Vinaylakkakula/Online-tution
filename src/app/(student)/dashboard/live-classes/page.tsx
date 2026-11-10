@@ -209,7 +209,7 @@ export default function LiveClassesPage() {
                       </div>
                       <div>
                         <span className="font-bold text-gray-900 block">{session.faculty}</span>
-                        <span className="text-[10px] text-gray-500">{session.facultyTitle}</span>
+                        <span className="text-[10px] text-gray-500">{session.facultyTitle || "Senior Faculty"}</span>
                       </div>
                     </div>
 
