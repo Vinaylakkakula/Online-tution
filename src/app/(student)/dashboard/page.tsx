@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
+import { useLMSData } from "@/lib/lms-store";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,12 +26,16 @@ import {
   Flame,
   ArrowRight,
   GraduationCap,
+  AlertCircle,
 } from "lucide-react";
 
 export default function StudentDashboardPage() {
   const { user } = useAuth();
   const studentName = user?.full_name || "Aryan Sharma";
+  const { courses, materials, liveClasses, tests, announcements } = useLMSData();
   const [selectedLanguage, setSelectedLanguage] = useState<"all" | "english" | "hinglish">("all");
+
+  const activeLiveClass = liveClasses.find((l) => l.status === "live") || liveClasses[0];
 
   return (
     <div className="space-y-8 pb-10">
@@ -78,7 +83,7 @@ export default function StudentDashboardPage() {
             href="/dashboard/my-courses"
             className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
           >
-            <span>View All Programs</span>
+            <span>View All Programs ({courses.length})</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -90,12 +95,10 @@ export default function StudentDashboardPage() {
             href="/dashboard/my-courses"
             className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0D3B66] via-[#124B82] to-[#0A2E52] p-6 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-blue-400/20"
           >
-            {/* Background Graphic Accents */}
             <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-blue-500/15 blur-xl group-hover:scale-125 transition-transform" />
             <div className="absolute bottom-0 right-0 w-36 h-36 border-t-2 border-l-2 border-amber-400/40 rounded-tl-full opacity-60 pointer-events-none" />
 
             <div className="relative z-10 flex items-center gap-4">
-              {/* Graphic Atom Icon */}
               <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner group-hover:rotate-12 transition-transform">
                 <Atom className="w-9 h-9 text-cyan-300 animate-[spin_12s_linear_infinite]" />
               </div>
@@ -119,12 +122,10 @@ export default function StudentDashboardPage() {
             href="/dashboard/my-courses"
             className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#5E1A84] via-[#7B249C] to-[#4A146C] p-6 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-purple-400/20"
           >
-            {/* Background Graphic Accents */}
             <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-purple-400/20 blur-xl group-hover:scale-125 transition-transform" />
             <div className="absolute bottom-0 right-0 w-36 h-36 border-t-2 border-l-2 border-amber-300/40 rounded-tl-full opacity-60 pointer-events-none" />
 
             <div className="relative z-10 flex items-center gap-4">
-              {/* Graphic Trophy Icon */}
               <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
                 <Trophy className="w-9 h-9 text-amber-300" />
               </div>
@@ -148,12 +149,10 @@ export default function StudentDashboardPage() {
             href="/dashboard/my-courses"
             className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0B5A53] via-[#0E7067] to-[#08453F] p-6 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-teal-400/20"
           >
-            {/* Background Graphic Accents */}
             <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-teal-400/20 blur-xl group-hover:scale-125 transition-transform" />
             <div className="absolute bottom-0 right-0 w-36 h-36 border-t-2 border-l-2 border-amber-300/40 rounded-tl-full opacity-60 pointer-events-none" />
 
             <div className="relative z-10 flex items-center gap-4">
-              {/* Graphic Lightbulb & Book Icon */}
               <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
                 <Lightbulb className="w-9 h-9 text-amber-300" />
               </div>
@@ -184,14 +183,13 @@ export default function StudentDashboardPage() {
             href="/dashboard/tests"
             className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
           >
-            <span>Practice Tests</span>
+            <span>Practice Tests ({tests.length})</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         {/* 4 Pastel Category Cards matching Oliveboard */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 1. Sectional Test */}
           <Link
             href="/dashboard/tests"
             className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#EAF5FE] hover:bg-[#D9EDFD] border border-[#CDE5FC] transition-all hover:shadow-md group"
@@ -207,7 +205,6 @@ export default function StudentDashboardPage() {
             <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all" />
           </Link>
 
-          {/* 2. Topic Test */}
           <Link
             href="/dashboard/tests"
             className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#E8F8F2] hover:bg-[#D4F4E6] border border-[#CAEDE0] transition-all hover:shadow-md group"
@@ -223,7 +220,6 @@ export default function StudentDashboardPage() {
             <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all" />
           </Link>
 
-          {/* 3. Mock Test */}
           <Link
             href="/dashboard/tests"
             className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#F3ECFB] hover:bg-[#E8DCF7] border border-[#DFCEF2] transition-all hover:shadow-md group"
@@ -239,7 +235,6 @@ export default function StudentDashboardPage() {
             <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all" />
           </Link>
 
-          {/* 4. Grand Test */}
           <Link
             href="/dashboard/tests"
             className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#FDF0E6] hover:bg-[#FCE3D2] border border-[#FAD4BA] transition-all hover:shadow-md group"
@@ -257,7 +252,7 @@ export default function StudentDashboardPage() {
         </div>
       </div>
 
-      {/* Main Grid: Continue Learning + Live Session Alerts */}
+      {/* Main Grid: Continue Learning + Live Session Alerts & Announcements */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
         {/* Left Column: Continue Learning Card (8 cols) */}
         <div className="lg:col-span-8 space-y-6">
@@ -287,7 +282,6 @@ export default function StudentDashboardPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-              {/* Video Thumbnail */}
               <div className="relative w-full sm:w-52 h-32 rounded-xl bg-gradient-to-br from-gray-900 via-[#0D3B66] to-gray-800 flex items-center justify-center shrink-0 overflow-hidden group cursor-pointer shadow-sm">
                 <div className="w-12 h-12 rounded-full bg-[#16A6A1] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <Play className="w-5 h-5 fill-white ml-0.5" />
@@ -300,7 +294,6 @@ export default function StudentDashboardPage() {
                 </span>
               </div>
 
-              {/* Lecture details */}
               <div className="flex-1 space-y-2 w-full">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="border-teal-500 text-teal-800 bg-teal-50 text-[10px] font-bold">
@@ -331,16 +324,16 @@ export default function StudentDashboardPage() {
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
             <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
-              <span className="text-[11px] text-gray-500 font-bold block">Enrolled Batches</span>
-              <span className="text-xl font-black text-[#004B87]">3 Active</span>
+              <span className="text-[11px] text-gray-500 font-bold block">Active Programs</span>
+              <span className="text-xl font-black text-[#004B87]">{courses.length} Courses</span>
             </div>
             <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
-              <span className="text-[11px] text-gray-500 font-bold block">Lessons Finished</span>
-              <span className="text-xl font-black text-emerald-600">84 Modules</span>
+              <span className="text-[11px] text-gray-500 font-bold block">Materials Available</span>
+              <span className="text-xl font-black text-emerald-600">{materials.length} PDFs</span>
             </div>
             <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
-              <span className="text-[11px] text-gray-500 font-bold block">Study Hours</span>
-              <span className="text-xl font-black text-gray-800">46.5 Hrs</span>
+              <span className="text-[11px] text-gray-500 font-bold block">Mock Tests</span>
+              <span className="text-xl font-black text-gray-800">{tests.length} CBTs</span>
             </div>
             <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
               <span className="text-[11px] text-gray-500 font-bold block">Learning Streak</span>
@@ -355,57 +348,60 @@ export default function StudentDashboardPage() {
         {/* Right Column: Live Class Spotlight & Today's Schedule (4 cols) */}
         <div className="lg:col-span-4 space-y-5">
           {/* Urgent Live Class Spotlight Card */}
-          <Card className="rounded-2xl border-2 border-red-200 bg-gradient-to-br from-red-50/70 to-rose-50/40 p-5 shadow-xs space-y-3.5">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 text-xs font-black text-red-600 tracking-wide uppercase">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                Live in 2h 20m
-              </span>
-              <Badge className="bg-red-600 text-white text-[10px] font-bold">Today</Badge>
-            </div>
-
-            <div>
-              <h4 className="text-base font-black text-gray-900 leading-snug">
-                Advanced Problem Solving: Magnetism & Biot-Savart Law
-              </h4>
-              <p className="text-xs text-gray-600 mt-1">
-                Faculty: <strong>Dr. Rahul Sharma</strong>
-              </p>
-              <div className="flex items-center gap-2 text-xs text-gray-500 mt-2 font-medium">
-                <Clock className="w-4 h-4 text-red-500" />
-                <span>5:00 PM – 6:30 PM IST (Interactive Zoom)</span>
+          {activeLiveClass && (
+            <Card className="rounded-2xl border-2 border-red-200 bg-gradient-to-br from-red-50/70 to-rose-50/40 p-5 shadow-xs space-y-3.5">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 text-xs font-black text-red-600 tracking-wide uppercase">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                  {activeLiveClass.status === "live" ? "Live Right Now" : "Live Session"}
+                </span>
+                <Badge className="bg-red-600 text-white text-[10px] font-bold">Today</Badge>
               </div>
-            </div>
 
-            <Link href="/dashboard/live-classes" className="block pt-1">
-              <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs h-10 rounded-xl shadow-md flex items-center justify-center gap-2">
-                <Radio className="w-4 h-4" />
-                <span>Join Live Classroom</span>
-              </Button>
-            </Link>
-          </Card>
+              <div>
+                <h4 className="text-base font-black text-gray-900 leading-snug">
+                  {activeLiveClass.title}
+                </h4>
+                <p className="text-xs text-gray-600 mt-1">
+                  Faculty: <strong>{activeLiveClass.faculty}</strong>
+                </p>
+                <div className="flex items-center gap-2 text-xs text-gray-500 mt-2 font-medium">
+                  <Clock className="w-4 h-4 text-red-500" />
+                  <span>{activeLiveClass.scheduledAt}</span>
+                </div>
+              </div>
 
-          {/* Quick Mock Test Reminder */}
+              <Link href="/dashboard/live-classes" className="block pt-1">
+                <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs h-10 rounded-xl shadow-md flex items-center justify-center gap-2">
+                  <Radio className="w-4 h-4" />
+                  <span>Join Live Classroom</span>
+                </Button>
+              </Link>
+            </Card>
+          )}
+
+          {/* Real-time Announcements from LMSStore */}
           <Card className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-2">
-                <FileCheck2 className="w-4 h-4 text-[#004B87]" />
-                Upcoming Mock Test
+                <AlertCircle className="w-4 h-4 text-amber-500" />
+                Latest Announcements
               </h3>
-              <Badge variant="outline" className="border-teal-400 text-teal-800 bg-teal-50 text-[10px] font-bold">
-                All India
+              <Badge variant="outline" className="border-amber-400 text-amber-900 bg-amber-50 text-[10px] font-bold">
+                Admin Notice
               </Badge>
             </div>
 
-            <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs space-y-1">
-              <p className="font-bold text-gray-900">All India JEE Mock Test #08</p>
-              <p className="text-[11px] text-gray-500">75 Questions • 180 Minutes • 300 Marks</p>
-              <div className="pt-2 flex justify-between items-center">
-                <span className="text-[11px] text-amber-700 font-bold">Opens Sunday, 9:00 AM</span>
-                <Link href="/dashboard/tests" className="text-[#004B87] font-extrabold hover:underline">
-                  Take Test →
-                </Link>
-              </div>
+            <div className="space-y-2.5">
+              {announcements.slice(0, 3).map((ann) => (
+                <div key={ann.id} className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-gray-900">{ann.title}</span>
+                    <span className="text-[10px] text-gray-400">{ann.date}</span>
+                  </div>
+                  <p className="text-[11px] text-gray-600 leading-relaxed">{ann.message}</p>
+                </div>
+              ))}
             </div>
           </Card>
         </div>
