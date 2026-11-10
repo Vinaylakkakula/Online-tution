@@ -24,6 +24,7 @@ import {
   AlertCircle,
   Play,
 } from "lucide-react";
+import { useLMSData, LMSLiveClass } from "@/lib/lms-store";
 
 interface LiveClassItem {
   id: string;
@@ -105,10 +106,11 @@ const liveClassesData: LiveClassItem[] = [
 ];
 
 export default function LiveClassesPage() {
-  const [selectedMeeting, setSelectedMeeting] = useState<LiveClassItem | null>(null);
+  const { liveClasses } = useLMSData();
+  const [selectedMeeting, setSelectedMeeting] = useState<LMSLiveClass | null>(null);
   const [activeFilter, setActiveFilter] = useState<"all" | "live" | "upcoming" | "completed">("all");
 
-  const filtered = liveClassesData.filter((item) => {
+  const filtered = liveClasses.filter((item) => {
     if (activeFilter === "all") return true;
     return item.status === activeFilter;
   });

@@ -26,190 +26,170 @@ import {
   Video,
   Calendar,
   Users,
-  Bell,
   Trash2,
   ExternalLink,
+  GraduationCap,
 } from "lucide-react";
-
-interface ScheduledLiveClass {
-  id: string;
-  title: string;
-  course: string;
-  batch: string;
-  faculty: string;
-  dateTime: string;
-  durationMinutes: number;
-  provider: "zoom" | "google_meet";
-  meetingUrl: string;
-  status: "live" | "scheduled" | "completed";
-}
-
-const initialSchedule: ScheduledLiveClass[] = [
-  {
-    id: "lc-101",
-    title: "Advanced Problem Solving: Magnetism & Biot-Savart Law",
-    course: "IIT-JEE Comprehensive Mastery 2026-27",
-    batch: "Pratham Batch (Morning)",
-    faculty: "Dr. Rahul Sharma",
-    dateTime: "Today, 5:00 PM - 6:30 PM",
-    durationMinutes: 90,
-    provider: "zoom",
-    meetingUrl: "https://zoom.us/j/9876543210",
-    status: "live",
-  },
-  {
-    id: "lc-102",
-    title: "Carbocation Rearrangements & Ring Expansions",
-    course: "IIT-JEE Comprehensive Mastery 2026-27",
-    batch: "Pratham Batch (Morning)",
-    faculty: "Prof. Priya Saxena",
-    dateTime: "Tomorrow, 7:00 AM - 8:30 AM",
-    durationMinutes: 90,
-    provider: "zoom",
-    meetingUrl: "https://zoom.us/j/9876543211",
-    status: "scheduled",
-  },
-  {
-    id: "lc-103",
-    title: "Olympiad Math: Modular Arithmetic & Diophantine Equations",
-    course: "Physics Olympiad Advanced Sprint",
-    batch: "Aryabhata Batch",
-    faculty: "Er. Amit Verma",
-    dateTime: "Wednesday, 6:00 PM - 7:30 PM",
-    durationMinutes: 90,
-    provider: "google_meet",
-    meetingUrl: "https://meet.google.com/abc-defg-hij",
-    status: "scheduled",
-  },
-];
+import { useLMSData, LMSLiveClass } from "@/lib/lms-store";
 
 export default function AdminLiveClassesPage() {
-  const [classes, setClasses] = useState<ScheduledLiveClass[]>(initialSchedule);
+  const { liveClasses, courses, batches, store } = useLMSData();
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [course, setCourse] = useState("IIT-JEE Comprehensive Mastery 2026-27");
-  const [batch, setBatch] = useState("Pratham Batch (Morning)");
+  const [courseTitle, setCourseTitle] = useState(
+    courses[0]?.title || "IIT-JEE Comprehensive Mastery 2026-27"
+  );
+  const [batchName, setBatchName] = useState(
+    batches[0]?.name || "Pratham Batch (Morning)"
+  );
   const [faculty, setFaculty] = useState("Dr. Rahul Sharma");
-  const [dateTime, setDateTime] = useState("Friday, 5:00 PM - 6:30 PM");
-  const [provider, setProvider] = useState<"zoom" | "google_meet">("zoom");
-  const [meetingUrl, setMeetingUrl] = useState("https://zoom.us/j/9988776655");
-  const [notified, setNotified] = useState<Record<string, boolean>>({});
+  const [scheduledAt, setScheduledAt] = useState("Today, 5:00 PM – 6:30 PM IST");
+  const [duration, setDuration] = useState("90 Minutes");
+  const [meetingProvider, setMeetingProvider] = useState<"zoom" | "google_meet">("zoom");
+  const [meetingUrl, setMeetingUrl] = useState("https://zoom.us/j/9876543210");
+  const [passcode, setPasscode] = useState("DEEPSIDDHI-2026");
+  const [description, setDescription] = useState(
+    "Interactive problem solving and doubt clearing session."
+  );
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title) return;
+    if (!title.trim()) return;
 
-    const newClass: ScheduledLiveClass = {
+    const newClass: LMSLiveClass = {
       id: `lc-${Date.now()}`,
-      title,
-      course,
-      batch,
+      title: title.trim(),
+      course: courseTitle || courses[0]?.title || "General",
+      batch: batchName || batches[0]?.name || "General Batch",
       faculty,
-      dateTime,
-      durationMinutes: 90,
-      provider,
-      meetingUrl,
-      status: "scheduled",
+      scheduledAt,
+      duration,
+      status: "upcoming",
+      meetingProvider,
+      meetingUrl: meetingUrl.trim() || "https://zoom.us",
+      passcode,
+      description,
+      enrolledStudentsCount: 120,
     };
 
-    setClasses([newClass, ...classes]);
+    store.addLiveClass(newClass);
     setModalOpen(false);
     setTitle("");
   };
 
-  const handleNotify = (id: string) => {
-    setNotified((prev) => ({ ...prev, [id]: true }));
-    setTimeout(() => {
-      setNotified((prev) => ({ ...prev, [id]: false }));
-    }, 2500);
-  };
-
-  const cancelClass = (id: string) => {
-    setClasses(classes.filter((c) => c.id !== id));
+  const handleDelete = (id: string) => {
+    if (confirm("Cancel and remove this live class?")) {
+      store.deleteLiveClass(id);
+    }
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-2xs">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Live Classroom Scheduler</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Schedule live webinars, configure Zoom/Google Meet integrations, and broadcast instant push alerts to enrolled students.
+          <div className="flex items-center gap-2 mb-1">
+            <Badge className="bg-red-500 text-white text-[10px] font-bold animate-pulse">
+              ● Live Studio
+            </Badge>
+            <span className="text-xs text-gray-500 font-semibold">
+              HD Interactive Classes
+            </span>
+          </div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+            Live Interactive Classes
+          </h1>
+          <p className="text-xs text-gray-500 font-medium mt-0.5">
+            Schedule live Zoom & Google Meet sessions for specific batches. Students get 1-click classroom entry.
           </p>
         </div>
 
         <Button
           onClick={() => setModalOpen(true)}
-          className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl h-10 px-4 gap-2 shadow-sm"
+          className="bg-[#004B87] hover:bg-[#003866] text-white font-extrabold text-xs h-10 px-5 rounded-xl shadow-sm flex items-center gap-2 self-start sm:self-auto"
         >
-          <Radio className="w-4 h-4 animate-pulse" />
+          <Plus className="w-4 h-4 stroke-[3]" />
           Schedule Live Class
         </Button>
       </div>
 
-      {/* Classes List */}
+      {/* Live Classes Grid */}
       <div className="space-y-4">
-        {classes.map((cls) => (
-          <Card key={cls.id} className="rounded-3xl border-gray-100 shadow-md bg-white p-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {liveClasses.map((item) => (
+          <Card
+            key={item.id}
+            className="rounded-2xl border-gray-200/90 shadow-2xs hover:shadow-md transition-shadow bg-white p-5"
+          >
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  {cls.status === "live" ? (
-                    <Badge className="bg-red-600 text-white text-[10px] animate-pulse">
-                      🔴 Live Streaming Now
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="border-teal-500 text-teal-800 bg-teal-50 text-[10px]">
-                      Scheduled
-                    </Badge>
-                  )}
-                  <span className="text-xs text-gray-500">{cls.course} • {cls.batch}</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge
+                    className={`text-[10px] font-bold ${
+                      item.status === "live"
+                        ? "bg-red-500 text-white"
+                        : item.status === "upcoming"
+                        ? "bg-blue-50 text-[#004B87] border border-blue-200"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {item.status === "live" ? "● LIVE NOW" : "Upcoming Session"}
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px] font-bold border-gray-300">
+                    {item.meetingProvider === "zoom" ? "Zoom Video" : "Google Meet"}
+                  </Badge>
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="text-xs font-bold text-[#004B87]">{item.course}</span>
                 </div>
 
-                <h3 className="text-base font-bold text-gray-900 leading-snug">{cls.title}</h3>
+                <h3 className="font-extrabold text-base text-gray-900">
+                  {item.title}
+                </h3>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-4 text-xs text-gray-500 font-medium flex-wrap">
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-teal-600" />
-                    <span>{cls.dateTime}</span>
+                    <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                    <span>{item.scheduledAt}</span>
                   </div>
-                  <span>•</span>
-                  <div>Faculty: <strong className="text-gray-700">{cls.faculty}</strong></div>
-                  <span>•</span>
-                  <div className="flex items-center gap-1">
-                    <Video className="w-3.5 h-3.5 text-blue-600" />
-                    <span className="capitalize">{cls.provider} Room</span>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-gray-400" />
+                    <span>{item.duration}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-gray-400" />
+                    <span>Faculty: {item.faculty}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-blue-700 font-bold">
+                    <span>Batch: {item.batch}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex items-center gap-2 shrink-0">
                 <Button
-                  size="sm"
                   variant="outline"
-                  onClick={() => handleNotify(cls.id)}
-                  className={`text-xs h-9 rounded-xl gap-1.5 ${
-                    notified[cls.id] ? "bg-emerald-50 text-emerald-700 border-emerald-300 font-bold" : "border-gray-200"
-                  }`}
+                  size="sm"
+                  onClick={() => store.toggleLiveStatus(item.id)}
+                  className="text-xs font-bold rounded-xl h-9 px-3"
                 >
-                  <Bell className="w-3.5 h-3.5 text-amber-500" />
-                  {notified[cls.id] ? "Alert Dispatched!" : "Notify Enrolled"}
+                  {item.status === "live" ? "End Class" : "Go Live Now"}
                 </Button>
 
-                <a href={cls.meetingUrl} target="_blank" rel="noopener noreferrer">
-                  <Button size="sm" className="bg-[#163B65] text-white text-xs h-9 rounded-xl gap-1.5">
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    Launch
-                  </Button>
+                <a
+                  href={item.meetingUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-extrabold rounded-xl h-9 px-4 shadow-xs"
+                >
+                  <span>Launch Studio</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </a>
 
                 <Button
-                  size="sm"
                   variant="ghost"
-                  onClick={() => cancelClass(cls.id)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0 rounded-xl"
+                  size="sm"
+                  onClick={() => handleDelete(item.id)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs rounded-xl h-9 px-3"
+                  title="Delete Session"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -219,97 +199,148 @@ export default function AdminLiveClassesPage() {
         ))}
       </div>
 
-      {/* Schedule Dialog */}
+      {/* Schedule Live Class Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-[500px] p-6 rounded-3xl bg-white border-0 shadow-2xl space-y-4">
+        <DialogContent className="sm:max-w-md rounded-2xl p-6">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#163B65]">
-              Schedule New Live Class
+            <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
+              <Radio className="w-5 h-5 text-red-500" />
+              Schedule Live Classroom
             </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleCreate} className="space-y-4 text-xs">
+          <form onSubmit={handleCreate} className="space-y-4 pt-2">
             <div>
-              <Label className="text-xs font-semibold text-gray-700">Lecture Topic Title *</Label>
+              <Label className="text-xs font-bold text-gray-700">Class Title *</Label>
               <Input
                 required
+                placeholder="e.g. Advanced Problem Solving: Magnetism & Biot-Savart Law"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Advanced Optics Numerical Drill"
-                className="mt-1 h-10 border-gray-200"
+                className="mt-1 text-xs rounded-xl h-10"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Course *</Label>
-                <Input
-                  value={course}
-                  onChange={(e) => setCourse(e.target.value)}
-                  className="mt-1 h-10 border-gray-200"
-                />
-              </div>
-
-              <div>
-                <Label className="text-xs font-semibold text-gray-700">Cohort / Batch *</Label>
-                <Input
-                  value={batch}
-                  onChange={(e) => setBatch(e.target.value)}
-                  className="mt-1 h-10 border-gray-200"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-xs font-semibold text-gray-700">Lead Faculty</Label>
-                <Input
-                  value={faculty}
-                  onChange={(e) => setFaculty(e.target.value)}
-                  className="mt-1 h-10 border-gray-200"
-                />
-              </div>
-
-              <div>
-                <Label className="text-xs font-semibold text-gray-700">Date & Time *</Label>
-                <Input
-                  value={dateTime}
-                  onChange={(e) => setDateTime(e.target.value)}
-                  className="mt-1 h-10 border-gray-200"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-xs font-semibold text-gray-700">Meeting Provider *</Label>
-                <Select value={provider} onValueChange={(val) => setProvider(val as "zoom" | "google_meet")}>
-                  <SelectTrigger className="mt-1 h-10 border-gray-200">
-                    <SelectValue />
+                <Label className="text-xs font-bold text-gray-700">Tied to Course *</Label>
+                <Select value={courseTitle} onValueChange={setCourseTitle}>
+                  <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                    <SelectValue placeholder="Select course" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="zoom">Zoom Video</SelectItem>
-                    <SelectItem value="google_meet">Google Meet</SelectItem>
+                    {courses.map((c) => (
+                      <SelectItem key={c.id} value={c.title} className="text-xs font-medium">
+                        {c.title}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label className="text-xs font-semibold text-gray-700">Meeting URL *</Label>
+                <Label className="text-xs font-bold text-gray-700">Target Batch *</Label>
+                <Select value={batchName} onValueChange={setBatchName}>
+                  <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                    <SelectValue placeholder="Select batch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {batches.map((b) => (
+                      <SelectItem key={b.id} value={b.name} className="text-xs font-medium">
+                        {b.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Date & Time *</Label>
                 <Input
-                  value={meetingUrl}
-                  onChange={(e) => setMeetingUrl(e.target.value)}
-                  className="mt-1 h-10 border-gray-200"
+                  required
+                  value={scheduledAt}
+                  onChange={(e) => setScheduledAt(e.target.value)}
+                  placeholder="Today, 5:00 PM – 6:30 PM IST"
+                  className="mt-1 text-xs rounded-xl h-10"
+                />
+              </div>
+
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Duration</Label>
+                <Input
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="90 Minutes"
+                  className="mt-1 text-xs rounded-xl h-10"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="rounded-xl">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Meeting Provider</Label>
+                <Select
+                  value={meetingProvider}
+                  onValueChange={(v: "zoom" | "google_meet") => setMeetingProvider(v)}
+                >
+                  <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="zoom" className="text-xs">Zoom Video</SelectItem>
+                    <SelectItem value="google_meet" className="text-xs">Google Meet</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Faculty</Label>
+                <Input
+                  value={faculty}
+                  onChange={(e) => setFaculty(e.target.value)}
+                  placeholder="Dr. Rahul Sharma"
+                  className="mt-1 text-xs rounded-xl h-10"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Meeting Link *</Label>
+              <Input
+                required
+                value={meetingUrl}
+                onChange={(e) => setMeetingUrl(e.target.value)}
+                placeholder="https://zoom.us/j/9876543210?pwd=..."
+                className="mt-1 text-xs rounded-xl h-10"
+              />
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Passcode</Label>
+              <Input
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                placeholder="DEEPSIDDHI-2026"
+                className="mt-1 text-xs rounded-xl h-10"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setModalOpen(false)}
+                className="text-xs rounded-xl h-10 px-4"
+              >
                 Cancel
               </Button>
-              <Button type="submit" className="bg-[#163B65] text-white rounded-xl">
-                Schedule & Broadcast
+              <Button
+                type="submit"
+                className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-extrabold rounded-xl h-10 px-5 shadow-sm"
+              >
+                Schedule & Notify Cohort
               </Button>
             </div>
           </form>

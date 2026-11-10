@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -22,322 +23,518 @@ import {
   Users,
   Search,
   Filter,
-  Download,
   UserCheck,
   UserX,
   BookOpen,
   Calendar,
   CheckCircle2,
-  MoreVertical,
-  ShieldAlert,
-  ArrowUpDown,
+  Trash2,
+  Plus,
+  GraduationCap,
+  Sparkles,
+  Phone,
+  Mail,
 } from "lucide-react";
-
-interface StudentRecord {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  course: string;
-  batch: string;
-  classLevel: string;
-  joinedDate: string;
-  progress: number;
-  isActive: boolean;
-}
-
-const mockStudents: StudentRecord[] = [
-  {
-    id: "STD-1001",
-    name: "Aryan Sharma",
-    email: "aryan@gmail.com",
-    phone: "+91 9876543210",
-    course: "IIT-JEE Comprehensive Mastery",
-    batch: "Pratham Batch (Morning)",
-    classLevel: "Class 11",
-    joinedDate: "Nov 1, 2026",
-    progress: 72,
-    isActive: true,
-  },
-  {
-    id: "STD-1002",
-    name: "Siddharth Verma",
-    email: "siddharth@gmail.com",
-    phone: "+91 9811223344",
-    course: "IIT-JEE Comprehensive Mastery",
-    batch: "Pratham Batch (Morning)",
-    classLevel: "Class 11",
-    joinedDate: "Oct 25, 2026",
-    progress: 84,
-    isActive: true,
-  },
-  {
-    id: "STD-1003",
-    name: "Ananya Deshmukh",
-    email: "ananya@gmail.com",
-    phone: "+91 9822334455",
-    course: "Physics Olympiad Sprint",
-    batch: "Aryabhata Olympiad",
-    classLevel: "Class 10",
-    joinedDate: "Oct 20, 2026",
-    progress: 65,
-    isActive: true,
-  },
-  {
-    id: "STD-1004",
-    name: "Rohan Kulkarni",
-    email: "rohan@gmail.com",
-    phone: "+91 9833445566",
-    course: "IIT-JEE Crash Course",
-    batch: "Sankalp Evening",
-    classLevel: "Class 12",
-    joinedDate: "Oct 15, 2026",
-    progress: 50,
-    isActive: true,
-  },
-  {
-    id: "STD-1005",
-    name: "Meera Nair",
-    email: "meera@gmail.com",
-    phone: "+91 9844556677",
-    course: "NTSE & Aptitude Mastery",
-    batch: "Vidyarthi Batch",
-    classLevel: "Class 9",
-    joinedDate: "Oct 10, 2026",
-    progress: 88,
-    isActive: true,
-  },
-  {
-    id: "STD-1006",
-    name: "Tanmay Roy",
-    email: "tanmay@gmail.com",
-    phone: "+91 9855667788",
-    course: "IIT-JEE Comprehensive Mastery",
-    batch: "Pratham Batch (Morning)",
-    classLevel: "Class 11",
-    joinedDate: "Oct 05, 2026",
-    progress: 30,
-    isActive: false,
-  },
-];
+import { useLMSData, LMSStudent } from "@/lib/lms-store";
 
 export default function StudentsManagementPage() {
-  const [students, setStudents] = useState<StudentRecord[]>(mockStudents);
-  const [search, setSearch] = useState("");
-  const [filterClass, setFilterClass] = useState("all");
-  const [selectedStudent, setSelectedStudent] = useState<StudentRecord | null>(null);
+  const { students, courses, batches, store } = useLMSData();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterBatch, setFilterBatch] = useState("all");
+  const [addStudentOpen, setAddStudentOpen] = useState(false);
+  const [enrollModalOpen, setEnrollModalOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<LMSStudent | null>(null);
 
-  const filtered = students.filter((s) => {
+  // Enrollment Modal state
+  const [enrollCourse, setEnrollCourse] = useState("");
+  const [enrollBatch, setEnrollBatch] = useState("");
+
+  // Add Student state
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("+91 ");
+  const [newClass, setNewClass] = useState("Class 11");
+  const [newCourse, setNewCourse] = useState("");
+  const [newBatch, setNewBatch] = useState("");
+
+  const filteredStudents = students.filter((s) => {
     const matchesSearch =
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      s.email.toLowerCase().includes(search.toLowerCase()) ||
-      s.phone.includes(search);
-    const matchesClass = filterClass === "all" || s.classLevel === filterClass;
-    return matchesSearch && matchesClass;
+      s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.phone.includes(searchTerm);
+
+    const matchesBatch = filterBatch === "all" || s.batchName === filterBatch;
+
+    return matchesSearch && matchesBatch;
   });
 
-  const toggleStatus = (id: string) => {
-    setStudents(
-      students.map((s) => (s.id === id ? { ...s, isActive: !s.isActive } : s))
-    );
+  const handleOpenEnrollModal = (student: LMSStudent) => {
+    setSelectedStudent(student);
+    setEnrollCourse(courses[0]?.title || "");
+    setEnrollBatch(batches[0]?.name || student.batchName);
+    setEnrollModalOpen(true);
   };
 
-  const exportCSV = () => {
-    const header = "Student ID,Name,Email,Phone,Course,Batch,Class,Joined Date,Progress,Status\n";
-    const rows = filtered
-      .map(
-        (s) =>
-          `"${s.id}","${s.name}","${s.email}","${s.phone}","${s.course}","${s.batch}","${s.classLevel}","${s.joinedDate}",${s.progress}%,"${s.isActive ? "Active" : "Inactive"}"`
-      )
-      .join("\n");
-    const blob = new Blob([header + rows], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `DeepSiddhi_Students_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleConfirmEnroll = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStudent || !enrollCourse) return;
+
+    store.enrollStudentInCourse(selectedStudent.id, enrollCourse, enrollBatch);
+    setEnrollModalOpen(false);
+    setSelectedStudent(null);
+  };
+
+  const handleCreateStudent = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim() || !newEmail.trim()) return;
+
+    const courseToEnroll = newCourse || courses[0]?.title || "IIT-JEE Comprehensive Mastery 2026-27";
+    const batchToAssign = newBatch || batches[0]?.name || "Pratham Batch (Morning)";
+
+    const newStudent: LMSStudent = {
+      id: `STD-${Math.floor(1000 + Math.random() * 9000)}`,
+      name: newName.trim(),
+      email: newEmail.trim(),
+      phone: newPhone.trim(),
+      enrolledCourses: [courseToEnroll],
+      batchName: batchToAssign,
+      classLevel: newClass,
+      joinedDate: "Today",
+      progress: 0,
+      status: "Active",
+    };
+
+    store.addStudent(newStudent);
+    setAddStudentOpen(false);
+    setNewName("");
+    setNewEmail("");
+    setNewPhone("+91 ");
+  };
+
+  const handleDeleteStudent = (id: string) => {
+    if (confirm("Are you sure you want to remove this student record?")) {
+      store.deleteStudent(id);
+    }
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-2xs">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Student Directory & Accounts</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Manage student enrollments, assign batches, monitor progress, toggle account status, and export rosters.
+          <div className="flex items-center gap-2 mb-1">
+            <Badge className="bg-[#004B87] text-white text-[10px] font-bold">
+              Student Directory
+            </Badge>
+            <span className="text-xs text-gray-500 font-semibold">
+              Live Enrollment Engine
+            </span>
+          </div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+            Student Management & Course Enrollment
+          </h1>
+          <p className="text-xs text-gray-500 font-medium mt-0.5">
+            Assign courses & batches to specific students. Everything syncs instantly with the student portal.
           </p>
         </div>
 
-        <Button
-          onClick={exportCSV}
-          className="bg-[#163B65] hover:bg-[#122e50] text-white text-xs font-semibold rounded-xl h-10 px-4 gap-2"
-        >
-          <Download className="w-4 h-4" />
-          Export Student CSV
-        </Button>
+        <div className="flex items-center gap-2.5">
+          <Button
+            onClick={() => setAddStudentOpen(true)}
+            className="bg-[#004B87] hover:bg-[#003866] text-white font-extrabold text-xs h-10 px-5 rounded-xl shadow-sm flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            Register Student
+          </Button>
+        </div>
       </div>
 
-      {/* Search and Filters Card */}
-      <Card className="rounded-2xl border-gray-100 shadow-sm bg-white p-4">
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="relative flex-1 w-full">
+      {/* Metrics Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-4">
+          <span className="text-xs text-gray-500 font-bold block">Total Registered</span>
+          <span className="text-2xl font-black text-[#004B87]">{students.length}</span>
+        </Card>
+        <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-4">
+          <span className="text-xs text-gray-500 font-bold block">Active Students</span>
+          <span className="text-2xl font-black text-emerald-600">
+            {students.filter((s) => s.status === "Active").length}
+          </span>
+        </Card>
+        <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-4">
+          <span className="text-xs text-gray-500 font-bold block">Total Courses</span>
+          <span className="text-2xl font-black text-purple-700">{courses.length}</span>
+        </Card>
+        <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-4">
+          <span className="text-xs text-gray-500 font-bold block">Active Batches</span>
+          <span className="text-2xl font-black text-amber-600">{batches.length}</span>
+        </Card>
+      </div>
+
+      {/* Filter & Search Bar */}
+      <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-96">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <Input
-              placeholder="Search by student name, phone, or email..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-10 text-xs border-gray-200"
+              placeholder="Search by student name, email, phone or ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 text-xs rounded-xl h-10 border-gray-200"
             />
           </div>
 
-          <div className="w-full sm:w-48">
-            <Select value={filterClass} onValueChange={setFilterClass}>
-              <SelectTrigger className="h-10 text-xs border-gray-200">
-                <SelectValue placeholder="Filter Class" />
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <span className="text-xs text-gray-500 font-bold whitespace-nowrap">
+              Filter Batch:
+            </span>
+            <Select value={filterBatch} onValueChange={setFilterBatch}>
+              <SelectTrigger className="w-full sm:w-56 text-xs rounded-xl h-10">
+                <SelectValue placeholder="All Batches" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Classes</SelectItem>
-                <SelectItem value="Class 9">Class 9</SelectItem>
-                <SelectItem value="Class 10">Class 10</SelectItem>
-                <SelectItem value="Class 11">Class 11</SelectItem>
-                <SelectItem value="Class 12">Class 12</SelectItem>
+                <SelectItem value="all" className="text-xs">
+                  All Batches
+                </SelectItem>
+                {batches.map((b) => (
+                  <SelectItem key={b.id} value={b.name} className="text-xs">
+                    {b.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </div>
       </Card>
 
-      {/* Students Table */}
-      <Card className="rounded-3xl border-gray-100 shadow-md bg-white overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-gray-50 text-gray-500 uppercase tracking-wider font-semibold border-b border-gray-100">
-              <tr>
-                <th className="py-3 px-4">Student</th>
-                <th className="py-3 px-4">Contact</th>
-                <th className="py-3 px-4">Course & Batch</th>
-                <th className="py-3 px-4">Class</th>
-                <th className="py-3 px-4">Progress</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filtered.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50/60">
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#163B65] to-[#16A6A1] text-white font-bold flex items-center justify-center text-xs">
-                        {s.name.charAt(0)}
-                      </div>
-                      <div>
-                        <span className="font-bold text-[#163B65] block">{s.name}</span>
-                        <span className="text-[10px] text-gray-400 font-mono">{s.id}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-gray-600">
-                    <span className="block">{s.phone}</span>
-                    <span className="text-[10px] text-gray-400">{s.email}</span>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className="font-semibold text-gray-900 block">{s.course}</span>
-                    <span className="text-[10px] text-teal-700 font-medium">{s.batch}</span>
-                  </td>
-                  <td className="py-3.5 px-4 text-gray-600">{s.classLevel}</td>
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-800">{s.progress}%</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <Badge
-                      className={`text-[10px] ${
-                        s.isActive
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {s.isActive ? "Active" : "Suspended"}
-                    </Badge>
-                  </td>
-                  <td className="py-3.5 px-4 text-right space-x-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedStudent(s)}
-                      className="h-8 text-[11px] rounded-lg border-gray-200"
-                    >
-                      Details
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleStatus(s.id)}
-                      className={`h-8 text-[11px] rounded-lg ${
-                        s.isActive ? "text-red-600 hover:bg-red-50" : "text-emerald-600 hover:bg-emerald-50"
-                      }`}
-                    >
-                      {s.isActive ? "Deactivate" : "Activate"}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+      {/* Students List */}
+      <div className="space-y-4">
+        {filteredStudents.length === 0 ? (
+          <Card className="rounded-2xl border-gray-200/90 p-12 text-center bg-white">
+            <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <h3 className="text-base font-bold text-gray-700">No students found</h3>
+            <p className="text-xs text-gray-400 mt-1">
+              Try adjusting your search query or registering a new student.
+            </p>
+          </Card>
+        ) : (
+          filteredStudents.map((student) => (
+            <Card
+              key={student.id}
+              className="rounded-2xl border-gray-200/90 shadow-2xs hover:shadow-md transition-shadow bg-white overflow-hidden p-5"
+            >
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                {/* Student Info */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center font-black text-[#004B87] text-base shrink-0">
+                    {student.name.charAt(0)}
+                  </div>
 
-      {/* Student Details Dialog */}
-      <Dialog open={!!selectedStudent} onOpenChange={(open) => !open && setSelectedStudent(null)}>
-        <DialogContent className="sm:max-w-[500px] p-6 rounded-3xl bg-white border-0 shadow-2xl space-y-4">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-extrabold text-base text-gray-900">
+                        {student.name}
+                      </h3>
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] font-bold text-gray-500 border-gray-200"
+                      >
+                        {student.id}
+                      </Badge>
+                      <Badge
+                        className={`text-[10px] font-bold ${
+                          student.status === "Active"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : "bg-red-50 text-red-700 border border-red-200"
+                        }`}
+                      >
+                        {student.status}
+                      </Badge>
+                      <Badge className="bg-blue-50 text-[#004B87] border border-blue-200 text-[10px] font-bold">
+                        {student.classLevel}
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-xs text-gray-500 font-medium flex-wrap">
+                      <div className="flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5 text-gray-400" />
+                        <span>{student.email}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-gray-400" />
+                        <span>{student.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                        <span>Joined: {student.joinedDate}</span>
+                      </div>
+                    </div>
+
+                    {/* Active Batch */}
+                    <div className="flex items-center gap-2 pt-1 text-xs text-gray-700">
+                      <span className="font-bold text-gray-500">Current Cohort:</span>
+                      <span className="font-semibold px-2.5 py-0.5 rounded-lg bg-gray-100 border border-gray-200 text-gray-800">
+                        {student.batchName || "Not assigned"}
+                      </span>
+                    </div>
+
+                    {/* Enrolled Courses Tags */}
+                    <div className="pt-2 flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-bold text-gray-500">Enrolled Courses:</span>
+                      {student.enrolledCourses && student.enrolledCourses.length > 0 ? (
+                        student.enrolledCourses.map((c, idx) => (
+                          <Badge
+                            key={idx}
+                            className="bg-[#004B87]/10 text-[#004B87] hover:bg-[#004B87]/20 border border-[#004B87]/20 text-[11px] font-bold py-0.5 px-2.5"
+                          >
+                            <GraduationCap className="w-3 h-3 mr-1 inline" />
+                            {c}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">No courses assigned</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex sm:flex-row lg:flex-col items-center lg:items-end justify-between sm:justify-end gap-2 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-gray-100">
+                  <Button
+                    onClick={() => handleOpenEnrollModal(student)}
+                    className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-black rounded-xl h-9 px-4 shadow-xs flex items-center gap-1.5"
+                  >
+                    <GraduationCap className="w-4 h-4" />
+                    Enroll Course & Batch
+                  </Button>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => store.toggleStudentStatus(student.id)}
+                      className="text-[11px] font-bold rounded-xl h-8 px-3"
+                    >
+                      {student.status === "Active" ? "Suspend" : "Activate"}
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteStudent(student.id)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 text-[11px] font-bold rounded-xl h-8 px-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* ENROLL COURSE MODAL */}
+      <Dialog open={enrollModalOpen} onOpenChange={setEnrollModalOpen}>
+        <DialogContent className="sm:max-w-md rounded-2xl p-6">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-[#163B65]">
-              Student Profile • {selectedStudent?.name}
+            <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-[#004B87]" />
+              Enroll Course to Student
             </DialogTitle>
           </DialogHeader>
 
-          <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-2 text-xs">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Student ID:</span>
-              <span className="font-mono font-bold text-gray-900">{selectedStudent?.id}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Mobile Phone:</span>
-              <span className="font-bold text-gray-900">{selectedStudent?.phone}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Email:</span>
-              <span className="font-bold text-gray-900">{selectedStudent?.email}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Enrolled Track:</span>
-              <span className="font-bold text-[#163B65]">{selectedStudent?.course}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Assigned Batch:</span>
-              <span className="font-bold text-teal-700">{selectedStudent?.batch}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Syllabus Progress:</span>
-              <span className="font-bold text-emerald-600">{selectedStudent?.progress}% Completed</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Registration Date:</span>
-              <span className="font-bold text-gray-900">{selectedStudent?.joinedDate}</span>
-            </div>
-          </div>
+          {selectedStudent && (
+            <form onSubmit={handleConfirmEnroll} className="space-y-4 pt-2">
+              {/* Selected Student Banner */}
+              <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-100">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-xs text-[#004B87]">
+                    Student: {selectedStudent.name}
+                  </span>
+                  <Badge variant="outline" className="text-[10px] font-bold text-blue-700 bg-white">
+                    {selectedStudent.id}
+                  </Badge>
+                </div>
+                <div className="text-[11px] text-gray-500 mt-1">
+                  {selectedStudent.email} • {selectedStudent.classLevel}
+                </div>
+              </div>
 
-          <div className="flex justify-end">
-            <Button
-              onClick={() => setSelectedStudent(null)}
-              className="bg-[#163B65] text-white text-xs rounded-xl"
-            >
-              Close Window
-            </Button>
-          </div>
+              {/* Course Selection */}
+              <div>
+                <Label className="text-xs font-bold text-gray-700">
+                  Select Course to Assign *
+                </Label>
+                <Select value={enrollCourse} onValueChange={setEnrollCourse}>
+                  <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                    <SelectValue placeholder="Choose course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {courses.map((course) => (
+                      <SelectItem key={course.id} value={course.title} className="text-xs">
+                        {course.title} ({course.category})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Enrolling the student grants immediate access to this course's live classes, tests, notes, and recorded lectures.
+                </p>
+              </div>
+
+              {/* Batch Assignment */}
+              <div>
+                <Label className="text-xs font-bold text-gray-700">
+                  Assign to Batch / Cohort *
+                </Label>
+                <Select value={enrollBatch} onValueChange={setEnrollBatch}>
+                  <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                    <SelectValue placeholder="Choose batch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {batches.map((batch) => (
+                      <SelectItem key={batch.id} value={batch.name} className="text-xs">
+                        {batch.name} ({batch.timing})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setEnrollModalOpen(false)}
+                  className="text-xs rounded-xl h-10 px-4"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-extrabold rounded-xl h-10 px-5 shadow-sm"
+                >
+                  Confirm & Enroll Student
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* REGISTER NEW STUDENT MODAL */}
+      <Dialog open={addStudentOpen} onOpenChange={setAddStudentOpen}>
+        <DialogContent className="sm:max-w-md rounded-2xl p-6">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2">
+              <Users className="w-5 h-5 text-[#004B87]" />
+              Register New Student
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateStudent} className="space-y-4 pt-2">
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Full Name *</Label>
+              <Input
+                required
+                placeholder="e.g. Aryan Sharma"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="mt-1 text-xs rounded-xl h-10"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Email Address *</Label>
+                <Input
+                  required
+                  type="email"
+                  placeholder="student@example.com"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  className="mt-1 text-xs rounded-xl h-10"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-bold text-gray-700">Phone Number</Label>
+                <Input
+                  value={newPhone}
+                  onChange={(e) => setNewPhone(e.target.value)}
+                  placeholder="+91 9876543210"
+                  className="mt-1 text-xs rounded-xl h-10"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Academic Level</Label>
+              <Select value={newClass} onValueChange={setNewClass}>
+                <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Class 8" className="text-xs">Class 8</SelectItem>
+                  <SelectItem value="Class 9" className="text-xs">Class 9</SelectItem>
+                  <SelectItem value="Class 10" className="text-xs">Class 10</SelectItem>
+                  <SelectItem value="Class 11" className="text-xs">Class 11</SelectItem>
+                  <SelectItem value="Class 12" className="text-xs">Class 12</SelectItem>
+                  <SelectItem value="Dropper / Repeater" className="text-xs">Dropper / Repeater</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Initial Course</Label>
+              <Select value={newCourse} onValueChange={setNewCourse}>
+                <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                  <SelectValue placeholder="Select course" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.map((c) => (
+                    <SelectItem key={c.id} value={c.title} className="text-xs">
+                      {c.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Initial Batch</Label>
+              <Select value={newBatch} onValueChange={setNewBatch}>
+                <SelectTrigger className="mt-1 text-xs rounded-xl h-10">
+                  <SelectValue placeholder="Select batch" />
+                </SelectTrigger>
+                <SelectContent>
+                  {batches.map((b) => (
+                    <SelectItem key={b.id} value={b.name} className="text-xs">
+                      {b.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setAddStudentOpen(false)}
+                className="text-xs rounded-xl h-10 px-4"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-extrabold rounded-xl h-10 px-5 shadow-sm"
+              >
+                Register & Enroll
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

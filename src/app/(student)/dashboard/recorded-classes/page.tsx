@@ -5,434 +5,303 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 import {
   Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  Maximize2,
-  RotateCcw,
   CheckCircle2,
   Clock,
   BookOpen,
-  Download,
   Share2,
   Bookmark,
-  ChevronDown,
-  ChevronUp,
   FileText,
   MessageSquare,
   Sparkles,
+  ExternalLink,
+  Video,
 } from "lucide-react";
+import { useLMSData, LMSRecordedClass } from "@/lib/lms-store";
 
-interface LessonItem {
-  id: string;
-  title: string;
-  duration: string;
-  durationMinutes: number;
-  completed: boolean;
-  active?: boolean;
+function getYouTubeEmbedUrl(url: string) {
+  if (!url) return "";
+  try {
+    if (url.includes("embed/")) return url;
+    if (url.includes("youtube.com/watch?v=")) {
+      const videoId = url.split("watch?v=")[1].split("&")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    if (url.includes("youtu.be/")) {
+      const videoId = url.split("youtu.be/")[1].split("?")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+  } catch {
+    return url;
+  }
+  return url;
 }
 
-interface ChapterGroup {
-  name: string;
-  subject: string;
-  lessons: LessonItem[];
-}
-
-const curriculumData: ChapterGroup[] = [
-  {
-    name: "Chapter 4: Rotational Dynamics & Moment of Inertia",
-    subject: "Physics",
-    lessons: [
-      {
-        id: "l-1",
-        title: "Lecture 1: Rigid Body Rotation & Angular Kinematics",
-        duration: "45 mins",
-        durationMinutes: 45,
-        completed: true,
-      },
-      {
-        id: "l-2",
-        title: "Lecture 2: Moment of Inertia for Continuous Bodies",
-        duration: "50 mins",
-        durationMinutes: 50,
-        completed: true,
-      },
-      {
-        id: "l-3",
-        title: "Lecture 3: Parallel & Perpendicular Axes Theorems",
-        duration: "48 mins",
-        durationMinutes: 48,
-        completed: false,
-        active: true,
-      },
-      {
-        id: "l-4",
-        title: "Lecture 4: Torque, Angular Momentum & Conservation Laws",
-        duration: "55 mins",
-        durationMinutes: 55,
-        completed: false,
-      },
-      {
-        id: "l-5",
-        title: "Lecture 5: Pure Rolling Dynamics & Work-Energy on Incline",
-        duration: "52 mins",
-        durationMinutes: 52,
-        completed: false,
-      },
-    ],
-  },
-  {
-    name: "Chapter 5: Gravitation & Planetary Orbital Mechanics",
-    subject: "Physics",
-    lessons: [
-      {
-        id: "l-6",
-        title: "Lecture 1: Newton's Universal Law & Gravitational Potential",
-        duration: "42 mins",
-        durationMinutes: 42,
-        completed: false,
-      },
-      {
-        id: "l-7",
-        title: "Lecture 2: Kepler's Laws & Escape Velocity Calculations",
-        duration: "46 mins",
-        durationMinutes: 46,
-        completed: false,
-      },
-    ],
-  },
-  {
-    name: "Chapter 3: Thermodynamics & Reaction Kinetics",
-    subject: "Chemistry",
-    lessons: [
-      {
-        id: "l-8",
-        title: "Lecture 1: First Law, Enthalpy & Hess's Law",
-        duration: "49 mins",
-        durationMinutes: 49,
-        completed: true,
-      },
-      {
-        id: "l-9",
-        title: "Lecture 2: Second Law, Entropy & Gibbs Free Energy",
-        duration: "54 mins",
-        durationMinutes: 54,
-        completed: false,
-      },
-    ],
-  },
-];
-
-export default function RecordedClassesPage() {
-  const [selectedLesson, setSelectedLesson] = useState<LessonItem>(
-    curriculumData[0].lessons[2]
+export default function StudentRecordedClassesPage() {
+  const { recordedClasses } = useLMSData();
+  const [selectedLectureId, setSelectedLectureId] = useState<string>(
+    recordedClasses[0]?.id || ""
   );
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
-  const [currentTime, setCurrentTime] = useState<number>(1960); // 32m 40s
-  const totalSeconds = selectedLesson.durationMinutes * 60;
-  const [isMuted, setIsMuted] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(selectedLesson.completed);
-  const [activeTab, setActiveTab] = useState<"overview" | "notes" | "dpp">("overview");
+  const [completedMap, setCompletedMap] = useState<Record<string, boolean>>({
+    "rec-1": true,
+  });
 
-  const speeds = [0.75, 1, 1.25, 1.5, 2];
+  const activeLecture: LMSRecordedClass | undefined =
+    recordedClasses.find((r) => r.id === selectedLectureId) ||
+    recordedClasses[0];
 
-  const formatSeconds = (sec: number) => {
-    const mins = Math.floor(sec / 60);
-    const remainderSec = Math.floor(sec % 60);
-    return `${mins}:${remainderSec < 10 ? "0" : ""}${remainderSec}`;
+  const isCompleted = activeLecture ? !!completedMap[activeLecture.id] : false;
+
+  const toggleComplete = (id: string) => {
+    setCompletedMap((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
-  const handleToggleComplete = () => {
-    setIsCompleted(!isCompleted);
-  };
+  const embedUrl = activeLecture
+    ? getYouTubeEmbedUrl(activeLecture.videoUrl)
+    : "";
 
   return (
-    <div className="space-y-6">
-      {/* Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {/* Top Breadcrumb & Title */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <Badge className="bg-[#163B65] text-white">IIT-JEE Comprehensive</Badge>
-            <Badge variant="outline" className="border-teal-500 text-teal-800 bg-teal-50">Physics</Badge>
+          <div className="flex items-center gap-2 mb-1">
+            <Badge className="bg-[#004B87] text-white text-[10px] font-bold">
+              Video Player
+            </Badge>
+            <span className="text-xs text-gray-500 font-semibold">
+              HD Chapter Recordings
+            </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[#163B65] mt-1">
-            {selectedLesson.title}
+          <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
+            {activeLecture?.course || "IIT-JEE Comprehensive Mastery"}
           </h1>
+          <p className="text-xs text-gray-500 font-medium">
+            {activeLecture?.chapter} • {activeLecture?.faculty}
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={handleToggleComplete}
-            className={`text-xs gap-1.5 h-9 rounded-xl ${
+            onClick={() => activeLecture && toggleComplete(activeLecture.id)}
+            className={`text-xs font-bold rounded-xl h-9 px-4 ${
               isCompleted
-                ? "bg-emerald-50 text-emerald-700 border-emerald-300 font-bold"
-                : "text-gray-700 border-gray-300"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "border-gray-200 text-gray-700"
             }`}
           >
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            {isCompleted ? "Marked Completed" : "Mark as Completed"}
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+            {isCompleted ? "Completed" : "Mark as Watched"}
           </Button>
         </div>
       </div>
 
-      {/* Main Grid: Video Player + Playlist Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Video Player Column (8 Cols) */}
-        <div className="lg:col-span-8 space-y-4">
-          <Card className="rounded-3xl border-gray-200 shadow-xl bg-black overflow-hidden relative group">
-            {/* Screen Area */}
-            <div className="aspect-video w-full bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 relative flex items-center justify-center">
-              {/* Educational Chalkboard Canvas Mock */}
-              <div className="absolute inset-4 sm:inset-8 border border-white/10 rounded-2xl p-6 bg-slate-900/60 backdrop-blur-xs flex flex-col justify-between select-none">
-                <div className="flex justify-between items-start">
-                  <span className="text-xs font-mono text-teal-400">
-                    DeepSiddhi Foundation • Secure Playback DRM
-                  </span>
-                  <span className="text-xs font-mono text-white/50">
-                    STUDENT ID: STD-001 (WATERMARKED)
-                  </span>
-                </div>
-
-                <div className="text-center space-y-2 py-6">
-                  <span className="text-2xl sm:text-3xl font-extrabold text-white tracking-wider font-mono">
-                    I = I_cm + Md²
-                  </span>
-                  <p className="text-xs text-white/70 max-w-md mx-auto">
-                    Parallel Axis Theorem: Calculating moment of inertia about an arbitrary parallel axis at perpendicular distance d from center of mass.
+      {/* Main Grid: Video Player on Left, Playlist on Right */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Video Player + Notes */}
+        <div className="lg:col-span-2 space-y-4">
+          <Card className="rounded-2xl border-gray-200/90 shadow-md bg-black overflow-hidden">
+            <div className="relative aspect-video w-full bg-black flex items-center justify-center">
+              {embedUrl && embedUrl.includes("http") ? (
+                <iframe
+                  src={embedUrl}
+                  title={activeLecture?.title || "Video lecture"}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="text-center text-white space-y-3 p-6">
+                  <Video className="w-12 h-12 text-[#004B87] mx-auto" />
+                  <p className="text-sm font-bold">
+                    {activeLecture?.title || "Select a lecture from the playlist"}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Video link: {activeLecture?.videoUrl}
                   </p>
                 </div>
-
-                <div className="flex justify-between text-[11px] text-white/40 font-mono">
-                  <span>Faculty: Dr. Rahul Sharma</span>
-                  <span>Stream Quality: 1080p 60fps</span>
-                </div>
-              </div>
-
-              {/* Big Center Play/Pause button */}
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="w-16 h-16 rounded-full bg-[#16A6A1]/90 hover:bg-[#16A6A1] text-white flex items-center justify-center shadow-2xl z-10 transition-transform transform group-hover:scale-110"
-              >
-                {isPlaying ? (
-                  <Pause className="w-8 h-8 fill-white" />
-                ) : (
-                  <Play className="w-8 h-8 fill-white ml-1" />
-                )}
-              </button>
-            </div>
-
-            {/* Video Controls Bar */}
-            <div className="bg-slate-950 p-4 text-white space-y-2 border-t border-white/10">
-              {/* Progress Slider */}
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-mono text-white/80 w-12 text-right">
-                  {formatSeconds(currentTime)}
-                </span>
-                <input
-                  type="range"
-                  min={0}
-                  max={totalSeconds}
-                  value={currentTime}
-                  onChange={(e) => setCurrentTime(Number(e.target.value))}
-                  className="flex-1 h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-[#16A6A1]"
-                />
-                <span className="text-xs font-mono text-white/80 w-12">
-                  {formatSeconds(totalSeconds)}
-                </span>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-1">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="p-1.5 rounded-lg hover:bg-white/10 text-white"
-                  >
-                    {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                  </button>
-
-                  <button
-                    onClick={() => setCurrentTime(Math.max(0, currentTime - 10))}
-                    className="p-1.5 rounded-lg hover:bg-white/10 text-white flex items-center gap-1 text-xs"
-                    title="Rewind 10s"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    <span>10s</span>
-                  </button>
-
-                  <button
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="p-1.5 rounded-lg hover:bg-white/10 text-white"
-                  >
-                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-3 text-xs">
-                  {/* Speed Selector */}
-                  <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg">
-                    <span className="text-white/60">Speed:</span>
-                    {speeds.map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setPlaybackSpeed(s)}
-                        className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
-                          playbackSpeed === s
-                            ? "bg-[#16A6A1] text-white"
-                            : "text-white/70 hover:text-white"
-                        }`}
-                      >
-                        {s}x
-                      </button>
-                    ))}
-                  </div>
-
-                  <button className="p-1.5 rounded-lg hover:bg-white/10 text-white">
-                    <Maximize2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           </Card>
 
-          {/* Tabbed Info: Overview, Lecture Notes, DPP */}
-          <Card className="rounded-3xl border-gray-100 shadow-sm bg-white p-6">
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="bg-gray-100 p-1 rounded-xl">
-                <TabsTrigger value="overview" className="text-xs font-semibold rounded-lg">
-                  Lesson Overview
-                </TabsTrigger>
-                <TabsTrigger value="notes" className="text-xs font-semibold rounded-lg">
-                  Handwritten Notes (PDF)
-                </TabsTrigger>
-                <TabsTrigger value="dpp" className="text-xs font-semibold rounded-lg">
-                  Practice DPP Sheet (15 Qs)
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="pt-4 text-xs space-y-3 text-gray-700">
-                <h4 className="text-sm font-bold text-[#163B65]">Topics Covered in this Session:</h4>
-                <ul className="list-disc pl-5 space-y-1 text-gray-600">
-                  <li>Physical derivation of Parallel Axis Theorem using calculus summation</li>
-                  <li>Limitation & scope of Perpendicular Axis Theorem for planar laminar plates</li>
-                  <li>Calculating moment of inertia of semicircular discs, hollow cones, and composite rings</li>
-                  <li>Past 10-year JEE Advanced tricky problem patterns and shortcut integration techniques</li>
-                </ul>
-              </TabsContent>
-
-              <TabsContent value="notes" className="pt-4">
-                <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-8 h-8 text-teal-700" />
-                    <div>
-                      <h5 className="font-bold text-xs text-teal-900">
-                        Lecture_03_Parallel_Axis_Dr_Rahul_Sharma.pdf
-                      </h5>
-                      <span className="text-[10px] text-teal-700">4.2 MB • High Resolution Notes</span>
-                    </div>
+          {/* Active Lecture Details */}
+          {activeLecture && (
+            <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-[#004B87] text-white text-[10px] font-bold">
+                      {activeLecture.subject}
+                    </Badge>
+                    <span className="text-xs text-gray-500 font-bold">
+                      {activeLecture.duration}
+                    </span>
+                    <span className="text-xs text-gray-400">•</span>
+                    <span className="text-xs text-gray-500">
+                      Uploaded {activeLecture.date}
+                    </span>
                   </div>
-                  <Button size="sm" className="bg-[#163B65] text-white text-xs gap-1.5 rounded-xl">
-                    <Download className="w-3.5 h-3.5" />
-                    Download PDF
+                  <h2 className="text-lg font-black text-gray-900">
+                    {activeLecture.title}
+                  </h2>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs rounded-xl h-8 text-gray-600"
+                    onClick={() => {
+                      navigator.clipboard?.writeText(window.location.href);
+                      alert("Lecture link copied to clipboard!");
+                    }}
+                  >
+                    <Share2 className="w-3.5 h-3.5 mr-1" />
+                    Share
                   </Button>
                 </div>
-              </TabsContent>
+              </div>
 
-              <TabsContent value="dpp" className="pt-4">
-                <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-8 h-8 text-blue-700" />
-                    <div>
-                      <h5 className="font-bold text-xs text-blue-900">
-                        DPP_Sheet_Rotational_Dynamics_03.pdf
-                      </h5>
-                      <span className="text-[10px] text-blue-700">15 MCQ + Numerical Questions with Key</span>
-                    </div>
+              {/* Tabs: Overview, Notes, Q&A */}
+              <Tabs defaultValue="overview" className="pt-2">
+                <TabsList className="bg-gray-100 p-1 rounded-xl">
+                  <TabsTrigger value="overview" className="text-xs font-bold rounded-lg">
+                    Lesson Overview
+                  </TabsTrigger>
+                  <TabsTrigger value="formula" className="text-xs font-bold rounded-lg">
+                    Formula Cheat Sheet
+                  </TabsTrigger>
+                  <TabsTrigger value="qa" className="text-xs font-bold rounded-lg">
+                    Ask Doubt (Faculty)
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="overview" className="pt-4 space-y-3 text-xs text-gray-600 leading-relaxed">
+                  <p>
+                    In this session, <strong>{activeLecture.faculty}</strong> covers the fundamental principles of{" "}
+                    <strong>{activeLecture.chapter}</strong>, walking through core definitions, derivations, and JEE Main / Advanced level problem-solving tricks.
+                  </p>
+                  <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 text-blue-900 text-xs space-y-1 font-medium">
+                    <span className="font-bold block">Key Learning Goals:</span>
+                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-blue-800">
+                      <li>Mathematical formulation and standard textbook proofs</li>
+                      <li>High-yield shortcuts to save 2-3 minutes per question in CBT exams</li>
+                      <li>Common pitfalls and sign errors in numerical calculations</li>
+                    </ul>
                   </div>
-                  <Button size="sm" className="bg-[#16A6A1] text-white text-xs gap-1.5 rounded-xl">
-                    <Download className="w-3.5 h-3.5" />
-                    Download DPP
-                  </Button>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </Card>
+                </TabsContent>
+
+                <TabsContent value="formula" className="pt-4 space-y-2">
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 text-xs font-mono space-y-2 text-gray-800">
+                    <div>1. Parallel Axis: <strong>I = I_cm + M * d^2</strong></div>
+                    <div>2. Perpendicular Axis (Plane laminas): <strong>I_z = I_x + I_y</strong></div>
+                    <div>3. Pure Rolling Condition: <strong>v_cm = omega * R</strong></div>
+                    <div>4. Rolling Acceleration on incline: <strong>a = g*sin(theta) / (1 + I / (M*R^2))</strong></div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="qa" className="pt-4 space-y-3">
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 text-xs text-center space-y-2">
+                    <MessageSquare className="w-8 h-8 text-[#004B87] mx-auto" />
+                    <h4 className="font-bold text-gray-800">Have a doubt in this lecture?</h4>
+                    <p className="text-[11px] text-gray-500">
+                      Send your question directly to {activeLecture.faculty}. Answers are posted within 2 hours.
+                    </p>
+                    <Button
+                      onClick={() => alert("Doubt cleared ticket created! Faculty notified.")}
+                      className="bg-[#004B87] hover:bg-[#003866] text-white font-bold text-xs rounded-xl h-8 px-4"
+                    >
+                      Post Question to Teacher
+                    </Button>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </Card>
+          )}
         </div>
 
-        {/* Playlist & Chapter Accordion Sidebar (4 Cols) */}
-        <div className="lg:col-span-4 space-y-4">
-          <Card className="rounded-3xl border-gray-100 shadow-md bg-white p-5 space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        {/* Right: Course Playlist */}
+        <div className="space-y-4">
+          <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white overflow-hidden">
+            <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-sm text-[#163B65]">Course Curriculum</h3>
-                <span className="text-[11px] text-gray-500">240 Lessons Total</span>
+                <h3 className="font-black text-sm text-gray-900">
+                  Course Video Playlist
+                </h3>
+                <span className="text-[11px] text-gray-500 font-medium">
+                  {recordedClasses.length} Lectures Available
+                </span>
               </div>
-              <Badge variant="outline" className="text-teal-700 border-teal-300 text-[10px]">
-                72% Completed
+              <Badge className="bg-[#004B87] text-white text-[10px] font-bold">
+                Live Synced
               </Badge>
             </div>
 
-            {/* Chapters list */}
-            <div className="space-y-4 max-h-[640px] overflow-y-auto pr-1">
-              {curriculumData.map((chap, cIdx) => (
-                <div key={cIdx} className="space-y-2">
-                  <span className="text-xs font-bold text-gray-700 block px-1">
-                    {chap.name}
-                  </span>
+            <div className="divide-y divide-gray-100 max-h-[620px] overflow-y-auto">
+              {recordedClasses.map((lecture, idx) => {
+                const isSelected = lecture.id === (activeLecture?.id ?? "");
+                const done = !!completedMap[lecture.id];
 
-                  <div className="space-y-1.5">
-                    {chap.lessons.map((lesson) => {
-                      const isCurrent = selectedLesson.id === lesson.id;
-                      return (
+                return (
+                  <div
+                    key={lecture.id}
+                    onClick={() => setSelectedLectureId(lecture.id)}
+                    className={`p-3.5 flex items-start gap-3 cursor-pointer transition-colors ${
+                      isSelected
+                        ? "bg-blue-50/80 border-l-4 border-l-[#004B87]"
+                        : "hover:bg-gray-50"
+                    }`}
+                  >
+                    <div className="mt-0.5 shrink-0">
+                      {done ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      ) : (
                         <div
-                          key={lesson.id}
-                          onClick={() => {
-                            setSelectedLesson(lesson);
-                            setIsCompleted(lesson.completed);
-                            setCurrentTime(0);
-                          }}
-                          className={`p-3 rounded-xl cursor-pointer text-xs transition-all flex items-start gap-2.5 ${
-                            isCurrent
-                              ? "bg-[#163B65] text-white shadow-md font-semibold"
-                              : "bg-gray-50 hover:bg-gray-100 text-gray-800"
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center text-[9px] font-bold ${
+                            isSelected
+                              ? "bg-[#004B87] text-white border-[#004B87]"
+                              : "border-gray-300 text-gray-500"
                           }`}
                         >
-                          {lesson.completed ? (
-                            <CheckCircle2
-                              className={`w-4 h-4 shrink-0 mt-0.5 ${
-                                isCurrent ? "text-emerald-300" : "text-emerald-600"
-                              }`}
-                            />
-                          ) : (
-                            <Play
-                              className={`w-4 h-4 shrink-0 mt-0.5 ${
-                                isCurrent ? "fill-white text-white" : "text-gray-400"
-                              }`}
-                            />
-                          )}
-
-                          <div className="flex-1">
-                            <p className="line-clamp-2 leading-snug">{lesson.title}</p>
-                            <span
-                              className={`text-[10px] mt-1 block ${
-                                isCurrent ? "text-white/70" : "text-gray-400"
-                              }`}
-                            >
-                              {lesson.duration}
-                            </span>
-                          </div>
+                          {idx + 1}
                         </div>
-                      );
-                    })}
+                      )}
+                    </div>
+
+                    <div className="space-y-1 flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <Badge
+                          variant="outline"
+                          className="text-[9px] font-bold px-1.5 py-0 border-gray-300 text-gray-600"
+                        >
+                          {lecture.subject}
+                        </Badge>
+                        <span className="text-[10px] text-gray-400 font-medium shrink-0">
+                          {lecture.duration}
+                        </span>
+                      </div>
+
+                      <h4
+                        className={`text-xs font-bold leading-snug line-clamp-2 ${
+                          isSelected ? "text-[#004B87] font-extrabold" : "text-gray-800"
+                        }`}
+                      >
+                        {lecture.title}
+                      </h4>
+
+                      <p className="text-[10px] text-gray-400 truncate">
+                        {lecture.chapter}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </Card>
         </div>

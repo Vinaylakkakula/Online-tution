@@ -21,6 +21,7 @@ export interface LMSCourse {
 export interface LMSMaterial {
   id: string;
   title: string;
+  courseTitle: string;
   subject: "Physics" | "Chemistry" | "Mathematics" | "General";
   chapter: string;
   fileSize: string;
@@ -49,11 +50,14 @@ export interface LMSLiveClass {
 export interface LMSRecordedClass {
   id: string;
   title: string;
+  course: string;
   subject: string;
   chapter: string;
   faculty: string;
   duration: string;
   videoUrl: string;
+  viewsCount: number;
+  isPublished: boolean;
   date: string;
 }
 
@@ -68,6 +72,7 @@ export interface LMSTestQuestion {
 export interface LMSTest {
   id: string;
   title: string;
+  courseTitle: string;
   category: "Sectional" | "Topic" | "Mock" | "Grand";
   questionsCount: number;
   duration: string;
@@ -90,22 +95,28 @@ export interface LMSStudent {
   name: string;
   email: string;
   phone: string;
-  course: string;
-  class: string;
-  date: string;
+  enrolledCourses: string[]; // List of courses assigned to this student
+  batchName: string;
+  classLevel: string;
+  joinedDate: string;
+  progress: number;
   status: "Active" | "Pending" | "Suspended";
 }
 
 export interface LMSBatch {
   id: string;
   name: string;
+  courseTitle: string;
   timing: string;
+  startDate: string;
   days: string;
   faculty: string;
-  studentsCount: number;
+  maxStudents: number;
+  currentEnrolled: number;
+  status: "active" | "filling" | "completed";
 }
 
-// Initial Sample Data for out-of-the-box readiness
+// Initial Default Data
 const DEFAULT_COURSES: LMSCourse[] = [
   {
     id: "c-1",
@@ -119,7 +130,7 @@ const DEFAULT_COURSES: LMSCourse[] = [
     duration: "24 Months",
     isPublished: true,
     enrolledCount: 420,
-    description: "Complete foundational to advanced preparation for JEE Main & JEE Advanced.",
+    description: "Two-year integrated Physics, Chemistry & Mathematics for JEE Main & Advanced.",
     color: "from-[#0C335C] via-[#104375] to-[#0A2A4D]",
   },
   {
@@ -134,7 +145,7 @@ const DEFAULT_COURSES: LMSCourse[] = [
     duration: "6 Months",
     isPublished: true,
     enrolledCount: 185,
-    description: "Specialized training for National Standard Examination in Physics and INPhO.",
+    description: "Specialized Olympiad physics training for NSEP, INPhO, and international contests.",
     color: "from-[#4E146E] via-[#6B1F96] to-[#3B0E54]",
   },
   {
@@ -149,8 +160,98 @@ const DEFAULT_COURSES: LMSCourse[] = [
     duration: "6 Months",
     isPublished: true,
     enrolledCount: 237,
-    description: "Stage 1 and Stage 2 mental ability, logic, and scholastic aptitude mastery.",
+    description: "Mental Ability Test (MAT) and Scholastic Aptitude Test (SAT) preparation.",
     color: "from-[#094A44] via-[#0E635C] to-[#073632]",
+  },
+];
+
+const DEFAULT_BATCHES: LMSBatch[] = [
+  {
+    id: "b-1",
+    name: "Pratham Batch (Morning)",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
+    timing: "7:00 AM – 10:00 AM IST",
+    startDate: "Nov 15, 2026",
+    days: "Mon, Wed, Fri",
+    faculty: "Dr. Rahul Sharma",
+    maxStudents: 150,
+    currentEnrolled: 136,
+    status: "filling",
+  },
+  {
+    id: "b-2",
+    name: "Aryabhata Olympiad Batch",
+    courseTitle: "Physics Olympiad Advanced Sprint (NSEP & INPhO)",
+    timing: "6:00 PM – 8:00 PM IST",
+    startDate: "Nov 10, 2026",
+    days: "Mon, Wed, Fri",
+    faculty: "Dr. Rahul Sharma",
+    maxStudents: 75,
+    currentEnrolled: 64,
+    status: "filling",
+  },
+  {
+    id: "b-3",
+    name: "Vidyarthi Foundation Batch",
+    courseTitle: "National Talent Search (NTSE) & Aptitude Mastery",
+    timing: "4:00 PM – 5:30 PM IST",
+    startDate: "Oct 20, 2026",
+    days: "Tue, Thu, Sat",
+    faculty: "Er. Vivek Rathore",
+    maxStudents: 100,
+    currentEnrolled: 98,
+    status: "active",
+  },
+];
+
+const DEFAULT_STUDENTS: LMSStudent[] = [
+  {
+    id: "STD-1001",
+    name: "Aryan Sharma",
+    email: "student@deepsiddhi.org",
+    phone: "+91 9876543210",
+    enrolledCourses: ["IIT-JEE Comprehensive Mastery 2026-27", "Physics Olympiad Advanced Sprint (NSEP & INPhO)"],
+    batchName: "Pratham Batch (Morning)",
+    classLevel: "Class 11",
+    joinedDate: "Nov 1, 2026",
+    progress: 72,
+    status: "Active",
+  },
+  {
+    id: "STD-1002",
+    name: "Meera Nair",
+    email: "meera.nair@outlook.com",
+    phone: "+91 9811223344",
+    enrolledCourses: ["Physics Olympiad Advanced Sprint (NSEP & INPhO)"],
+    batchName: "Aryabhata Olympiad Batch",
+    classLevel: "Class 10",
+    joinedDate: "Nov 3, 2026",
+    progress: 45,
+    status: "Active",
+  },
+  {
+    id: "STD-1003",
+    name: "Tanmay Roy",
+    email: "tanmay.roy@gmail.com",
+    phone: "+91 9988771122",
+    enrolledCourses: ["National Talent Search (NTSE) & Aptitude Mastery"],
+    batchName: "Vidyarthi Foundation Batch",
+    classLevel: "Class 9",
+    joinedDate: "Oct 28, 2026",
+    progress: 86,
+    status: "Active",
+  },
+  {
+    id: "STD-1004",
+    name: "Kavya Iyer",
+    email: "kavya.iyer@gmail.com",
+    phone: "+91 9765432109",
+    enrolledCourses: ["IIT-JEE Comprehensive Mastery 2026-27"],
+    batchName: "Pratham Batch (Morning)",
+    classLevel: "Class 12",
+    joinedDate: "Nov 5, 2026",
+    progress: 60,
+    status: "Pending",
   },
 ];
 
@@ -158,6 +259,7 @@ const DEFAULT_MATERIALS: LMSMaterial[] = [
   {
     id: "mat-1",
     title: "Rotational Dynamics: Complete Comprehensive Formula Sheet & Shortcut Map",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
     subject: "Physics",
     chapter: "Chapter 4: Rotational Mechanics",
     fileSize: "2.4 MB",
@@ -168,6 +270,7 @@ const DEFAULT_MATERIALS: LMSMaterial[] = [
   {
     id: "mat-2",
     title: "Master Handwritten Notes: Parallel Axis Theorem & Rolling Bodies",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
     subject: "Physics",
     chapter: "Chapter 4: Rotational Mechanics",
     fileSize: "6.8 MB",
@@ -178,6 +281,7 @@ const DEFAULT_MATERIALS: LMSMaterial[] = [
   {
     id: "mat-3",
     title: "Organic Chemistry Reaction Mechanism Map (45 Conversions)",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
     subject: "Chemistry",
     chapter: "Chapter 3: Reaction Mechanisms",
     fileSize: "4.1 MB",
@@ -188,12 +292,55 @@ const DEFAULT_MATERIALS: LMSMaterial[] = [
   {
     id: "mat-4",
     title: "Calculus & Coordinate Geometry 200 Advanced Numerical Problem Bank",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
     subject: "Mathematics",
     chapter: "Calculus Mastery",
     fileSize: "8.5 MB",
     fileType: "DPP",
     downloadsCount: 1820,
     dateUploaded: "1 week ago",
+  },
+];
+
+const DEFAULT_RECORDED_CLASSES: LMSRecordedClass[] = [
+  {
+    id: "rec-1",
+    title: "Lecture 1: Rigid Body Rotation & Angular Kinematics",
+    course: "IIT-JEE Comprehensive Mastery 2026-27",
+    subject: "Physics",
+    chapter: "Chapter 4: Rotational Mechanics",
+    faculty: "Dr. Rahul Sharma",
+    duration: "45 mins",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    viewsCount: 382,
+    isPublished: true,
+    date: "Yesterday",
+  },
+  {
+    id: "rec-2",
+    title: "Lecture 2: Moment of Inertia for Continuous Bodies & Integration",
+    course: "IIT-JEE Comprehensive Mastery 2026-27",
+    subject: "Physics",
+    chapter: "Chapter 4: Rotational Mechanics",
+    faculty: "Dr. Rahul Sharma",
+    duration: "52 mins",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    viewsCount: 341,
+    isPublished: true,
+    date: "2 days ago",
+  },
+  {
+    id: "rec-3",
+    title: "Lecture 3: Organic Reaction Mechanisms SN1 vs SN2 Inversion",
+    course: "IIT-JEE Comprehensive Mastery 2026-27",
+    subject: "Chemistry",
+    chapter: "Chapter 3: Reaction Mechanisms",
+    faculty: "Prof. Priya Saxena",
+    duration: "48 mins",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    viewsCount: 412,
+    isPublished: true,
+    date: "3 days ago",
   },
 ];
 
@@ -234,6 +381,7 @@ const DEFAULT_TESTS: LMSTest[] = [
   {
     id: "test-1",
     title: "All India JEE Mock Test #08 (Full Length)",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
     category: "Mock",
     questionsCount: 75,
     duration: "180 Mins",
@@ -273,6 +421,7 @@ const DEFAULT_TESTS: LMSTest[] = [
   {
     id: "test-2",
     title: "Rotational Dynamics & Gravity Chapter Speed Test",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
     category: "Sectional",
     questionsCount: 25,
     duration: "45 Mins",
@@ -283,21 +432,12 @@ const DEFAULT_TESTS: LMSTest[] = [
   {
     id: "test-3",
     title: "Organic Reaction Mechanisms & Isomerism Quiz",
+    courseTitle: "IIT-JEE Comprehensive Mastery 2026-27",
     category: "Topic",
     questionsCount: 20,
     duration: "40 Mins",
     totalMarks: 80,
     status: "Completed",
-    questions: [],
-  },
-  {
-    id: "test-4",
-    title: "National Talent Search Stage 1 Grand Assessment",
-    category: "Grand",
-    questionsCount: 100,
-    duration: "120 Mins",
-    totalMarks: 200,
-    status: "Available",
     questions: [],
   },
 ];
@@ -321,67 +461,6 @@ const DEFAULT_ANNOUNCEMENTS: LMSAnnouncement[] = [
   },
 ];
 
-const DEFAULT_STUDENTS: LMSStudent[] = [
-  {
-    id: "std-1",
-    name: "Aryan Sharma",
-    email: "aryan@gmail.com",
-    phone: "+91 9876543210",
-    course: "IIT-JEE Comprehensive",
-    class: "Class 11",
-    date: "10 mins ago",
-    status: "Active",
-  },
-  {
-    id: "std-2",
-    name: "Meera Nair",
-    email: "meera.nair@outlook.com",
-    phone: "+91 9811223344",
-    course: "Olympiad Advanced Sprint",
-    class: "Class 10",
-    date: "35 mins ago",
-    status: "Active",
-  },
-  {
-    id: "std-3",
-    name: "Tanmay Roy",
-    email: "tanmay.roy@gmail.com",
-    phone: "+91 9988771122",
-    course: "NTSE & Aptitude Mastery",
-    class: "Class 9",
-    date: "1 hour ago",
-    status: "Pending",
-  },
-];
-
-const DEFAULT_BATCHES: LMSBatch[] = [
-  {
-    id: "b-1",
-    name: "Pratham Batch (Morning)",
-    timing: "7:00 AM – 10:00 AM IST",
-    days: "Mon, Wed, Fri",
-    faculty: "Dr. Rahul Sharma",
-    studentsCount: 142,
-  },
-  {
-    id: "b-2",
-    name: "Aryabhata Olympiad Batch",
-    timing: "6:00 PM – 8:00 PM IST",
-    days: "Mon, Wed, Fri",
-    faculty: "Dr. Rahul Sharma",
-    studentsCount: 88,
-  },
-  {
-    id: "b-3",
-    name: "Vidyarthi Foundation Batch",
-    timing: "4:00 PM – 5:30 PM IST",
-    days: "Tue, Thu, Sat",
-    faculty: "Er. Vivek Rathore",
-    studentsCount: 95,
-  },
-];
-
-// Helper to safely access localStorage in client
 function getStored<T>(key: string, defaultVal: T): T {
   if (typeof window === "undefined") return defaultVal;
   try {
@@ -403,7 +482,6 @@ function setStored<T>(key: string, val: T): void {
   }
 }
 
-// Global LMS Store Singleton
 export const LMSStore = {
   // Courses
   getCourses: (): LMSCourse[] => getStored("lms_courses", DEFAULT_COURSES),
@@ -423,6 +501,57 @@ export const LMSStore = {
     );
   },
 
+  // Batches
+  getBatches: (): LMSBatch[] => getStored("lms_batches", DEFAULT_BATCHES),
+  saveBatches: (batches: LMSBatch[]) => setStored("lms_batches", batches),
+  addBatch: (batch: LMSBatch) => {
+    const current = LMSStore.getBatches();
+    LMSStore.saveBatches([batch, ...current]);
+  },
+  deleteBatch: (id: string) => {
+    const current = LMSStore.getBatches();
+    LMSStore.saveBatches(current.filter((b) => b.id !== id));
+  },
+
+  // Students & Course Enrollment
+  getStudents: (): LMSStudent[] => getStored("lms_students", DEFAULT_STUDENTS),
+  saveStudents: (students: LMSStudent[]) => setStored("lms_students", students),
+  addStudent: (student: LMSStudent) => {
+    const current = LMSStore.getStudents();
+    LMSStore.saveStudents([student, ...current]);
+  },
+  deleteStudent: (id: string) => {
+    const current = LMSStore.getStudents();
+    LMSStore.saveStudents(current.filter((s) => s.id !== id));
+  },
+  enrollStudentInCourse: (studentId: string, courseTitle: string, batchName?: string) => {
+    const current = LMSStore.getStudents();
+    LMSStore.saveStudents(
+      current.map((s) => {
+        if (s.id === studentId) {
+          const already = s.enrolledCourses.includes(courseTitle);
+          const updatedCourses = already ? s.enrolledCourses : [...s.enrolledCourses, courseTitle];
+          return {
+            ...s,
+            enrolledCourses: updatedCourses,
+            batchName: batchName || s.batchName,
+          };
+        }
+        return s;
+      })
+    );
+  },
+  toggleStudentStatus: (studentId: string) => {
+    const current = LMSStore.getStudents();
+    LMSStore.saveStudents(
+      current.map((s) =>
+        s.id === studentId
+          ? { ...s, status: s.status === "Active" ? "Suspended" : "Active" }
+          : s
+      )
+    );
+  },
+
   // Materials
   getMaterials: (): LMSMaterial[] => getStored("lms_materials", DEFAULT_MATERIALS),
   saveMaterials: (materials: LMSMaterial[]) => setStored("lms_materials", materials),
@@ -433,6 +562,18 @@ export const LMSStore = {
   deleteMaterial: (id: string) => {
     const current = LMSStore.getMaterials();
     LMSStore.saveMaterials(current.filter((m) => m.id !== id));
+  },
+
+  // Recorded Classes
+  getRecordedClasses: (): LMSRecordedClass[] => getStored("lms_recorded_classes", DEFAULT_RECORDED_CLASSES),
+  saveRecordedClasses: (classes: LMSRecordedClass[]) => setStored("lms_recorded_classes", classes),
+  addRecordedClass: (cls: LMSRecordedClass) => {
+    const current = LMSStore.getRecordedClasses();
+    LMSStore.saveRecordedClasses([cls, ...current]);
+  },
+  deleteRecordedClass: (id: string) => {
+    const current = LMSStore.getRecordedClasses();
+    LMSStore.saveRecordedClasses(current.filter((c) => c.id !== id));
   },
 
   // Live Classes
@@ -481,62 +622,40 @@ export const LMSStore = {
     LMSStore.saveAnnouncements(current.filter((a) => a.id !== id));
   },
 
-  // Students
-  getStudents: (): LMSStudent[] => getStored("lms_students", DEFAULT_STUDENTS),
-  saveStudents: (students: LMSStudent[]) => setStored("lms_students", students),
-  addStudent: (student: LMSStudent) => {
-    const current = LMSStore.getStudents();
-    LMSStore.saveStudents([student, ...current]);
-  },
-  deleteStudent: (id: string) => {
-    const current = LMSStore.getStudents();
-    LMSStore.saveStudents(current.filter((s) => s.id !== id));
-  },
-
-  // Batches
-  getBatches: (): LMSBatch[] => getStored("lms_batches", DEFAULT_BATCHES),
-  saveBatches: (batches: LMSBatch[]) => setStored("lms_batches", batches),
-  addBatch: (batch: LMSBatch) => {
-    const current = LMSStore.getBatches();
-    LMSStore.saveBatches([batch, ...current]);
-  },
-  deleteBatch: (id: string) => {
-    const current = LMSStore.getBatches();
-    LMSStore.saveBatches(current.filter((b) => b.id !== id));
-  },
-
   // Reset Everything to Default Sample Data
   resetAll: () => {
     if (typeof window === "undefined") return;
     localStorage.removeItem("lms_courses");
+    localStorage.removeItem("lms_batches");
+    localStorage.removeItem("lms_students");
     localStorage.removeItem("lms_materials");
+    localStorage.removeItem("lms_recorded_classes");
     localStorage.removeItem("lms_live_classes");
     localStorage.removeItem("lms_tests");
     localStorage.removeItem("lms_announcements");
-    localStorage.removeItem("lms_students");
-    localStorage.removeItem("lms_batches");
     window.dispatchEvent(new Event("lms_store_updated"));
   },
 };
 
-// React Hook for automatic real-time updates across components
 export function useLMSData() {
   const [courses, setCourses] = useState<LMSCourse[]>([]);
+  const [batches, setBatches] = useState<LMSBatch[]>([]);
+  const [students, setStudents] = useState<LMSStudent[]>([]);
   const [materials, setMaterials] = useState<LMSMaterial[]>([]);
+  const [recordedClasses, setRecordedClasses] = useState<LMSRecordedClass[]>([]);
   const [liveClasses, setLiveClasses] = useState<LMSLiveClass[]>([]);
   const [tests, setTests] = useState<LMSTest[]>([]);
   const [announcements, setAnnouncements] = useState<LMSAnnouncement[]>([]);
-  const [students, setStudents] = useState<LMSStudent[]>([]);
-  const [batches, setBatches] = useState<LMSBatch[]>([]);
 
   const refreshAll = () => {
     setCourses(LMSStore.getCourses());
+    setBatches(LMSStore.getBatches());
+    setStudents(LMSStore.getStudents());
     setMaterials(LMSStore.getMaterials());
+    setRecordedClasses(LMSStore.getRecordedClasses());
     setLiveClasses(LMSStore.getLiveClasses());
     setTests(LMSStore.getTests());
     setAnnouncements(LMSStore.getAnnouncements());
-    setStudents(LMSStore.getStudents());
-    setBatches(LMSStore.getBatches());
   };
 
   useEffect(() => {
@@ -548,12 +667,13 @@ export function useLMSData() {
 
   return {
     courses,
+    batches,
+    students,
     materials,
+    recordedClasses,
     liveClasses,
     tests,
     announcements,
-    students,
-    batches,
     store: LMSStore,
     refreshAll,
   };

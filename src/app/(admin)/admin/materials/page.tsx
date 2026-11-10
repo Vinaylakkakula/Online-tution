@@ -23,9 +23,12 @@ import {
 import Link from "next/link";
 
 export default function AdminMaterialsPage() {
-  const { materials, store } = useLMSData();
+  const { materials, courses, store } = useLMSData();
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("");
+  const [courseTitle, setCourseTitle] = useState(
+    courses[0]?.title || "IIT-JEE Comprehensive Mastery 2026-27"
+  );
   const [subject, setSubject] = useState<"Physics" | "Chemistry" | "Mathematics" | "General">("Physics");
   const [chapter, setChapter] = useState("");
   const [fileType, setFileType] = useState<"PDF" | "Notes" | "Formula Sheet" | "DPP">("PDF");
@@ -38,6 +41,7 @@ export default function AdminMaterialsPage() {
     store.addMaterial({
       id: `mat-${Date.now()}`,
       title,
+      courseTitle: courseTitle || courses[0]?.title || "IIT-JEE Comprehensive Mastery 2026-27",
       subject,
       chapter: chapter || "General Mechanics",
       fileSize: fileSize || "3.2 MB",
@@ -145,6 +149,21 @@ export default function AdminMaterialsPage() {
                 onChange={(e) => setTitle(e.target.value)}
                 className="mt-1 text-xs rounded-xl"
               />
+            </div>
+
+            <div>
+              <Label className="text-xs font-bold text-gray-700">Tied to Course *</Label>
+              <select
+                value={courseTitle}
+                onChange={(e) => setCourseTitle(e.target.value)}
+                className="w-full mt-1 h-9 px-3 text-xs bg-white border border-gray-200 rounded-xl"
+              >
+                {courses.map((c) => (
+                  <option key={c.id} value={c.title}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="grid grid-cols-2 gap-3">

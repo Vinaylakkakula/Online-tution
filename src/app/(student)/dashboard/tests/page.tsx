@@ -27,6 +27,7 @@ import {
   FileText,
   Search,
 } from "lucide-react";
+import { useLMSData } from "@/lib/lms-store";
 
 interface Question {
   id: number;
@@ -86,6 +87,7 @@ const sampleTestQuestions: Question[] = [
 ];
 
 export default function TestsPage() {
+  const { tests } = useLMSData();
   const [testActive, setTestActive] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
@@ -645,49 +647,29 @@ export default function TestsPage() {
               </TabsList>
 
               <TabsContent value="tests" className="space-y-4">
-                {[
-                  {
-                    title: "All India JEE Mock Test #08 (Full Length)",
-                    category: "NTA CBT Simulation",
-                    questions: 75,
-                    duration: "180 Mins",
-                    marks: 300,
-                    status: "Available Now",
-                  },
-                  {
-                    title: "Rotational Dynamics & Gravity Chapter Speed Test",
-                    category: "Physics Sectional",
-                    questions: 25,
-                    duration: "45 Mins",
-                    marks: 100,
-                    status: "Available Now",
-                  },
-                  {
-                    title: "Organic Reaction Mechanisms & Isomerism",
-                    category: "Chemistry Topic Test",
-                    questions: 20,
-                    duration: "40 Mins",
-                    marks: 80,
-                    status: "Completed (Score: 72/80)",
-                  },
-                ].map((t, idx) => (
+                {tests.map((t) => (
                   <Card
-                    key={idx}
+                    key={t.id}
                     className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-5 hover:shadow-md transition-shadow"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-1">
-                        <Badge
-                          variant="outline"
-                          className="border-blue-400 text-[#004B87] bg-blue-50 text-[10px] font-bold"
-                        >
-                          {t.category}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className="border-blue-400 text-[#004B87] bg-blue-50 text-[10px] font-bold"
+                          >
+                            {t.category} Test
+                          </Badge>
+                          <span className="text-xs text-gray-500 font-semibold">
+                            {t.courseTitle}
+                          </span>
+                        </div>
                         <h3 className="text-base font-extrabold text-gray-900">
                           {t.title}
                         </h3>
                         <p className="text-xs text-gray-500 font-medium">
-                          {t.questions} Questions • {t.duration} • Total Marks: {t.marks}
+                          {t.questionsCount} Questions • {t.duration} • Total Marks: {t.totalMarks}
                         </p>
                       </div>
 
