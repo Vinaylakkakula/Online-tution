@@ -40,10 +40,6 @@ export function StudentHeader({
   const router = useRouter();
   const [selectedExamCategory, setSelectedExamCategory] = useState("IIT-JEE & Foundation");
 
-  const handleAdminClick = () => {
-    router.push("/admin");
-  };
-
   const displayName = user?.full_name || "Student Learner";
   const displayEmail = user?.email || "student@deepsiddhi.org";
 
@@ -128,17 +124,6 @@ export function StudentHeader({
             </span>
           </Link>
 
-          {/* Admin Panel Access Button */}
-          <button
-            onClick={handleAdminClick}
-            className="h-8.5 px-2.5 sm:px-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-black text-xs rounded-lg shadow-sm gap-1.5 border border-amber-400 flex items-center cursor-pointer transition-transform active:scale-95 shrink-0"
-            title="Open Admin Management Portal"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-950 shrink-0" />
-            <span className="hidden xs:inline">Admin Panel</span>
-            <span className="inline xs:hidden">Admin</span>
-          </button>
-
           {/* Explore Courses Button */}
           <Link href="/courses" className="hidden sm:inline-block">
             <Button
@@ -205,13 +190,6 @@ export function StudentHeader({
                   <User className="w-4 h-4 text-gray-500" />
                   My Profile & Settings
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={handleAdminClick}
-                className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-[#004B87]"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-500" />
-                Open Admin Console
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

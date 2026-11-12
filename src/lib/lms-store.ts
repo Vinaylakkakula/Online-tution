@@ -591,7 +591,7 @@ export const LMSStore = {
   syncWithServer: async (): Promise<boolean> => {
     if (typeof window === "undefined") return false;
     try {
-      const res = await fetch(`/api/lms`, { cache: "no-store" });
+      const res = await fetch(`/api/lms?t=${Date.now()}`, { cache: "no-store" });
       if (!res.ok) return false;
       const json = await res.json();
       if (!json.data) return false;
@@ -985,12 +985,12 @@ export function useLMSData() {
       if (updated) refreshAll();
     });
 
-    // 3. Regular periodic background polling (every 3 seconds) for cross-device sync
+    // 3. Regular periodic background polling (every 1.5 seconds) for instant cross-device sync
     const interval = setInterval(() => {
       LMSStore.syncWithServer().then((updated) => {
         if (updated) refreshAll();
       });
-    }, 3000);
+    }, 1500);
 
     // 4. Sync on window focus / tab visibility change (e.g. user unlocks mobile phone or switches browser)
     const handleFocus = () => {

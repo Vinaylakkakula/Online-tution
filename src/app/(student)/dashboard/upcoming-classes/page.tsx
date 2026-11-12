@@ -52,12 +52,12 @@ export default function UpcomingClassesPage() {
             </Badge>
             <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Synced with Admin
+              Live Updates
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Upcoming Class Calendar</h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Weekly live lecture schedule with real-time countdowns and session alerts synced from Admin.
+            Weekly live lecture schedule with real-time countdowns and session alerts.
           </p>
         </div>
 

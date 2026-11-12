@@ -236,16 +236,6 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/admin">
-                  <Button
-                    size="sm"
-                    className="h-9 px-3.5 bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-xs rounded-xl shadow-sm gap-1.5 border border-amber-400"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-gray-950" />
-                    <span>Admin Panel</span>
-                  </Button>
-                </Link>
-
                 <Link href="/login">
                   <Button
                     variant="outline"
@@ -338,12 +328,14 @@ export function Navbar() {
             ))}
 
             <div className="pt-3 border-t border-gray-100 px-4 space-y-2">
-              <Link href="/admin" className="block">
-                <Button className="w-full bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-xs rounded-xl shadow-xs gap-1.5 h-10">
-                  <ShieldCheck className="w-4 h-4 text-gray-950" />
-                  <span>Open Admin Panel</span>
-                </Button>
-              </Link>
+              {(role === "admin" || role === "super_admin") && (
+                <Link href="/admin" className="block">
+                  <Button className="w-full bg-[#163B65] hover:bg-[#122e50] text-white font-bold text-xs rounded-xl shadow-xs gap-1.5 h-10">
+                    <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    <span>Admin Console</span>
+                  </Button>
+                </Link>
+              )}
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <Link href="/dashboard">
                   <Button variant="outline" className="w-full text-xs font-bold text-[#004B87] border-gray-200 h-10 rounded-xl">

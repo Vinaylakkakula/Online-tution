@@ -62,11 +62,6 @@ export function StudentSidebar({
     router.push("/");
   };
 
-  const handleAdminClick = () => {
-    setMobileOpen?.(false);
-    router.push("/admin");
-  };
-
   return (
     <>
       {/* Mobile Backdrop */}
@@ -149,22 +144,12 @@ export function StudentSidebar({
           })}
         </div>
 
-        {/* Bottom Actions: Admin Panel Button, Profile, Logout */}
+        {/* Bottom Actions: Profile, Logout */}
         <div className="p-2 border-t border-white/10 space-y-1.5 flex flex-col items-center w-full">
-          {/* Always-visible Prominent Admin Panel Button */}
-          <button
-            onClick={handleAdminClick}
-            className="w-full py-2 px-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-gray-950 font-black text-[10px] flex flex-col items-center justify-center shadow-md transition-all group cursor-pointer active:scale-95"
-            title="Open Admin Panel"
-          >
-            <ShieldCheck className="w-4 h-4 mb-0.5 text-gray-950 group-hover:scale-110 transition-transform" />
-            <span>Admin Panel</span>
-          </button>
-
           <Link
             href="/dashboard/profile"
             onClick={() => setMobileOpen?.(false)}
-            className="w-full py-1.5 rounded-lg text-white/80 hover:bg-white/10 flex flex-col items-center text-[10px]"
+            className="w-full py-2 rounded-xl text-white/80 hover:bg-white/10 flex flex-col items-center text-[10px] transition-colors"
           >
             <User className="w-4 h-4 mb-0.5" />
             <span>Profile</span>
@@ -172,7 +157,7 @@ export function StudentSidebar({
 
           <button
             onClick={handleLogout}
-            className="w-full py-1.5 rounded-lg text-red-200 hover:bg-red-500/20 flex flex-col items-center text-[10px] transition-colors"
+            className="w-full py-2 rounded-xl text-red-200 hover:bg-red-500/20 flex flex-col items-center text-[10px] transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4 mb-0.5" />
             <span>Logout</span>

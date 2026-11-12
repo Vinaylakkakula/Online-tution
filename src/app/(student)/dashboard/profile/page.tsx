@@ -73,12 +73,12 @@ export default function StudentProfilePage() {
             </Badge>
             <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Synced with Admin Console
+              Verified Student Account
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Student Academic Profile</h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Personal identification, enrolled syllabus tracks, and security credentials. Updates reflect live in the Admin Panel.
+            Personal identification, enrolled syllabus tracks, and security credentials.
           </p>
         </div>
       </div>
@@ -180,12 +180,12 @@ export default function StudentProfilePage() {
               disabled={isSaving}
               className="bg-[#163B65] hover:bg-[#122e50] text-white text-xs font-semibold h-10 px-6 rounded-xl shadow-md transition-all"
             >
-              {isSaving ? "Syncing..." : "Save Profile & Sync with Admin"}
+              {isSaving ? "Saving..." : "Save Profile Details"}
             </Button>
             {saved && (
               <span className="text-xs text-emerald-600 font-bold flex items-center gap-1.5 animate-slide-down">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                Changes saved! Admin Panel student directory updated.
+                Changes saved successfully!
               </span>
             )}
           </div>

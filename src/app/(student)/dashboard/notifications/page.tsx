@@ -43,7 +43,7 @@ export default function NotificationsPage() {
             </Badge>
             <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Live Sync with Admin
+              Live Updates Active
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Notifications & Announcements</h1>
@@ -64,11 +64,11 @@ export default function NotificationsPage() {
         </div>
       </div>
 
-      {/* Admin Broadcast Announcements Section */}
+      {/* Official Announcements Section */}
       <div className="space-y-4">
         <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-amber-500" />
-          <span>Official Admin Notices ({announcements.length})</span>
+          <AlertCircle className="w-4 h-4 text-blue-600" />
+          <span>Official Announcements ({announcements.length})</span>
         </h2>
 
         {announcements.length === 0 ? (

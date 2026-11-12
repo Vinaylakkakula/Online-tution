@@ -408,8 +408,8 @@ export function WelcomeRegistrationModal() {
                   <span className="font-semibold text-gray-800">{formData.classLevel}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Admin Sync:</span>
-                  <span className="font-semibold text-emerald-600">✓ Enrolled in Admin Panel</span>
+                  <span className="text-gray-500">Admission Status:</span>
+                  <span className="font-semibold text-emerald-600">✓ Registered & Active</span>
                 </div>
               </div>
 

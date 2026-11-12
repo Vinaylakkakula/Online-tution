@@ -54,14 +54,14 @@ export default function StudentDashboardPage() {
             Welcome back, {studentName}!
           </h1>
           <p className="text-xs text-white/80 max-w-xl">
-            Your personalized learning track is active. All course updates and live classes are synced with the Academic Director.
+            Your personalized learning track is active. Access your courses, test series, and live classes below.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-white">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Admin Sync: Connected</span>
+            <span>Learning Portal • Online</span>
           </div>
         </div>
       </div>
@@ -414,8 +414,8 @@ export default function StudentDashboardPage() {
                 <AlertCircle className="w-4 h-4 text-amber-500" />
                 Latest Announcements
               </h3>
-              <Badge variant="outline" className="border-amber-400 text-amber-900 bg-amber-50 text-[10px] font-bold">
-                Admin Notice
+              <Badge variant="outline" className="border-blue-300 text-blue-900 bg-blue-50 text-[10px] font-bold">
+                Notice Board
               </Badge>
             </div>
 
