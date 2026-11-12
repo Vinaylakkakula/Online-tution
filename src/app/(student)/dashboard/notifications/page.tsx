@@ -12,140 +12,166 @@ import {
   AlertCircle,
   CheckCircle2,
   Trash2,
+  Sparkles,
+  ExternalLink,
 } from "lucide-react";
-
-interface NotificationItem {
-  id: string;
-  title: string;
-  message: string;
-  type: "class" | "test" | "material" | "announcement";
-  timeAgo: string;
-  isRead: boolean;
-}
-
-const initialNotifications: NotificationItem[] = [
-  {
-    id: "n-1",
-    title: "Physics Live Webinar Starting in 2 Hours",
-    message: "Dr. Rahul Sharma will be taking an advanced numerical drill on Magnetism & Biot-Savart Law at 5:00 PM IST.",
-    type: "class",
-    timeAgo: "2 hours ago",
-    isRead: false,
-  },
-  {
-    id: "n-2",
-    title: "All India JEE Mock Test #08 Published",
-    message: "Your scheduled 3-hour full syllabus simulation exam is now active in the Tests portal. Total Marks: 300.",
-    type: "test",
-    timeAgo: "5 hours ago",
-    isRead: false,
-  },
-  {
-    id: "n-3",
-    title: "New Study Material Uploaded: Chemistry Reaction Map",
-    message: "Prof. Priya Saxena has uploaded the 45-Conversion Organic Chemistry Quick Summary Chart.",
-    type: "material",
-    timeAgo: "Yesterday",
-    isRead: false,
-  },
-  {
-    id: "n-4",
-    title: "Special Doubt Clearing Schedule for Weekend",
-    message: "Mathematics mentor Er. Amit Verma will host an exclusive 2-hour doubt clearing session on Saturday at 4 PM.",
-    type: "announcement",
-    timeAgo: "2 days ago",
-    isRead: true,
-  },
-];
+import Link from "next/link";
+import { useLMSData } from "@/lib/lms-store";
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const { announcements, liveClasses, materials, tests } = useLMSData();
+  const [readMap, setReadMap] = useState<Record<string, boolean>>({});
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, isRead: true })));
+    const newMap: Record<string, boolean> = {};
+    announcements.forEach((a) => (newMap[a.id] = true));
+    setReadMap(newMap);
   };
 
-  const clearAll = () => {
-    setNotifications([]);
+  const toggleRead = (id: string) => {
+    setReadMap((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-4xl pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">In-App Notifications</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <Badge className="bg-[#004B87] text-white text-[10px] font-bold">
+              Activity & Notices
+            </Badge>
+            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Live Sync with Admin
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#163B65]">Notifications & Announcements</h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Real-time alerts for live lecture countdowns, new study materials, test results, and batch announcements.
+            Official announcements, schedule changes, live class reminders, and new study material alerts.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
+            onClick={markAllAsRead}
             variant="outline"
             size="sm"
-            onClick={markAllAsRead}
-            className="text-xs rounded-xl border-gray-200"
+            className="text-xs text-[#004B87] border-[#004B87]/30 hover:bg-[#EAF4FF] rounded-xl"
           >
-            Mark All as Read
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearAll}
-            className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl"
-          >
-            Clear
+            Mark all read
           </Button>
         </div>
       </div>
 
-      {/* List */}
-      <div className="space-y-3">
-        {notifications.length === 0 ? (
-          <Card className="rounded-3xl border-gray-100 p-12 text-center text-gray-400">
-            <Bell className="w-10 h-10 mx-auto mb-2 text-gray-300" />
-            <p className="text-sm">No new notifications. You are all caught up!</p>
+      {/* Admin Broadcast Announcements Section */}
+      <div className="space-y-4">
+        <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-amber-500" />
+          <span>Official Admin Notices ({announcements.length})</span>
+        </h2>
+
+        {announcements.length === 0 ? (
+          <Card className="p-6 text-center text-xs text-gray-400">
+            No active announcements.
           </Card>
         ) : (
-          notifications.map((item) => (
+          announcements.map((ann) => (
             <Card
-              key={item.id}
-              className={`rounded-2xl border transition-all p-5 ${
-                !item.isRead
-                  ? "bg-white border-teal-200 shadow-sm ring-1 ring-teal-200/50"
-                  : "bg-gray-50/60 border-gray-100"
+              key={ann.id}
+              className={`rounded-2xl border transition-all p-5 shadow-2xs ${
+                ann.priority === "high"
+                  ? "border-amber-300 bg-gradient-to-r from-amber-50/60 to-white"
+                  : "border-gray-200 bg-white"
               }`}
             >
-              <div className="flex items-start gap-4">
-                <div
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
-                    item.type === "class"
-                      ? "bg-red-100 text-red-600"
-                      : item.type === "test"
-                      ? "bg-purple-100 text-purple-600"
-                      : item.type === "material"
-                      ? "bg-teal-100 text-teal-600"
-                      : "bg-blue-100 text-blue-600"
-                  }`}
-                >
-                  {item.type === "class" && <Radio className="w-5 h-5" />}
-                  {item.type === "test" && <FileCheck2 className="w-5 h-5" />}
-                  {item.type === "material" && <FileText className="w-5 h-5" />}
-                  {item.type === "announcement" && <AlertCircle className="w-5 h-5" />}
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      ann.priority === "high"
+                        ? "bg-amber-500 text-white shadow-xs"
+                        : "bg-blue-100 text-[#004B87]"
+                    }`}
+                  >
+                    <AlertCircle className="w-5 h-5" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold text-sm text-gray-900">{ann.title}</span>
+                      <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[10px] font-bold">
+                        {ann.category}
+                      </Badge>
+                      <span className="text-[11px] text-gray-400 font-medium">{ann.date}</span>
+                    </div>
+                    <p className="text-xs text-gray-600 leading-relaxed">{ann.message}</p>
+                  </div>
                 </div>
 
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
-                    <span className="text-[11px] text-gray-400">{item.timeAgo}</span>
-                  </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">{item.message}</p>
-                </div>
+                <button
+                  onClick={() => toggleRead(ann.id)}
+                  className="text-xs text-gray-400 hover:text-gray-700 shrink-0 font-medium"
+                >
+                  {readMap[ann.id] ? "Mark Unread" : "Mark Read"}
+                </button>
               </div>
             </Card>
           ))
         )}
+      </div>
+
+      {/* Auto-synced Academic Activity Reminders */}
+      <div className="space-y-4 pt-4">
+        <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#004B87]" />
+          <span>Live Academic Feed</span>
+        </h2>
+
+        <div className="space-y-3">
+          {liveClasses.slice(0, 2).map((lc) => (
+            <Card key={lc.id} className="rounded-2xl border-gray-200 bg-white p-4 shadow-2xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                  <Radio className="w-4 h-4 animate-pulse" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-xs text-gray-900">{lc.title}</span>
+                    <Badge className="bg-red-50 text-red-700 border-red-200 text-[9px] font-bold">
+                      {lc.status.toUpperCase()}
+                    </Badge>
+                  </div>
+                  <span className="text-[11px] text-gray-500">{lc.scheduledAt} • {lc.faculty}</span>
+                </div>
+              </div>
+              <Link href="/dashboard/live-classes">
+                <Button size="sm" className="h-8 text-xs font-bold bg-[#004B87] hover:bg-[#003866] text-white rounded-lg">
+                  Join
+                </Button>
+              </Link>
+            </Card>
+          ))}
+
+          {materials.slice(0, 2).map((mat) => (
+            <Card key={mat.id} className="rounded-2xl border-gray-200 bg-white p-4 shadow-2xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="font-bold text-xs text-gray-900 block truncate max-w-md">{mat.title}</span>
+                  <span className="text-[11px] text-gray-500">{mat.subject} • {mat.fileType} • {mat.dateUploaded}</span>
+                </div>
+              </div>
+              <Link href="/dashboard/materials">
+                <Button size="sm" variant="outline" className="h-8 text-xs font-bold text-[#004B87] rounded-lg">
+                  View
+                </Button>
+              </Link>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );

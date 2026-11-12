@@ -13,9 +13,11 @@ import {
   LogOut,
   Settings,
   Sparkles,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +34,7 @@ export function AdminHeader({
 }: {
   onMenuClick: () => void;
 }) {
-  const { user, logout } = useAuth();
+  const { user, role, logout } = useAuth();
   const router = useRouter();
 
   return (
@@ -52,8 +54,9 @@ export function AdminHeader({
             <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
             Control Center
           </span>
-          <span className="hidden sm:inline-block text-xs font-medium text-gray-500">
-            DeepSiddhi Academic Engine
+          <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Sync Active</span>
           </span>
         </div>
       </div>
@@ -105,7 +108,9 @@ export function AdminHeader({
           <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-xl border border-gray-100">
             <DropdownMenuLabel className="p-2">
               <p className="text-xs font-bold text-gray-900">{user?.full_name || "Academic Director"}</p>
-              <p className="text-[11px] text-amber-700 font-bold">Super Administrator</p>
+              <p className="text-[11px] text-amber-700 font-bold capitalize">
+                {user?.role === "super_admin" ? "Super Administrator" : "Academic Director"}
+              </p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -117,6 +122,16 @@ export function AdminHeader({
             <DropdownMenuItem asChild>
               <Link href="/admin/courses" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
                 Manage Courses
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/students" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
+                Students & Enrolments
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/enquiries" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
+                Student Inquiries & Leads
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>

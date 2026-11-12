@@ -31,16 +31,20 @@ import {
   KeyRound,
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/context/auth-context";
+import { ClassLevel } from "@/types/database";
 
 export function WelcomeRegistrationModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<"details" | "otp" | "success">("details");
+  const { register } = useAuth();
+
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
     email: "",
     course: "IIT-JEE",
-    classLevel: "Class 11",
+    classLevel: "Class 11" as ClassLevel,
     agreedToTerms: false,
   });
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -89,7 +93,7 @@ export function WelcomeRegistrationModal() {
     setTimeout(() => {
       setIsSubmitting(false);
       setStep("otp");
-    }, 800);
+    }, 700);
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -100,12 +104,12 @@ export function WelcomeRegistrationModal() {
 
     // Auto-focus next input
     if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
+      const nextInput = document.getElementById(`welcome-otp-${index + 1}`);
       nextInput?.focus();
     }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const enteredOtp = otp.join("");
     if (enteredOtp.length !== 6) {
@@ -114,12 +118,25 @@ export function WelcomeRegistrationModal() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    // Register student, which automatically syncs to LMSStore & Admin Panel
+    const res = await register({
+      fullName: formData.fullName.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      course: formData.course,
+      classLevel: formData.classLevel,
+    });
+
+    setIsSubmitting(false);
+
+    if (res.success) {
       setStep("success");
       localStorage.setItem("deepsiddhi_welcome_seen", "registered");
       localStorage.setItem("deepsiddhi_lead", JSON.stringify(formData));
-    }, 900);
+    } else {
+      setError(res.error || "Verification failed. Please try again.");
+    }
   };
 
   return (
@@ -160,57 +177,64 @@ export function WelcomeRegistrationModal() {
           {step === "details" && (
             <form onSubmit={handleDetailsSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="fullName" className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Student Full Name <span className="text-red-500">*</span>
+                <Label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  Student Full Name
                 </Label>
                 <div className="relative mt-1">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <Input
-                    id="fullName"
+                    required
                     placeholder="e.g. Aryan Sharma"
-                    className="pl-9 h-11 border-gray-200 focus:border-[#16A6A1] focus:ring-[#16A6A1]"
                     value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fullName: e.target.value })
+                    }
+                    className="pl-9 h-11 border-gray-200 focus:border-[#16A6A1]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="phone" className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Mobile Number <span className="text-red-500">*</span>
+                  <Label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Mobile Number
                   </Label>
                   <div className="relative mt-1">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-500">
                       +91
                     </span>
                     <Input
-                      id="phone"
                       type="tel"
                       maxLength={10}
+                      required
                       placeholder="98765 43210"
-                      className="pl-12 h-11 border-gray-200 focus:border-[#16A6A1] focus:ring-[#16A6A1]"
                       value={formData.phone}
                       onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })
+                        setFormData({
+                          ...formData,
+                          phone: e.target.value.replace(/\D/g, ""),
+                        })
                       }
+                      className="pl-12 h-11 border-gray-200 focus:border-[#16A6A1]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="email" className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Email Address <span className="text-red-500">*</span>
+                  <Label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Email Address
                   </Label>
                   <div className="relative mt-1">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
-                      id="email"
                       type="email"
+                      required
                       placeholder="aryan@gmail.com"
-                      className="pl-9 h-11 border-gray-200 focus:border-[#16A6A1] focus:ring-[#16A6A1]"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      className="pl-9 h-11 border-gray-200 focus:border-[#16A6A1]"
                     />
                   </div>
                 </div>
@@ -219,120 +243,116 @@ export function WelcomeRegistrationModal() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Select Target Course <span className="text-red-500">*</span>
+                    Target Course Track
                   </Label>
-                  <Select
-                    value={formData.course}
-                    onValueChange={(val) => setFormData({ ...formData, course: val })}
-                  >
-                    <SelectTrigger className="mt-1 h-11 border-gray-200">
-                      <SelectValue placeholder="Select Course" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="IIT-JEE">IIT-JEE (Main & Advanced)</SelectItem>
-                      <SelectItem value="Olympiad">Olympiad Preparation</SelectItem>
-                      <SelectItem value="NTSE">NTSE Examination</SelectItem>
-                      <SelectItem value="Foundation">Foundation (Classes 6-10)</SelectItem>
-                      <SelectItem value="Other Courses">Other Competitive Exams</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="mt-1">
+                    <Select
+                      value={formData.course}
+                      onValueChange={(val) =>
+                        setFormData({ ...formData, course: val })
+                      }
+                    >
+                      <SelectTrigger className="h-11 border-gray-200">
+                        <SelectValue placeholder="Select Course" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="IIT-JEE">IIT-JEE (Main & Advanced)</SelectItem>
+                        <SelectItem value="Olympiad">Physics & Math Olympiad</SelectItem>
+                        <SelectItem value="NTSE">NTSE & Foundation</SelectItem>
+                        <SelectItem value="Foundation">Class 6–10 Foundation</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div>
                   <Label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Current Class <span className="text-red-500">*</span>
+                    Current Class Level
                   </Label>
-                  <Select
-                    value={formData.classLevel}
-                    onValueChange={(val) => setFormData({ ...formData, classLevel: val })}
-                  >
-                    <SelectTrigger className="mt-1 h-11 border-gray-200">
-                      <SelectValue placeholder="Select Class" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Class 6">Class 6</SelectItem>
-                      <SelectItem value="Class 7">Class 7</SelectItem>
-                      <SelectItem value="Class 8">Class 8</SelectItem>
-                      <SelectItem value="Class 9">Class 9</SelectItem>
-                      <SelectItem value="Class 10">Class 10</SelectItem>
-                      <SelectItem value="Class 11">Class 11</SelectItem>
-                      <SelectItem value="Class 12">Class 12</SelectItem>
-                      <SelectItem value="Dropper">Dropper / Repeater</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="mt-1">
+                    <Select
+                      value={formData.classLevel}
+                      onValueChange={(val) =>
+                        setFormData({ ...formData, classLevel: val as ClassLevel })
+                      }
+                    >
+                      <SelectTrigger className="h-11 border-gray-200">
+                        <SelectValue placeholder="Select Class" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Class 8">Class 8</SelectItem>
+                        <SelectItem value="Class 9">Class 9</SelectItem>
+                        <SelectItem value="Class 10">Class 10</SelectItem>
+                        <SelectItem value="Class 11">Class 11</SelectItem>
+                        <SelectItem value="Class 12">Class 12</SelectItem>
+                        <SelectItem value="Dropper">Dropper Batch</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-start gap-2 pt-1">
                 <Checkbox
-                  id="terms"
+                  id="welcome-terms"
                   checked={formData.agreedToTerms}
                   onCheckedChange={(checked) =>
-                    setFormData({ ...formData, agreedToTerms: checked === true })
+                    setFormData({
+                      ...formData,
+                      agreedToTerms: checked === true,
+                    })
                   }
-                  className="mt-1 border-gray-300 data-[state=checked]:bg-[#16A6A1]"
+                  className="mt-0.5"
                 />
-                <Label htmlFor="terms" className="text-xs text-gray-600 font-normal leading-tight cursor-pointer">
-                  I agree to receive course updates & SMS OTP notifications. I consent to the{" "}
-                  <Link href="/privacy" className="text-[#16A6A1] underline">Privacy Policy</Link>.
-                </Label>
+                <label
+                  htmlFor="welcome-terms"
+                  className="text-xs text-gray-500 leading-snug cursor-pointer"
+                >
+                  I consent to receive important academic updates, admission guidance, and test schedule notifications via SMS/WhatsApp.
+                </label>
               </div>
 
               <div className="pt-2">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-11 bg-[#163B65] hover:bg-[#122e50] text-white font-medium text-sm rounded-xl shadow-md flex items-center justify-center gap-2 group"
+                  className="w-full h-11 bg-[#163B65] hover:bg-[#122e50] text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? (
-                    "Sending OTP..."
-                  ) : (
-                    <>
-                      Continue Learning
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </>
-                  )}
+                  <span>{isSubmitting ? "Generating OTP..." : "Get OTP & Start Free Demo"}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Button>
-              </div>
-
-              <div className="text-center text-xs text-gray-500 pt-2 border-t border-gray-100 flex items-center justify-between">
-                <span>Already have an account?</span>
-                <Link
-                  href="/login"
-                  onClick={handleClose}
-                  className="text-[#16A6A1] font-semibold hover:underline"
-                >
-                  Student Login
-                </Link>
               </div>
             </form>
           )}
 
           {step === "otp" && (
             <form onSubmit={handleVerifyOtp} className="space-y-5">
-              <div className="text-center py-2">
-                <div className="w-12 h-12 bg-[#EAF4FF] text-[#163B65] rounded-full flex items-center justify-center mx-auto mb-3">
+              <div className="text-center space-y-1">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-teal-50 text-[#16A6A1] mb-1">
                   <KeyRound className="w-6 h-6" />
                 </div>
-                <h4 className="text-base font-bold text-[#163B65]">Verify Mobile Number</h4>
-                <p className="text-xs text-gray-500 mt-1">
-                  We sent a 6-digit OTP code to <strong className="text-gray-800">+91 {formData.phone}</strong>
+                <h3 className="font-bold text-gray-900 text-base">
+                  Verify Mobile Number
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Enter the 6-digit verification code sent to{" "}
+                  <strong>+91 {formData.phone}</strong>
                 </p>
-                <div className="mt-2 inline-block bg-teal-50 border border-teal-200 px-3 py-1 rounded text-xs text-teal-800 font-mono">
-                  Demo OTP: <strong>123456</strong>
+                <div className="inline-block bg-teal-50 px-2.5 py-1 rounded text-[11px] text-teal-800 font-semibold mt-1">
+                  Demo Test OTP: <strong>123456</strong>
                 </div>
               </div>
 
               <div className="flex justify-center gap-2">
-                {otp.map((digit, idx) => (
+                {otp.map((digit, i) => (
                   <Input
-                    key={idx}
-                    id={`otp-${idx}`}
+                    key={i}
+                    id={`welcome-otp-${i}`}
                     type="text"
                     maxLength={1}
                     value={digit}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    className="w-11 h-12 text-center text-lg font-bold border-gray-300 focus:border-[#16A6A1] focus:ring-[#16A6A1]"
+                    onChange={(e) => handleOtpChange(i, e.target.value)}
+                    className="w-10 sm:w-12 h-12 text-center text-lg font-bold border-gray-300 focus:border-[#16A6A1] rounded-xl"
                   />
                 ))}
               </div>
@@ -340,18 +360,18 @@ export function WelcomeRegistrationModal() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-11 bg-[#16A6A1] hover:bg-[#138e8a] text-white font-medium text-sm rounded-xl shadow-md"
+                className="w-full h-11 bg-[#16A6A1] hover:bg-[#138e8a] text-white font-semibold rounded-xl shadow-md transition-all"
               >
-                {isSubmitting ? "Verifying..." : "Verify & Start Learning"}
+                {isSubmitting ? "Verifying..." : "Verify OTP & Complete"}
               </Button>
 
-              <div className="flex justify-between items-center text-xs text-gray-500">
+              <div className="flex justify-between items-center text-xs">
                 <button
                   type="button"
                   onClick={() => setStep("details")}
                   className="text-gray-500 hover:text-gray-800 underline"
                 >
-                  Change Number
+                  Change Details
                 </button>
                 <button
                   type="button"
@@ -374,7 +394,7 @@ export function WelcomeRegistrationModal() {
               <div>
                 <h3 className="text-xl font-bold text-[#163B65]">Registration Successful!</h3>
                 <p className="text-sm text-gray-600 mt-1 max-w-sm mx-auto">
-                  Welcome to DeepSiddhi Foundation, <strong>{formData.fullName}</strong>. Your personalized learning dashboard has been prepared.
+                  Welcome to DeepSiddhi Foundation, <strong>{formData.fullName}</strong>. Your profile has been created and synced with the Academic Director.
                 </p>
               </div>
 
@@ -388,8 +408,8 @@ export function WelcomeRegistrationModal() {
                   <span className="font-semibold text-gray-800">{formData.classLevel}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Account Status:</span>
-                  <span className="font-semibold text-emerald-600">Active (Student Portal)</span>
+                  <span className="text-gray-500">Admin Sync:</span>
+                  <span className="font-semibold text-emerald-600">✓ Enrolled in Admin Panel</span>
                 </div>
               </div>
 

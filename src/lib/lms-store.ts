@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export interface LMSCourse {
   id: string;
@@ -116,6 +116,19 @@ export interface LMSBatch {
   currentEnrolled: number;
   studentsCount?: number;
   status: "active" | "filling" | "completed";
+}
+
+export interface LMSEnquiry {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  course: string;
+  classLevel: string;
+  source: string;
+  createdAt: string;
+  status: "new" | "contacted" | "enrolled" | "closed";
+  notes?: string;
 }
 
 // Initial Default Data
@@ -463,6 +476,75 @@ const DEFAULT_ANNOUNCEMENTS: LMSAnnouncement[] = [
   },
 ];
 
+const DEFAULT_ENQUIRIES: LMSEnquiry[] = [
+  {
+    id: "ENQ-501",
+    name: "Vikram Malhotra",
+    phone: "+91 9899887766",
+    email: "vikram.parent@gmail.com",
+    course: "IIT-JEE",
+    classLevel: "Class 11",
+    source: "Website Welcome Popup",
+    createdAt: "Today, 11:20 AM",
+    status: "new",
+  },
+  {
+    id: "ENQ-502",
+    name: "Suresh Pillai",
+    phone: "+91 9811002233",
+    email: "suresh@yahoo.com",
+    course: "Olympiad",
+    classLevel: "Class 8",
+    source: "Contact Us Form",
+    createdAt: "Today, 10:15 AM",
+    status: "contacted",
+    notes: "Spoke to father. Interested in Physics Olympiad. Demo session booked for Thursday.",
+  },
+  {
+    id: "ENQ-503",
+    name: "Deepika Sen",
+    phone: "+91 9900112233",
+    email: "deepika@gmail.com",
+    course: "NTSE",
+    classLevel: "Class 10",
+    source: "Website Welcome Popup",
+    createdAt: "Yesterday",
+    status: "enrolled",
+    notes: "Payment confirmed. Enrolled in Vidyarthi Batch.",
+  },
+  {
+    id: "ENQ-504",
+    name: "Rahul Aggarwal",
+    phone: "+91 9711224466",
+    email: "rahul.a@outlook.com",
+    course: "IIT-JEE",
+    classLevel: "Class 12",
+    source: "Contact Us Form",
+    createdAt: "2 days ago",
+    status: "closed",
+    notes: "Looking for offline center in Jaipur only.",
+  },
+];
+
+const BROADCAST_CHANNEL_NAME = "deepsiddhi_lms_sync";
+
+function triggerSyncBroadcast(key: string): void {
+  if (typeof window === "undefined") return;
+  // Dispatch local window event for immediate in-tab listeners
+  window.dispatchEvent(new CustomEvent("lms_store_updated", { detail: { key, time: Date.now() } }));
+
+  // Cross-tab broadcast via BroadcastChannel API
+  try {
+    if ("BroadcastChannel" in window) {
+      const channel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+      channel.postMessage({ type: "SYNC_EVENT", key, timestamp: Date.now() });
+      channel.close();
+    }
+  } catch {
+    // Fallback handled by storage event
+  }
+}
+
 function getStored<T>(key: string, defaultVal: T): T {
   if (typeof window === "undefined") return defaultVal;
   try {
@@ -478,7 +560,7 @@ function setStored<T>(key: string, val: T): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(key, JSON.stringify(val));
-    window.dispatchEvent(new Event("lms_store_updated"));
+    triggerSyncBroadcast(key);
   } catch (e) {
     console.error("LMS Store save error:", e);
   }
@@ -491,6 +573,12 @@ export const LMSStore = {
   addCourse: (course: LMSCourse) => {
     const current = LMSStore.getCourses();
     LMSStore.saveCourses([course, ...current]);
+  },
+  updateCourse: (id: string, updated: Partial<LMSCourse>) => {
+    const current = LMSStore.getCourses();
+    LMSStore.saveCourses(
+      current.map((c) => (c.id === id ? { ...c, ...updated } : c))
+    );
   },
   deleteCourse: (id: string) => {
     const current = LMSStore.getCourses();
@@ -520,7 +608,27 @@ export const LMSStore = {
   saveStudents: (students: LMSStudent[]) => setStored("lms_students", students),
   addStudent: (student: LMSStudent) => {
     const current = LMSStore.getStudents();
-    LMSStore.saveStudents([student, ...current]);
+    // Prevent duplicate emails; update existing if matched
+    const existingIndex = current.findIndex(
+      (s) => s.email.toLowerCase() === student.email.toLowerCase()
+    );
+    if (existingIndex >= 0) {
+      const updated = [...current];
+      updated[existingIndex] = { ...updated[existingIndex], ...student };
+      LMSStore.saveStudents(updated);
+    } else {
+      LMSStore.saveStudents([student, ...current]);
+    }
+  },
+  updateStudent: (idOrEmail: string, updated: Partial<LMSStudent>) => {
+    const current = LMSStore.getStudents();
+    LMSStore.saveStudents(
+      current.map((s) =>
+        s.id === idOrEmail || s.email.toLowerCase() === idOrEmail.toLowerCase()
+          ? { ...s, ...updated }
+          : s
+      )
+    );
   },
   deleteStudent: (id: string) => {
     const current = LMSStore.getStudents();
@@ -530,7 +638,7 @@ export const LMSStore = {
     const current = LMSStore.getStudents();
     LMSStore.saveStudents(
       current.map((s) => {
-        if (s.id === studentId) {
+        if (s.id === studentId || s.email === studentId) {
           const already = s.enrolledCourses.includes(courseTitle);
           const updatedCourses = already ? s.enrolledCourses : [...s.enrolledCourses, courseTitle];
           return {
@@ -541,6 +649,14 @@ export const LMSStore = {
         }
         return s;
       })
+    );
+
+    // Also increment enrollment counter on the course
+    const courses = LMSStore.getCourses();
+    LMSStore.saveCourses(
+      courses.map((c) =>
+        c.title === courseTitle ? { ...c, enrolledCount: (c.enrolledCount || 0) + 1 } : c
+      )
     );
   },
   toggleStudentStatus: (studentId: string) => {
@@ -567,8 +683,10 @@ export const LMSStore = {
   },
 
   // Recorded Classes
-  getRecordedClasses: (): LMSRecordedClass[] => getStored("lms_recorded_classes", DEFAULT_RECORDED_CLASSES),
-  saveRecordedClasses: (classes: LMSRecordedClass[]) => setStored("lms_recorded_classes", classes),
+  getRecordedClasses: (): LMSRecordedClass[] =>
+    getStored("lms_recorded_classes", DEFAULT_RECORDED_CLASSES),
+  saveRecordedClasses: (classes: LMSRecordedClass[]) =>
+    setStored("lms_recorded_classes", classes),
   addRecordedClass: (cls: LMSRecordedClass) => {
     const current = LMSStore.getRecordedClasses();
     LMSStore.saveRecordedClasses([cls, ...current]);
@@ -584,6 +702,12 @@ export const LMSStore = {
   addLiveClass: (cls: LMSLiveClass) => {
     const current = LMSStore.getLiveClasses();
     LMSStore.saveLiveClasses([cls, ...current]);
+  },
+  updateLiveClass: (id: string, updated: Partial<LMSLiveClass>) => {
+    const current = LMSStore.getLiveClasses();
+    LMSStore.saveLiveClasses(
+      current.map((l) => (l.id === id ? { ...l, ...updated } : l))
+    );
   },
   deleteLiveClass: (id: string) => {
     const current = LMSStore.getLiveClasses();
@@ -613,8 +737,10 @@ export const LMSStore = {
   },
 
   // Announcements
-  getAnnouncements: (): LMSAnnouncement[] => getStored("lms_announcements", DEFAULT_ANNOUNCEMENTS),
-  saveAnnouncements: (anns: LMSAnnouncement[]) => setStored("lms_announcements", anns),
+  getAnnouncements: (): LMSAnnouncement[] =>
+    getStored("lms_announcements", DEFAULT_ANNOUNCEMENTS),
+  saveAnnouncements: (anns: LMSAnnouncement[]) =>
+    setStored("lms_announcements", anns),
   addAnnouncement: (ann: LMSAnnouncement) => {
     const current = LMSStore.getAnnouncements();
     LMSStore.saveAnnouncements([ann, ...current]);
@@ -622,6 +748,26 @@ export const LMSStore = {
   deleteAnnouncement: (id: string) => {
     const current = LMSStore.getAnnouncements();
     LMSStore.saveAnnouncements(current.filter((a) => a.id !== id));
+  },
+
+  // Enquiries & Leads
+  getEnquiries: (): LMSEnquiry[] => getStored("lms_enquiries", DEFAULT_ENQUIRIES),
+  saveEnquiries: (enquiries: LMSEnquiry[]) => setStored("lms_enquiries", enquiries),
+  addEnquiry: (enquiry: LMSEnquiry) => {
+    const current = LMSStore.getEnquiries();
+    LMSStore.saveEnquiries([enquiry, ...current]);
+  },
+  updateEnquiryStatus: (id: string, status: LMSEnquiry["status"], notes?: string) => {
+    const current = LMSStore.getEnquiries();
+    LMSStore.saveEnquiries(
+      current.map((e) =>
+        e.id === id ? { ...e, status, ...(notes !== undefined ? { notes } : {}) } : e
+      )
+    );
+  },
+  deleteEnquiry: (id: string) => {
+    const current = LMSStore.getEnquiries();
+    LMSStore.saveEnquiries(current.filter((e) => e.id !== id));
   },
 
   // Reset Everything to Default Sample Data
@@ -635,7 +781,8 @@ export const LMSStore = {
     localStorage.removeItem("lms_live_classes");
     localStorage.removeItem("lms_tests");
     localStorage.removeItem("lms_announcements");
-    window.dispatchEvent(new Event("lms_store_updated"));
+    localStorage.removeItem("lms_enquiries");
+    triggerSyncBroadcast("all");
   },
 };
 
@@ -648,8 +795,10 @@ export function useLMSData() {
   const [liveClasses, setLiveClasses] = useState<LMSLiveClass[]>([]);
   const [tests, setTests] = useState<LMSTest[]>([]);
   const [announcements, setAnnouncements] = useState<LMSAnnouncement[]>([]);
+  const [enquiries, setEnquiries] = useState<LMSEnquiry[]>([]);
+  const [lastSyncedAt, setLastSyncedAt] = useState<number>(Date.now());
 
-  const refreshAll = () => {
+  const refreshAll = useCallback(() => {
     setCourses(LMSStore.getCourses());
     setBatches(LMSStore.getBatches());
     setStudents(LMSStore.getStudents());
@@ -658,14 +807,44 @@ export function useLMSData() {
     setLiveClasses(LMSStore.getLiveClasses());
     setTests(LMSStore.getTests());
     setAnnouncements(LMSStore.getAnnouncements());
-  };
+    setEnquiries(LMSStore.getEnquiries());
+    setLastSyncedAt(Date.now());
+  }, []);
 
   useEffect(() => {
     refreshAll();
+
+    // In-window event listener
     const handleUpdate = () => refreshAll();
     window.addEventListener("lms_store_updated", handleUpdate);
-    return () => window.removeEventListener("lms_store_updated", handleUpdate);
-  }, []);
+
+    // Cross-tab storage listener
+    const handleStorage = (e: StorageEvent) => {
+      if (!e.key || e.key.startsWith("lms_") || e.key.startsWith("deepsiddhi_")) {
+        refreshAll();
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+
+    // Cross-tab BroadcastChannel listener
+    let channel: BroadcastChannel | null = null;
+    try {
+      if (typeof window !== "undefined" && "BroadcastChannel" in window) {
+        channel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+        channel.onmessage = () => {
+          refreshAll();
+        };
+      }
+    } catch {
+      // Channel fallback
+    }
+
+    return () => {
+      window.removeEventListener("lms_store_updated", handleUpdate);
+      window.removeEventListener("storage", handleStorage);
+      channel?.close();
+    };
+  }, [refreshAll]);
 
   return {
     courses,
@@ -676,6 +855,9 @@ export function useLMSData() {
     liveClasses,
     tests,
     announcements,
+    enquiries,
+    lastSyncedAt,
+    isLiveSynced: true,
     store: LMSStore,
     refreshAll,
   };

@@ -64,7 +64,6 @@ export function StudentSidebar({
 
   const handleAdminClick = () => {
     setMobileOpen?.(false);
-    loginWithDemo("admin");
     router.push("/admin");
   };
 

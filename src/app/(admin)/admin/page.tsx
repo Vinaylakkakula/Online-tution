@@ -518,6 +518,144 @@ export default function AdminOverviewPage() {
               </ResponsiveContainer>
             </div>
           </Card>
+
+          {/* Real-time Inbound Feed: Students & Admissions Leads */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Column 1: Recent Student Registrations */}
+            <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-5 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#004B87] flex items-center justify-center">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-gray-900 leading-none">
+                      Recent Student Registrations
+                    </h3>
+                    <p className="text-[11px] text-gray-400 mt-0.5">
+                      Live sync from website & registration portal ({students.length} total)
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/admin/students"
+                  className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
+                >
+                  <span>Manage All</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              <div className="space-y-2.5">
+                {students.slice(0, 5).map((s) => (
+                  <div
+                    key={s.id}
+                    className="p-3 rounded-xl bg-gray-50/80 hover:bg-blue-50/40 border border-gray-100 transition-colors flex items-center justify-between gap-3 text-xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#004B87] text-white font-bold text-xs flex items-center justify-center shrink-0">
+                        {s.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-900 flex items-center gap-1.5">
+                          <span>{s.name}</span>
+                          <span className="text-[10px] font-mono text-gray-400">({s.id})</span>
+                        </div>
+                        <div className="text-[11px] text-gray-500">
+                          {s.email} • {s.phone}
+                        </div>
+                        <div className="text-[10px] text-teal-700 font-medium">
+                          {s.enrolledCourses[0] || "No course assigned"}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <Badge
+                        className={`text-[10px] font-bold ${
+                          s.status === "Active"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-amber-100 text-amber-800"
+                        }`}
+                      >
+                        {s.status}
+                      </Badge>
+                      <span className="block text-[10px] text-gray-400 mt-1">
+                        {s.joinedDate}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Column 2: Recent Admissions Inquiries */}
+            <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-5 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-gray-900 leading-none">
+                      Admissions Leads & Queries
+                    </h3>
+                    <p className="text-[11px] text-gray-400 mt-0.5">
+                      Submitted via Contact Form & Welcome Popups
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/admin/enquiries"
+                  className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
+                >
+                  <span>View All Leads</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              <div className="space-y-2.5">
+                {store.getEnquiries().slice(0, 5).map((enq) => (
+                  <div
+                    key={enq.id}
+                    className="p-3 rounded-xl bg-gray-50/80 hover:bg-emerald-50/30 border border-gray-100 transition-colors flex items-center justify-between gap-3 text-xs"
+                  >
+                    <div>
+                      <div className="font-bold text-gray-900 flex items-center gap-1.5">
+                        <span>{enq.name}</span>
+                        <span className="text-[10px] font-mono text-gray-400">({enq.id})</span>
+                      </div>
+                      <div className="text-[11px] text-gray-500">
+                        {enq.phone} • {enq.email}
+                      </div>
+                      <div className="text-[10px] text-gray-600 italic">
+                        {enq.course} • {enq.source}
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <Badge
+                        className={`text-[10px] font-bold capitalize ${
+                          enq.status === "new"
+                            ? "bg-amber-100 text-amber-800"
+                            : enq.status === "enrolled"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}
+                      >
+                        {enq.status}
+                      </Badge>
+                      <span className="block text-[10px] text-gray-400 mt-1">
+                        {enq.createdAt}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* =========================================================================
@@ -897,6 +1035,81 @@ export default function AdminOverviewPage() {
               </Card>
             ))}
           </div>
+
+          {/* Active Student Roster */}
+          <Card className="rounded-2xl border-gray-200/90 shadow-2xs bg-white p-5 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div>
+                <h3 className="text-base font-black text-gray-900">Enrolled Students ({students.length})</h3>
+                <p className="text-xs text-gray-400">Live roster of students registered via student portal & welcome popup.</p>
+              </div>
+
+              <Link href="/admin/students">
+                <Button size="sm" variant="outline" className="text-xs font-bold text-[#004B87] rounded-xl">
+                  Full Student Console →
+                </Button>
+              </Link>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50 text-gray-500 uppercase tracking-wider font-bold border-b border-gray-100">
+                  <tr>
+                    <th className="py-2.5 px-3">Student</th>
+                    <th className="py-2.5 px-3">Contact</th>
+                    <th className="py-2.5 px-3">Enrolled Course</th>
+                    <th className="py-2.5 px-3">Batch</th>
+                    <th className="py-2.5 px-3">Class</th>
+                    <th className="py-2.5 px-3">Status</th>
+                    <th className="py-2.5 px-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {students.map((st) => (
+                    <tr key={st.id} className="hover:bg-gray-50/50">
+                      <td className="py-2.5 px-3">
+                        <span className="font-bold text-gray-900 block">{st.name}</span>
+                        <span className="text-[10px] text-gray-400 font-mono">{st.id}</span>
+                      </td>
+                      <td className="py-2.5 px-3 text-gray-600">
+                        <span className="block font-medium">{st.phone}</span>
+                        <span className="text-[10px] text-gray-400">{st.email}</span>
+                      </td>
+                      <td className="py-2.5 px-3 font-semibold text-gray-800">
+                        {st.enrolledCourses[0] || "—"}
+                      </td>
+                      <td className="py-2.5 px-3 text-gray-600">{st.batchName}</td>
+                      <td className="py-2.5 px-3 text-gray-500">{st.classLevel}</td>
+                      <td className="py-2.5 px-3">
+                        <Badge
+                          className={`text-[10px] font-bold ${
+                            st.status === "Active"
+                              ? "bg-emerald-100 text-emerald-800"
+                              : "bg-amber-100 text-amber-800"
+                          }`}
+                        >
+                          {st.status}
+                        </Badge>
+                      </td>
+                      <td className="py-2.5 px-3 text-right">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            store.toggleStudentStatus(st.id);
+                            showSuccess(`Status toggled for student "${st.name}".`);
+                          }}
+                          className="text-[11px] h-7 px-2 font-bold text-gray-600 hover:text-gray-900"
+                        >
+                          Toggle Status
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         </TabsContent>
       </Tabs>
 

@@ -38,7 +38,34 @@ export default function StudentDashboardPage() {
   const activeLiveClass = liveClasses.find((l) => l.status === "live") || liveClasses[0];
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="space-y-6 pb-10">
+      {/* Welcome & Sync Bar */}
+      <div className="bg-gradient-to-r from-[#004B87] via-[#104375] to-[#16A6A1] text-white p-5 sm:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-[11px] font-bold backdrop-blur-xs">
+              {user?.class_level || "Class 11"}
+            </span>
+            <span className="text-cyan-200 text-xs font-semibold">
+              • Academic Session 2026-27
+            </span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight">
+            Welcome back, {studentName}!
+          </h1>
+          <p className="text-xs text-white/80 max-w-xl">
+            Your personalized learning track is active. All course updates and live classes are synced with the Academic Director.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-white">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Admin Sync: Connected</span>
+          </div>
+        </div>
+      </div>
+
       {/* Top Language Filter Bar (Matches Oliveboard Screenshot 4) */}
       <div className="flex items-center gap-2">
         <button

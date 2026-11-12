@@ -2,8 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   Menu,
@@ -12,6 +22,10 @@ import {
   ChevronDown,
   ShieldCheck,
   User,
+  LogOut,
+  LayoutDashboard,
+  BookOpen,
+  Settings,
 } from "lucide-react";
 
 const navLinks = [
@@ -35,6 +49,8 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, role, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +64,11 @@ export function Navbar() {
     setIsMobileMenuOpen(false);
     setOpenDropdown(null);
   }, [pathname]);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
   return (
     <header
@@ -121,36 +142,130 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Desktop CTAs: Student Portal, Admin Panel, Login */}
+          {/* Desktop CTAs: User State Aware */}
           <div className="hidden lg:flex items-center gap-2.5">
-            <Link href="/admin">
-              <Button
-                size="sm"
-                className="h-9 px-3.5 bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-xs rounded-xl shadow-sm gap-1.5 border border-amber-400"
-              >
-                <ShieldCheck className="w-4 h-4 text-gray-950" />
-                <span>Admin Panel</span>
-              </Button>
-            </Link>
+            {isAuthenticated && user ? (
+              <>
+                {/* Admin Quick Jump if Admin */}
+                {(role === "admin" || role === "super_admin") && (
+                  <Link href="/admin">
+                    <Button
+                      size="sm"
+                      className="h-9 px-3.5 bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-xs rounded-xl shadow-sm gap-1.5 border border-amber-400"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-gray-950" />
+                      <span>Admin Console</span>
+                    </Button>
+                  </Link>
+                )}
 
-            <Link href="/dashboard">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 px-3.5 text-[#004B87] border-[#004B87]/30 hover:bg-[#EAF4FF] text-xs font-bold rounded-xl"
-              >
-                Student Portal
-              </Button>
-            </Link>
+                {/* Student Portal Jump */}
+                <Link href="/dashboard">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 px-3.5 text-[#004B87] border-[#004B87]/30 hover:bg-[#EAF4FF] text-xs font-bold rounded-xl"
+                  >
+                    Student Portal
+                  </Button>
+                </Link>
 
-            <Link href="/login">
-              <Button
-                size="sm"
-                className="h-9 px-4 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-bold rounded-xl shadow-sm"
-              >
-                Sign In
-              </Button>
-            </Link>
+                {/* Authenticated User Menu Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 pl-2 pr-3 py-1 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
+                      <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#004B87] to-[#16A6A1] text-white text-xs font-bold flex items-center justify-center">
+                        {user.full_name?.charAt(0) || "U"}
+                      </div>
+                      <div className="text-left leading-none hidden xl:block">
+                        <span className="text-xs font-bold text-gray-900 block truncate max-w-[110px]">
+                          {user.full_name}
+                        </span>
+                        <span className="text-[10px] text-gray-500 capitalize">
+                          {user.role}
+                        </span>
+                      </div>
+                      <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-xl shadow-xl border border-gray-100">
+                    <DropdownMenuLabel className="p-2">
+                      <div className="font-bold text-xs text-gray-900">{user.full_name}</div>
+                      <div className="text-[11px] text-gray-500 truncate">{user.email}</div>
+                      <Badge className="mt-1 bg-blue-50 text-[#004B87] border border-blue-200 text-[10px] font-bold">
+                        {user.role.toUpperCase()}
+                      </Badge>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg">
+                        <LayoutDashboard className="w-4 h-4 text-[#004B87]" />
+                        <span>Student Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/my-courses" className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg">
+                        <BookOpen className="w-4 h-4 text-emerald-600" />
+                        <span>My Enrolled Courses</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/profile" className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg">
+                        <User className="w-4 h-4 text-gray-600" />
+                        <span>Profile & Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    {(role === "admin" || role === "super_admin") && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" className="flex items-center gap-2 text-xs font-bold text-amber-900 bg-amber-50 cursor-pointer p-2 rounded-lg">
+                          <ShieldCheck className="w-4 h-4 text-amber-600" />
+                          <span>Admin Control Center</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 text-xs font-bold text-red-600 cursor-pointer p-2 rounded-lg hover:bg-red-50"
+                    >
+                      <LogOut className="w-4 h-4 text-red-600" />
+                      <span>Sign Out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Link href="/admin">
+                  <Button
+                    size="sm"
+                    className="h-9 px-3.5 bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-xs rounded-xl shadow-sm gap-1.5 border border-amber-400"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-gray-950" />
+                    <span>Admin Panel</span>
+                  </Button>
+                </Link>
+
+                <Link href="/login">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 px-3.5 text-[#004B87] border-[#004B87]/30 hover:bg-[#EAF4FF] text-xs font-bold rounded-xl"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+
+                <Link href="/register">
+                  <Button
+                    size="sm"
+                    className="h-9 px-4 bg-[#004B87] hover:bg-[#003866] text-white text-xs font-bold rounded-xl shadow-sm"
+                  >
+                    Register Free
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -170,6 +285,29 @@ export function Navbar() {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden bg-white border-t border-gray-100 py-4 space-y-2 animate-slide-down">
+            {/* Authenticated user banner on mobile */}
+            {isAuthenticated && user && (
+              <div className="mx-4 p-3 rounded-xl bg-blue-50/70 border border-blue-100 flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#004B87] text-white font-bold text-xs flex items-center justify-center">
+                    {user.full_name?.charAt(0) || "U"}
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-gray-900 block">{user.full_name}</span>
+                    <span className="text-[10px] text-gray-500 capitalize">{user.role}</span>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="h-8 text-xs text-red-600 hover:bg-red-50 p-1"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+
             {navLinks.map((link) => (
               <div key={link.href}>
                 <Link
@@ -212,11 +350,20 @@ export function Navbar() {
                     Student Portal
                   </Button>
                 </Link>
-                <Link href="/login">
-                  <Button className="w-full bg-[#004B87] text-white text-xs font-bold h-10 rounded-xl">
-                    Sign In
+                {isAuthenticated ? (
+                  <Button
+                    onClick={handleLogout}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold h-10 rounded-xl"
+                  >
+                    Sign Out
                   </Button>
-                </Link>
+                ) : (
+                  <Link href="/login">
+                    <Button className="w-full bg-[#004B87] text-white text-xs font-bold h-10 rounded-xl">
+                      Sign In
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

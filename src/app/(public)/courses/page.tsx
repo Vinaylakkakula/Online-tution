@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { useLMSData } from "@/lib/lms-store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,172 +24,74 @@ import {
   GraduationCap,
   ChevronRight,
   Filter,
+  Sparkles,
 } from "lucide-react";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Courses",
-  description: "Explore our comprehensive courses for IIT-JEE, Olympiad, NTSE, and Foundation preparation.",
-};
-
-const allCourses = [
-  {
-    id: "1",
-    title: "IIT-JEE Complete Course",
-    description: "Comprehensive preparation covering Physics, Chemistry, and Mathematics for JEE Main & Advanced with 240+ video lessons.",
-    category: "IIT-JEE",
-    targetClass: "Class 11-12",
-    faculty: "Dr. Rahul Sharma",
-    lessons: 240,
-    duration: "12 months",
-    price: 49999,
-    discountedPrice: 34999,
-    rating: 4.9,
-    students: 12500,
-    color: "from-blue-500 to-indigo-600",
-  },
-  {
-    id: "2",
-    title: "JEE Crash Course",
-    description: "Intensive revision program for JEE Main & Advanced focusing on high-yield topics and problem-solving strategies.",
-    category: "IIT-JEE",
-    targetClass: "Class 12, Dropper",
-    faculty: "Dr. Rahul Sharma",
-    lessons: 80,
-    duration: "3 months",
-    price: 19999,
-    discountedPrice: 14999,
-    rating: 4.8,
-    students: 8200,
-    color: "from-blue-600 to-blue-800",
-  },
-  {
-    id: "3",
-    title: "Olympiad Mastery Program",
-    description: "Advanced problem-solving techniques for National & International Science and Math Olympiads.",
-    category: "Olympiad",
-    targetClass: "Class 8-12",
-    faculty: "Prof. Anita Desai",
-    lessons: 120,
-    duration: "6 months",
-    price: 29999,
-    discountedPrice: 19999,
-    rating: 4.9,
-    students: 5600,
-    color: "from-emerald-500 to-teal-600",
-  },
-  {
-    id: "4",
-    title: "Math Olympiad Foundation",
-    description: "Build strong mathematical reasoning and problem-solving skills for competitive math olympiads.",
-    category: "Olympiad",
-    targetClass: "Class 6-10",
-    faculty: "Prof. Anita Desai",
-    lessons: 60,
-    duration: "4 months",
-    price: 12999,
-    discountedPrice: 8999,
-    rating: 4.7,
-    students: 3400,
-    color: "from-teal-500 to-emerald-600",
-  },
-  {
-    id: "5",
-    title: "NTSE Preparation Course",
-    description: "Structured preparation for NTSE with mock tests, comprehensive study material, and expert guidance.",
-    category: "NTSE",
-    targetClass: "Class 10",
-    faculty: "Mr. Vikram Patel",
-    lessons: 80,
-    duration: "4 months",
-    price: 14999,
-    discountedPrice: 9999,
-    rating: 4.8,
-    students: 7800,
-    color: "from-amber-500 to-orange-600",
-  },
-  {
-    id: "6",
-    title: "Foundation Mathematics",
-    description: "Build a strong mathematical foundation with conceptual clarity and advanced problem-solving skills.",
-    category: "Foundation",
-    targetClass: "Class 6-10",
-    faculty: "Dr. Priya Mehta",
-    lessons: 160,
-    duration: "8 months",
-    price: 19999,
-    discountedPrice: 14999,
-    rating: 4.8,
-    students: 9200,
-    color: "from-violet-500 to-purple-600",
-  },
-  {
-    id: "7",
-    title: "Foundation Science",
-    description: "Comprehensive science program covering Physics, Chemistry, and Biology with hands-on experiments.",
-    category: "Foundation",
-    targetClass: "Class 6-10",
-    faculty: "Dr. Priya Mehta",
-    lessons: 140,
-    duration: "8 months",
-    price: 17999,
-    discountedPrice: 12999,
-    rating: 4.7,
-    students: 6500,
-    color: "from-purple-500 to-pink-600",
-  },
-  {
-    id: "8",
-    title: "KVPY Preparation",
-    description: "Targeted preparation for Kishore Vaigyanik Protsahan Yojana with mock tests and study material.",
-    category: "Other Courses",
-    targetClass: "Class 11-12",
-    faculty: "Dr. Rahul Sharma",
-    lessons: 60,
-    duration: "3 months",
-    price: 12999,
-    discountedPrice: 8999,
-    rating: 4.6,
-    students: 2800,
-    color: "from-rose-500 to-red-600",
-  },
-];
 
 export default function CoursesPage() {
+  const { courses } = useLMSData();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [classFilter, setClassFilter] = useState("all");
+
+  const publishedCourses = courses.filter((c) => c.isPublished);
+
+  const filteredCourses = publishedCourses.filter((course) => {
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.faculty.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.category.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      categoryFilter === "all" || course.category === categoryFilter;
+
+    const matchesClass =
+      classFilter === "all" ||
+      (course.targetClass && course.targetClass.toLowerCase().includes(classFilter.toLowerCase()));
+
+    return matchesSearch && matchesCategory && matchesClass;
+  });
+
   return (
     <div>
       {/* Page Header */}
-      <section className="pt-28 pb-12 bg-gradient-to-br from-[#163B65] to-[#1a4a7a] relative overflow-hidden">
+      <section className="pt-28 pb-12 bg-gradient-to-br from-[#163B65] via-[#104375] to-[#16A6A1] relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-10 right-20 w-64 h-64 bg-[#16A6A1]/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-20 w-48 h-48 bg-[#16A6A1]/5 rounded-full blur-3xl" />
+          <div className="absolute top-10 right-20 w-64 h-64 bg-[#16A6A1]/15 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 left-20 w-48 h-48 bg-[#16A6A1]/10 rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <Badge className="bg-white/10 text-white border-0 mb-4">
-              <BookOpen className="w-3.5 h-3.5 mr-1" /> Course Catalog
-            </Badge>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white">
-              Explore Our Courses
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold backdrop-blur-md mb-4 border border-white/15">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>Real-Time Academic Catalog</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+              Explore Our Academic Programs
             </h1>
-            <p className="mt-3 text-white/60 max-w-xl mx-auto">
-              Choose from our wide range of expertly designed courses for competitive exam preparation.
+            <p className="mt-3 text-white/80 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+              Live interactive and structured foundational courses for IIT-JEE, Olympiads, and NTSE. All curriculums are synchronized live with the Academic Control Center.
             </p>
           </div>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="py-6 bg-white border-b border-gray-100 sticky top-16 lg:top-20 z-30 backdrop-blur-sm bg-white/95">
+      <section className="py-6 bg-white border-b border-gray-100 sticky top-16 lg:top-20 z-30 backdrop-blur-sm bg-white/95 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="relative flex-1 w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input placeholder="Search courses..." className="pl-10" />
+              <Input
+                placeholder="Search courses, instructors, subjects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 border-gray-200 focus:border-[#004B87] rounded-xl text-xs"
+              />
             </div>
             <div className="flex items-center gap-3 w-full sm:w-auto">
-              <Select>
-                <SelectTrigger className="w-full sm:w-[160px]">
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full sm:w-[160px] h-10 text-xs rounded-xl border-gray-200">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -194,19 +100,18 @@ export default function CoursesPage() {
                   <SelectItem value="Olympiad">Olympiad</SelectItem>
                   <SelectItem value="NTSE">NTSE</SelectItem>
                   <SelectItem value="Foundation">Foundation</SelectItem>
-                  <SelectItem value="Other">Other Courses</SelectItem>
                 </SelectContent>
               </Select>
-              <Select>
-                <SelectTrigger className="w-full sm:w-[160px]">
+
+              <Select value={classFilter} onValueChange={setClassFilter}>
+                <SelectTrigger className="w-full sm:w-[160px] h-10 text-xs rounded-xl border-gray-200">
                   <SelectValue placeholder="Class" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Classes</SelectItem>
-                  <SelectItem value="6-8">Class 6-8</SelectItem>
-                  <SelectItem value="9-10">Class 9-10</SelectItem>
-                  <SelectItem value="11-12">Class 11-12</SelectItem>
-                  <SelectItem value="dropper">Dropper</SelectItem>
+                  <SelectItem value="6">Class 6–8</SelectItem>
+                  <SelectItem value="9">Class 9–10</SelectItem>
+                  <SelectItem value="11">Class 11–12</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -215,83 +120,125 @@ export default function CoursesPage() {
       </section>
 
       {/* Courses Grid */}
-      <section className="py-12 bg-[#F6F8FC]">
+      <section className="py-12 bg-[#F6F8FC] min-h-[500px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
-            <p className="text-sm text-gray-500">
-              Showing <span className="font-semibold text-[#243247]">{allCourses.length}</span> courses
+            <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">
+              Showing <span className="font-black text-[#004B87]">{filteredCourses.length}</span> Active Programs
             </p>
+            <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Live Admin Sync Active</span>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allCourses.map((course) => (
-              <Card key={course.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm bg-white">
-                {/* Course Header */}
-                <div className={`h-44 bg-gradient-to-br ${course.color} relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-black/10" />
-                  <div className="absolute top-3 left-3">
-                    <Badge className="bg-white/20 text-white backdrop-blur-sm border-0 text-xs">
-                      {course.category}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2 py-1">
-                    <Star className="w-3 h-3 fill-yellow-300 text-yellow-300" />
-                    <span className="text-xs text-white font-medium">{course.rating}</span>
-                  </div>
-                  <div className="absolute bottom-3 right-3 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Play className="w-5 h-5 text-white fill-white" />
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <GraduationCap className="w-20 h-20 text-white/15" />
-                  </div>
-                </div>
+          {filteredCourses.length === 0 ? (
+            <div className="p-12 text-center bg-white rounded-3xl border border-gray-200 shadow-sm space-y-3">
+              <BookOpen className="w-12 h-12 text-gray-300 mx-auto" />
+              <h3 className="text-base font-bold text-gray-800">No courses match your filter</h3>
+              <p className="text-xs text-gray-500">Try adjusting your category search or clear filters.</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCategoryFilter("all");
+                  setClassFilter("all");
+                }}
+                className="text-xs rounded-xl"
+              >
+                Reset Filters
+              </Button>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredCourses.map((course, idx) => (
+                <Card
+                  key={course.id}
+                  className="group overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200/80 shadow-xs bg-white rounded-3xl flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Course Header Banner */}
+                    <div
+                      className={`h-44 bg-gradient-to-br ${
+                        course.color ||
+                        (idx % 2 === 0
+                          ? "from-[#0C335C] via-[#104375] to-[#0A2A4D]"
+                          : "from-[#4E146E] via-[#6B1F96] to-[#3B0E54]")
+                      } relative overflow-hidden p-4 text-white flex flex-col justify-between`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <Badge className="bg-white/20 text-white backdrop-blur-md border-0 text-[10px] font-bold">
+                          {course.category}
+                        </Badge>
+                        <div className="flex items-center gap-1 bg-white/20 backdrop-blur-md rounded-full px-2.5 py-0.5 text-xs font-bold">
+                          <Star className="w-3 h-3 fill-amber-300 text-amber-300" />
+                          <span>4.9</span>
+                        </div>
+                      </div>
 
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="accent" className="text-[10px]">{course.targetClass}</Badge>
-                  </div>
-                  
-                  <h3 className="font-semibold text-[#243247] text-lg group-hover:text-[#163B65] transition-colors">
-                    {course.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1.5 line-clamp-2">{course.description}</p>
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+                        <GraduationCap className="w-32 h-32" />
+                      </div>
 
-                  <div className="mt-4 flex items-center gap-2 text-sm text-gray-400">
-                    <Users className="w-4 h-4 text-[#16A6A1]" />
-                    <span>{course.faculty}</span>
-                  </div>
-
-                  <div className="mt-3 flex items-center gap-4 text-xs text-gray-400">
-                    <span className="flex items-center gap-1">
-                      <BookOpen className="w-3.5 h-3.5" /> {course.lessons} lessons
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" /> {course.duration}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5" /> {course.students.toLocaleString()} students
-                    </span>
-                  </div>
-
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-bold text-[#163B65]">
-                        ₹{course.discountedPrice.toLocaleString("en-IN")}
-                      </span>
-                      <span className="text-sm text-gray-400 line-through">
-                        ₹{course.price.toLocaleString("en-IN")}
-                      </span>
+                      <div className="relative z-10">
+                        <span className="inline-block bg-[#FDB813] text-gray-950 font-black text-[10px] px-2 py-0.5 rounded-full shadow-xs">
+                          {course.targetClass}
+                        </span>
+                      </div>
                     </div>
-                    <Link href={`/courses/${course.id}`}>
-                      <Button size="sm">
-                        Enrol <ChevronRight className="w-3.5 h-3.5" />
-                      </Button>
-                    </Link>
+
+                    <CardContent className="p-5 space-y-3">
+                      <h3 className="font-extrabold text-[#163B65] text-lg leading-snug group-hover:text-[#004B87] transition-colors">
+                        {course.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                        {course.description || "Comprehensive syllabus coverage with problem sets and live lectures."}
+                      </p>
+
+                      <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
+                        <Users className="w-3.5 h-3.5 text-[#16A6A1]" />
+                        <span>Lead: <strong>{course.faculty}</strong></span>
+                      </div>
+
+                      <div className="flex items-center gap-4 text-[11px] text-gray-400 font-medium pt-1">
+                        <span className="flex items-center gap-1">
+                          <BookOpen className="w-3 h-3 text-teal-600" /> {course.totalLessons} lessons
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-blue-600" /> {course.duration}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users className="w-3 h-3 text-amber-600" /> {course.enrolledCount} enrolled
+                        </span>
+                      </div>
+                    </CardContent>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+
+                  <div className="p-5 pt-0">
+                    <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-lg font-black text-[#163B65]">
+                          ₹{course.discountedPrice.toLocaleString("en-IN")}
+                        </span>
+                        {course.price > course.discountedPrice && (
+                          <span className="text-xs text-gray-400 line-through">
+                            ₹{course.price.toLocaleString("en-IN")}
+                          </span>
+                        )}
+                      </div>
+                      <Link href="/dashboard/my-courses">
+                        <Button size="sm" className="bg-[#004B87] hover:bg-[#003866] text-white text-xs font-bold rounded-xl h-9 px-3 gap-1 shadow-sm">
+                          <span>Enroll</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

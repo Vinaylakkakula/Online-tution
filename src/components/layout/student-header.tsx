@@ -14,9 +14,12 @@ import {
   ShoppingBag,
   ShieldCheck,
   LayoutDashboard,
+  Radio,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,14 +36,16 @@ export function StudentHeader({
 }: {
   onMenuClick: () => void;
 }) {
-  const { user, loginWithDemo, logout } = useAuth();
+  const { user, role, logout } = useAuth();
   const router = useRouter();
   const [selectedExamCategory, setSelectedExamCategory] = useState("IIT-JEE & Foundation");
 
   const handleAdminClick = () => {
-    loginWithDemo("admin");
     router.push("/admin");
   };
+
+  const displayName = user?.full_name || "Student Learner";
+  const displayEmail = user?.email || "student@deepsiddhi.org";
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200/80 shadow-xs">
@@ -90,6 +95,12 @@ export function StudentHeader({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Real-time Sync Indicator Pill */}
+          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Live Sync Active</span>
+          </div>
         </div>
 
         {/* Center: Search Bar (Rounded Pill like Oliveboard) */}
@@ -113,11 +124,11 @@ export function StudentHeader({
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>Celebrating Excellence</span>
             <span className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-mono">
-              Offer: 03:26:48
+              Offer
             </span>
           </Link>
 
-          {/* One-Click Guaranteed Admin Panel Button */}
+          {/* Admin Panel Access Button */}
           <button
             onClick={handleAdminClick}
             className="h-8.5 px-2.5 sm:px-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-black text-xs rounded-lg shadow-sm gap-1.5 border border-amber-400 flex items-center cursor-pointer transition-transform active:scale-95 shrink-0"
@@ -155,34 +166,38 @@ export function StudentHeader({
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-[#004B87]/20 transition-all">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#004B87] to-[#16A6A1] text-white text-xs font-bold flex items-center justify-center shadow-xs">
-                  {user?.full_name?.charAt(0).toUpperCase() || "A"}
+                  {displayName.charAt(0).toUpperCase()}
                 </div>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-xl border border-gray-100">
               <DropdownMenuLabel className="p-2">
                 <p className="text-xs font-bold text-gray-900 truncate">
-                  {user?.full_name || "Academic Director"}
+                  {displayName}
                 </p>
                 <p className="text-[11px] text-gray-500 truncate">
-                  {user?.email || "admin@deepsiddhi.org"}
+                  {displayEmail}
                 </p>
-                <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
-                  Active Access
-                </span>
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
+                    {user?.class_level || "Class 11"}
+                  </span>
+                  <span className="px-2 py-0.5 text-[10px] font-semibold bg-blue-50 text-blue-700 rounded-md capitalize">
+                    {user?.role || "Student"}
+                  </span>
+                </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={handleAdminClick}
-                className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-[#004B87]"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-500" />
-                Open Admin Console
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
                   <LayoutDashboard className="w-4 h-4 text-gray-500" />
                   Student Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/my-courses" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
+                  <BookOpen className="w-4 h-4 text-gray-500" />
+                  My Enrolled Courses
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -191,11 +206,12 @@ export function StudentHeader({
                   My Profile & Settings
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard/my-courses" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
-                  <BookOpen className="w-4 h-4 text-gray-500" />
-                  My Enrolled Courses
-                </Link>
+              <DropdownMenuItem
+                onClick={handleAdminClick}
+                className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-[#004B87]"
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-500" />
+                Open Admin Console
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

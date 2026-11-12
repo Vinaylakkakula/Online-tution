@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import { LMSStore } from "@/lib/lms-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,10 +89,17 @@ function LoginContent() {
     }
     setIsSubmitting(true);
     setTimeout(() => {
-      loginWithDemo("student");
+      const existing = LMSStore.getStudents().find(
+        (s) => s.phone.replace(/\D/g, "").includes(phone.replace(/\D/g, ""))
+      );
+      if (existing) {
+        login(existing.email, "demoPassword", "student");
+      } else {
+        loginWithDemo("student");
+      }
       setIsSubmitting(false);
       router.push(redirectUrl);
-    }, 800);
+    }, 600);
   };
 
   const handleDemoSignIn = (role: "student" | "admin" | "faculty") => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { LMSStore } from "@/lib/lms-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,10 +40,25 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Save lead to LMSStore so it immediately reflects in Admin Enquiries & Dashboard
+    LMSStore.addEnquiry({
+      id: `ENQ-${Math.floor(500 + Math.random() * 500)}`,
+      name: formData.fullName.trim() || "Website Visitor",
+      email: formData.email.trim() || "visitor@example.com",
+      phone: formData.phone.trim() || "+91 9876543210",
+      course: formData.course || "IIT-JEE",
+      classLevel: "Prospective Student",
+      source: "Contact Us Form",
+      createdAt: "Just now",
+      status: "new",
+      notes: formData.message.trim() || "General counseling and admission inquiry.",
+    });
+
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
-    }, 1000);
+    }, 700);
   };
 
   return (
