@@ -1,0 +1,394 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-12T11:41:00.000Z",
+  "courses": [
+    {
+      "id": "c-1",
+      "title": "IIT-JEE Comprehensive Mastery 2026-27",
+      "category": "IIT-JEE",
+      "targetClass": "Class 11 – 12",
+      "faculty": "Dr. Rahul Sharma & Er. Amit Verma",
+      "price": 49999,
+      "discountedPrice": 34999,
+      "totalLessons": 240,
+      "duration": "24 Months",
+      "isPublished": true,
+      "enrolledCount": 420,
+      "description": "Two-year integrated Physics, Chemistry & Mathematics for JEE Main & Advanced.",
+      "color": "from-[#0C335C] via-[#104375] to-[#0A2A4D]"
+    },
+    {
+      "id": "c-2",
+      "title": "Physics Olympiad Advanced Sprint (NSEP & INPhO)",
+      "category": "Olympiad",
+      "targetClass": "Classes 6 – 12",
+      "faculty": "Dr. Rahul Sharma",
+      "price": 24999,
+      "discountedPrice": 18999,
+      "totalLessons": 80,
+      "duration": "6 Months",
+      "isPublished": true,
+      "enrolledCount": 185,
+      "description": "Specialized Olympiad physics training for NSEP, INPhO, and international contests.",
+      "color": "from-[#4E146E] via-[#6B1F96] to-[#3B0E54]"
+    },
+    {
+      "id": "c-3",
+      "title": "National Talent Search (NTSE) & Aptitude Mastery",
+      "category": "NTSE",
+      "targetClass": "Class 8 – 10",
+      "faculty": "Er. Vivek Rathore",
+      "price": 19999,
+      "discountedPrice": 12999,
+      "totalLessons": 60,
+      "duration": "6 Months",
+      "isPublished": true,
+      "enrolledCount": 237,
+      "description": "Mental Ability Test (MAT) and Scholastic Aptitude Test (SAT) preparation.",
+      "color": "from-[#094A44] via-[#0E635C] to-[#073632]"
+    }
+  ],
+  "batches": [
+    {
+      "id": "b-1",
+      "name": "Pratham Batch (Morning)",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "timing": "7:00 AM – 10:00 AM IST",
+      "startDate": "Nov 15, 2026",
+      "days": "Mon, Wed, Fri",
+      "faculty": "Dr. Rahul Sharma",
+      "maxStudents": 150,
+      "currentEnrolled": 136,
+      "status": "filling"
+    },
+    {
+      "id": "b-2",
+      "name": "Aryabhata Olympiad Batch",
+      "courseTitle": "Physics Olympiad Advanced Sprint (NSEP & INPhO)",
+      "timing": "6:00 PM – 8:00 PM IST",
+      "startDate": "Nov 10, 2026",
+      "days": "Mon, Wed, Fri",
+      "faculty": "Dr. Rahul Sharma",
+      "maxStudents": 75,
+      "currentEnrolled": 64,
+      "status": "filling"
+    },
+    {
+      "id": "b-3",
+      "name": "Vidyarthi Foundation Batch",
+      "courseTitle": "National Talent Search (NTSE) & Aptitude Mastery",
+      "timing": "4:00 PM – 5:30 PM IST",
+      "startDate": "Oct 20, 2026",
+      "days": "Tue, Thu, Sat",
+      "faculty": "Er. Vivek Rathore",
+      "maxStudents": 100,
+      "currentEnrolled": 98,
+      "status": "active"
+    }
+  ],
+  "students": [
+    {
+      "id": "STD-1001",
+      "name": "Aryan Sharma",
+      "email": "student@deepsiddhi.org",
+      "phone": "+91 9876543210",
+      "enrolledCourses": [
+        "IIT-JEE Comprehensive Mastery 2026-27",
+        "Physics Olympiad Advanced Sprint (NSEP & INPhO)"
+      ],
+      "batchName": "Pratham Batch (Morning)",
+      "classLevel": "Class 11",
+      "joinedDate": "Nov 1, 2026",
+      "progress": 72,
+      "status": "Active"
+    },
+    {
+      "id": "STD-1002",
+      "name": "Meera Nair",
+      "email": "meera.nair@outlook.com",
+      "phone": "+91 9811223344",
+      "enrolledCourses": [
+        "Physics Olympiad Advanced Sprint (NSEP & INPhO)"
+      ],
+      "batchName": "Aryabhata Olympiad Batch",
+      "classLevel": "Class 10",
+      "joinedDate": "Nov 3, 2026",
+      "progress": 45,
+      "status": "Active"
+    },
+    {
+      "id": "STD-1003",
+      "name": "Tanmay Roy",
+      "email": "tanmay.roy@gmail.com",
+      "phone": "+91 9988771122",
+      "enrolledCourses": [
+        "National Talent Search (NTSE) & Aptitude Mastery"
+      ],
+      "batchName": "Vidyarthi Foundation Batch",
+      "classLevel": "Class 9",
+      "joinedDate": "Oct 28, 2026",
+      "progress": 86,
+      "status": "Active"
+    },
+    {
+      "id": "STD-1004",
+      "name": "Kavya Iyer",
+      "email": "kavya.iyer@gmail.com",
+      "phone": "+91 9765432109",
+      "enrolledCourses": [
+        "IIT-JEE Comprehensive Mastery 2026-27"
+      ],
+      "batchName": "Pratham Batch (Morning)",
+      "classLevel": "Class 12",
+      "joinedDate": "Nov 5, 2026",
+      "progress": 60,
+      "status": "Pending"
+    }
+  ],
+  "materials": [
+    {
+      "id": "mat-1",
+      "title": "Rotational Dynamics: Complete Comprehensive Formula Sheet & Shortcut Map",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "subject": "Physics",
+      "chapter": "Chapter 4: Rotational Mechanics",
+      "fileSize": "2.4 MB",
+      "fileType": "Formula Sheet",
+      "downloadsCount": 1420,
+      "dateUploaded": "Yesterday"
+    },
+    {
+      "id": "mat-2",
+      "title": "Master Handwritten Notes: Parallel Axis Theorem & Rolling Bodies",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "subject": "Physics",
+      "chapter": "Chapter 4: Rotational Mechanics",
+      "fileSize": "6.8 MB",
+      "fileType": "Notes",
+      "downloadsCount": 2190,
+      "dateUploaded": "2 days ago"
+    },
+    {
+      "id": "mat-3",
+      "title": "Organic Chemistry Reaction Mechanism Map (45 Conversions)",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "subject": "Chemistry",
+      "chapter": "Chapter 3: Reaction Mechanisms",
+      "fileSize": "4.1 MB",
+      "fileType": "PDF",
+      "downloadsCount": 3840,
+      "dateUploaded": "3 days ago"
+    },
+    {
+      "id": "mat-4",
+      "title": "Calculus & Coordinate Geometry 200 Advanced Numerical Problem Bank",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "subject": "Mathematics",
+      "chapter": "Calculus Mastery",
+      "fileSize": "8.5 MB",
+      "fileType": "DPP",
+      "downloadsCount": 1820,
+      "dateUploaded": "1 week ago"
+    }
+  ],
+  "recordedClasses": [
+    {
+      "id": "rec-1",
+      "title": "Lecture 1: Rigid Body Rotation & Angular Kinematics",
+      "course": "IIT-JEE Comprehensive Mastery 2026-27",
+      "subject": "Physics",
+      "chapter": "Chapter 4: Rotational Mechanics",
+      "faculty": "Dr. Rahul Sharma",
+      "duration": "45 mins",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "viewsCount": 382,
+      "isPublished": true,
+      "date": "Yesterday"
+    },
+    {
+      "id": "rec-2",
+      "title": "Lecture 2: Moment of Inertia for Continuous Bodies & Integration",
+      "course": "IIT-JEE Comprehensive Mastery 2026-27",
+      "subject": "Physics",
+      "chapter": "Chapter 4: Rotational Mechanics",
+      "faculty": "Dr. Rahul Sharma",
+      "duration": "52 mins",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "viewsCount": 341,
+      "isPublished": true,
+      "date": "2 days ago"
+    },
+    {
+      "id": "rec-3",
+      "title": "Lecture 3: Organic Reaction Mechanisms SN1 vs SN2 Inversion",
+      "course": "IIT-JEE Comprehensive Mastery 2026-27",
+      "subject": "Chemistry",
+      "chapter": "Chapter 3: Reaction Mechanisms",
+      "faculty": "Prof. Priya Saxena",
+      "duration": "48 mins",
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "viewsCount": 412,
+      "isPublished": true,
+      "date": "3 days ago"
+    }
+  ],
+  "liveClasses": [
+    {
+      "id": "lc-1",
+      "title": "Advanced Problem Solving: Magnetism & Biot-Savart Law Numerical Drill",
+      "course": "IIT-JEE Comprehensive Mastery 2026-27",
+      "batch": "Pratham Batch (Morning)",
+      "faculty": "Dr. Rahul Sharma",
+      "scheduledAt": "Today, 5:00 PM – 6:30 PM IST",
+      "duration": "90 Minutes",
+      "status": "live",
+      "meetingProvider": "zoom",
+      "meetingUrl": "https://zoom.us/j/9876543210?pwd=deepsiddhi",
+      "passcode": "DEEPSIDDHI-2026",
+      "description": "Derivations and speed shortcuts for non-standard current wire geometry.",
+      "enrolledStudentsCount": 142
+    },
+    {
+      "id": "lc-2",
+      "title": "Organic Chemistry: SN1 & SN2 Stereochemical Inversion Masterclass",
+      "course": "IIT-JEE Comprehensive Mastery 2026-27",
+      "batch": "Pratham Batch (Morning)",
+      "faculty": "Prof. Priya Saxena",
+      "scheduledAt": "Tomorrow, 7:00 AM – 8:30 AM IST",
+      "duration": "90 Minutes",
+      "status": "upcoming",
+      "meetingProvider": "zoom",
+      "meetingUrl": "https://zoom.us/j/9876543211?pwd=deepsiddhi",
+      "passcode": "DEEPSIDDHI-2026",
+      "description": "Walden inversion, solvent polarities, and nucleophilicity trends.",
+      "enrolledStudentsCount": 138
+    }
+  ],
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "All India JEE Mock Test #08 (Full Length)",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "category": "Mock",
+      "questionsCount": 75,
+      "duration": "180 Mins",
+      "totalMarks": 300,
+      "status": "Available",
+      "questions": [
+        {
+          "id": 1,
+          "question": "A solid sphere and a hollow sphere of identical mass and radius roll down an inclined plane without slipping from rest. Which sphere reaches the bottom first?",
+          "options": [
+            "Hollow sphere, because of greater moment of inertia",
+            "Solid sphere, because it has smaller moment of inertia and thus greater acceleration",
+            "Both reach the bottom at the same time since mass and radius are identical",
+            "Depends on the angle of inclination of the plane"
+          ],
+          "correctIndex": 1,
+          "explanation": "Acceleration in rolling down an incline is a = g sin(θ) / (1 + I / (mR²)). For a solid sphere I = 2/5 mR², while for a hollow sphere I = 2/3 mR². Thus solid sphere has higher acceleration and reaches first."
+        },
+        {
+          "id": 2,
+          "question": "Which of the following carbocations is the MOST stable according to hyperconjugation and resonance effects?",
+          "options": [
+            "Allyl carbocation (CH2=CH-CH2+)",
+            "Tropylium cation (C7H7+)",
+            "Tert-butyl carbocation ((CH3)3C+)",
+            "Benzyl carbocation (C6H5-CH2+)"
+          ],
+          "correctIndex": 1,
+          "explanation": "Tropylium cation has 6 pi electrons in a planar aromatic 7-membered ring satisfying Huckel's rule (4n+2 with n=1), imparting extraordinary aromatic resonance stability."
+        }
+      ]
+    },
+    {
+      "id": "test-2",
+      "title": "Rotational Dynamics & Gravity Chapter Speed Test",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "category": "Sectional",
+      "questionsCount": 25,
+      "duration": "45 Mins",
+      "totalMarks": 100,
+      "status": "Available",
+      "questions": []
+    },
+    {
+      "id": "test-3",
+      "title": "Organic Reaction Mechanisms & Isomerism Quiz",
+      "courseTitle": "IIT-JEE Comprehensive Mastery 2026-27",
+      "category": "Topic",
+      "questionsCount": 20,
+      "duration": "40 Mins",
+      "totalMarks": 80,
+      "status": "Completed",
+      "questions": []
+    }
+  ],
+  "announcements": [
+    {
+      "id": "ann-1",
+      "title": "Special Doubt Clearing Session with Er. Amit Verma",
+      "category": "Academic Update",
+      "message": "Special Doubt Clearing Session for Rotational Mechanics and Calculus scheduled for this Saturday at 4 PM.",
+      "date": "4 hours ago",
+      "priority": "high"
+    },
+    {
+      "id": "ann-2",
+      "title": "New 200-Question Chemistry Problem Bank Released",
+      "category": "Study Material",
+      "message": "Comprehensive problem set with complete handwritten solutions has been uploaded to Study Materials.",
+      "date": "Yesterday",
+      "priority": "normal"
+    }
+  ],
+  "enquiries": [
+    {
+      "id": "ENQ-501",
+      "name": "Vikram Malhotra",
+      "phone": "+91 9899887766",
+      "email": "vikram.parent@gmail.com",
+      "course": "IIT-JEE",
+      "classLevel": "Class 11",
+      "source": "Website Welcome Popup",
+      "createdAt": "Today, 11:20 AM",
+      "status": "new"
+    },
+    {
+      "id": "ENQ-502",
+      "name": "Suresh Pillai",
+      "phone": "+91 9811002233",
+      "email": "suresh@yahoo.com",
+      "course": "Olympiad",
+      "classLevel": "Class 8",
+      "source": "Contact Us Form",
+      "createdAt": "Today, 10:15 AM",
+      "status": "contacted",
+      "notes": "Spoke to father. Interested in Physics Olympiad. Demo session booked for Thursday."
+    },
+    {
+      "id": "ENQ-503",
+      "name": "Deepika Sen",
+      "phone": "+91 9900112233",
+      "email": "deepika@gmail.com",
+      "course": "NTSE",
+      "classLevel": "Class 10",
+      "source": "Website Welcome Popup",
+      "createdAt": "Yesterday",
+      "status": "enrolled",
+      "notes": "Payment confirmed. Enrolled in Vidyarthi Batch."
+    },
+    {
+      "id": "ENQ-504",
+      "name": "Rahul Aggarwal",
+      "phone": "+91 9711224466",
+      "email": "rahul.a@outlook.com",
+      "course": "IIT-JEE",
+      "classLevel": "Class 12",
+      "source": "Contact Us Form",
+      "createdAt": "2 days ago",
+      "status": "closed",
+      "notes": "Looking for offline center in Jaipur only."
+    }
+  ]
+}
