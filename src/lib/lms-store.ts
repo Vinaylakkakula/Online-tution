@@ -1,6 +1,91 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import {
+  CARTOON_COURSES,
+  DEFAULT_ACADEMIC_HOLIDAYS,
+  ACTIVE_COUPONS,
+  SAMPLE_FEEDBACK_LIST,
+  SAMPLE_STUDENT_PERFORMANCE,
+  CartoonCourse,
+  AcademicHoliday,
+  DemoLead,
+  StudentPerformanceRecord,
+  StudentFeedbackEntry,
+  CouponCode,
+  VideoItem,
+  MaterialItem,
+  AssignmentItem,
+  TestItem,
+  ChapterItem,
+  SubjectItem,
+} from "./cartoon-lms-data";
+
+export type {
+  CartoonCourse,
+  AcademicHoliday,
+  DemoLead,
+  StudentPerformanceRecord,
+  StudentFeedbackEntry,
+  CouponCode,
+  VideoItem,
+  MaterialItem,
+  AssignmentItem,
+  TestItem,
+  ChapterItem,
+  SubjectItem,
+};
+
+export interface StudentBookmark {
+  id: string;
+  studentId: string;
+  targetId: string;
+  type: "video" | "material";
+  title: string;
+  courseTitle: string;
+  subject: string;
+  chapter: string;
+  teacher: string;
+  duration?: string;
+  videoUrl?: string;
+  thumbnail?: string;
+  createdAt: string;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  studentId: string;
+  studentName: string;
+  classLevel: string;
+  date: string;
+  status: "present" | "absent" | "holiday" | "special_class";
+  remarks?: string;
+}
+
+export interface EmergencyAlert {
+  id: string;
+  title: string;
+  message: string;
+  date: string;
+  isActive: boolean;
+  declaredAt: string;
+}
+
+export interface StudentProfileExtra {
+  studentId: string;
+  avatarId: string;
+  frameId: string;
+  titleId: string;
+  school: string;
+  parentName: string;
+  parentPhone: string;
+  parentEmail: string;
+  coins: number;
+  xp: number;
+  level: number;
+  streakDays: number;
+  unlockedBadges: string[];
+}
 
 export interface LMSCourse {
   id: string;
@@ -526,6 +611,110 @@ const DEFAULT_ENQUIRIES: LMSEnquiry[] = [
   },
 ];
 
+const DEFAULT_BOOKMARKS: StudentBookmark[] = [
+  {
+    id: "bmk-1",
+    studentId: "STD-1001",
+    targetId: "v-c6-m-1",
+    type: "video",
+    title: "Fun with Large Numbers & Comparing Digits",
+    courseTitle: "Class 6 Junior Champs Adventure",
+    subject: "Mathematics",
+    chapter: "Chapter 1: Knowing Our Numbers",
+    teacher: "Er. Amit Verma",
+    duration: "24 mins",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    createdAt: "Nov 10, 2026",
+  },
+  {
+    id: "bmk-2",
+    studentId: "STD-1001",
+    targetId: "v-c6-s-1",
+    type: "video",
+    title: "Carbohydrates, Fats & Proteins: Lab Tests Demonstration",
+    courseTitle: "Class 6 Junior Champs Adventure",
+    subject: "General Science",
+    chapter: "Chapter 1: Components of Food",
+    teacher: "Dr. Neha Sen",
+    duration: "26 mins",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    createdAt: "Nov 11, 2026",
+  },
+];
+
+const DEFAULT_ATTENDANCE: AttendanceRecord[] = [
+  { id: "att-1", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-02", status: "present" },
+  { id: "att-2", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-03", status: "present" },
+  { id: "att-3", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-04", status: "present" },
+  { id: "att-4", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-05", status: "absent", remarks: "Doctor appointment" },
+  { id: "att-5", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-06", status: "present" },
+  { id: "att-6", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-09", status: "present" },
+  { id: "att-7", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-10", status: "present" },
+  { id: "att-8", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-11", status: "present" },
+  { id: "att-9", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-12", status: "present" },
+  { id: "att-10", studentId: "STD-1001", studentName: "Aryan Sharma", classLevel: "Class 6", date: "2026-11-13", status: "present" },
+];
+
+const DEFAULT_EMERGENCY_ALERT: EmergencyAlert = {
+  id: "emg-1",
+  title: "Heavy Rainfall Warning — Online Classes Continuous",
+  message: "Due to severe weather warnings issued by the meteorological department, physical learning centers are closed today. All live lecture streams and interactive doubts are happening on our cartoon LMS without interruption! Stay cozy and learn from home 🌧️✨",
+  date: "Today",
+  isActive: true,
+  declaredAt: "2026-11-13T07:30:00Z",
+};
+
+const DEFAULT_DEMO_LEADS: DemoLead[] = [
+  {
+    id: "lead-1",
+    studentName: "Kabir Mehra",
+    parentName: "Sanjay Mehra",
+    parentPhone: "+91 9822334455",
+    studentEmail: "kabir.mehra@gmail.com",
+    school: "Delhi Public School",
+    classLevel: "Class 7",
+    preferredSubject: "Mathematics & Science",
+    demoDate: "Nov 15, 2026 (5:00 PM)",
+    trialStartDate: "Nov 12, 2026",
+    trialEndDate: "Nov 19, 2026",
+    status: "Trial Active",
+    trialDaysLeft: 6,
+  },
+  {
+    id: "lead-2",
+    studentName: "Ananya Deshmukh",
+    parentName: "Sunita Deshmukh",
+    parentPhone: "+91 9877001122",
+    studentEmail: "ananya.d@gmail.com",
+    school: "St. Xavier's High School",
+    classLevel: "Class 9",
+    preferredSubject: "Physics & Chemistry",
+    demoDate: "Nov 16, 2026 (6:00 PM)",
+    trialStartDate: "Nov 10, 2026",
+    trialEndDate: "Nov 17, 2026",
+    status: "Trial Active",
+    trialDaysLeft: 4,
+  },
+];
+
+const DEFAULT_PROFILE_EXTRAS: Record<string, StudentProfileExtra> = {
+  "STD-1001": {
+    studentId: "STD-1001",
+    avatarId: "astro-leo",
+    frameId: "frame-gold",
+    titleId: "t-2",
+    school: "Springdales School, Delhi",
+    parentName: "Rajesh Sharma",
+    parentPhone: "+91 9876543210",
+    parentEmail: "rajesh.parent@gmail.com",
+    coins: 480,
+    xp: 1250,
+    level: 7,
+    streakDays: 5,
+    unlockedBadges: ["Space Hero", "Speedy Solver", "Math Magician", "Streak Champion"],
+  },
+};
+
 const BROADCAST_CHANNEL_NAME = "deepsiddhi_lms_sync";
 
 function triggerSyncBroadcast(key: string): void {
@@ -932,6 +1121,253 @@ export const LMSStore = {
     sendServerAction("delete_enquiry", { id });
   },
 
+  // --- CARTOON LMS & CLASSES 6 TO 10 SUBFOLDERS ---
+  getCartoonCourses: (): CartoonCourse[] => getStored("lms_cartoon_courses", CARTOON_COURSES),
+  saveCartoonCourses: (courses: CartoonCourse[]) => {
+    setStored("lms_cartoon_courses", courses);
+    sendServerAction("save_cartoon_courses", courses);
+  },
+  getCourseByClass: (classLevel: string): CartoonCourse | undefined => {
+    const list = LMSStore.getCartoonCourses();
+    return list.find((c) => c.classLevel.toLowerCase() === classLevel.toLowerCase()) || list[0];
+  },
+  updateCourseChapterItem: (courseId: string, subjectId: string, chapterId: string, itemType: "video" | "material" | "assignment" | "test", item: any) => {
+    const courses = LMSStore.getCartoonCourses();
+    const updated = courses.map((crs) => {
+      if (crs.id !== courseId) return crs;
+      return {
+        ...crs,
+        subjects: crs.subjects.map((sub) => {
+          if (sub.id !== subjectId) return sub;
+          return {
+            ...sub,
+            chapters: sub.chapters.map((ch) => {
+              if (ch.id !== chapterId) return ch;
+              if (itemType === "video") return { ...ch, videos: [item, ...ch.videos] };
+              if (itemType === "material") return { ...ch, materials: [item, ...ch.materials] };
+              if (itemType === "assignment") return { ...ch, assignments: [item, ...ch.assignments] };
+              if (itemType === "test") return { ...ch, tests: [item, ...ch.tests] };
+              return ch;
+            }),
+          };
+        }),
+      };
+    });
+    LMSStore.saveCartoonCourses(updated);
+  },
+
+  // --- BOOKMARKS ---
+  getBookmarks: (studentId?: string): StudentBookmark[] => {
+    const all = getStored<StudentBookmark[]>("lms_bookmarks", DEFAULT_BOOKMARKS);
+    if (!studentId) return all;
+    return all.filter((b) => b.studentId === studentId);
+  },
+  toggleBookmark: (bookmark: Omit<StudentBookmark, "id" | "createdAt"> & { id?: string }) => {
+    const current = getStored<StudentBookmark[]>("lms_bookmarks", DEFAULT_BOOKMARKS);
+    const existingIndex = current.findIndex(
+      (b) => b.targetId === bookmark.targetId && b.studentId === bookmark.studentId
+    );
+    let updated: StudentBookmark[];
+    if (existingIndex >= 0) {
+      updated = current.filter((_, idx) => idx !== existingIndex);
+    } else {
+      const newBm: StudentBookmark = {
+        ...bookmark,
+        id: bookmark.id || `bmk-${Date.now()}`,
+        createdAt: "Just now",
+      };
+      updated = [newBm, ...current];
+    }
+    setStored("lms_bookmarks", updated);
+    sendServerAction("sync_bookmarks", updated);
+    return existingIndex < 0;
+  },
+  isBookmarked: (targetId: string, studentId?: string): boolean => {
+    const list = LMSStore.getBookmarks(studentId);
+    return list.some((b) => b.targetId === targetId);
+  },
+
+  // --- ATTENDANCE MANAGEMENT ---
+  getAttendance: (studentId?: string): AttendanceRecord[] => {
+    const all = getStored<AttendanceRecord[]>("lms_attendance", DEFAULT_ATTENDANCE);
+    if (!studentId) return all;
+    return all.filter((a) => a.studentId === studentId);
+  },
+  markAttendance: (record: AttendanceRecord) => {
+    const current = LMSStore.getAttendance();
+    const existing = current.findIndex(
+      (a) => a.studentId === record.studentId && a.date === record.date
+    );
+    let updated: AttendanceRecord[];
+    if (existing >= 0) {
+      updated = current.map((a, idx) => (idx === existing ? record : a));
+    } else {
+      updated = [record, ...current];
+    }
+    setStored("lms_attendance", updated);
+    sendServerAction("mark_attendance", record);
+  },
+
+  // --- ACADEMIC CALENDAR & EMERGENCY HOLIDAYS ---
+  getHolidays: (): AcademicHoliday[] => getStored("lms_holidays", DEFAULT_ACADEMIC_HOLIDAYS),
+  addHoliday: (holiday: AcademicHoliday) => {
+    const current = LMSStore.getHolidays();
+    const updated = [holiday, ...current.filter((h) => h.id !== holiday.id)];
+    setStored("lms_holidays", updated);
+    sendServerAction("add_holiday", holiday);
+  },
+  deleteHoliday: (id: string) => {
+    const current = LMSStore.getHolidays();
+    const updated = current.filter((h) => h.id !== id);
+    setStored("lms_holidays", updated);
+    sendServerAction("delete_holiday", { id });
+  },
+  declareEmergencyHoliday: (title: string, date: string, message: string) => {
+    const alert: EmergencyAlert = {
+      id: `emg-${Date.now()}`,
+      title,
+      message,
+      date,
+      isActive: true,
+      declaredAt: new Date().toISOString(),
+    };
+    setStored("lms_emergency_alert", alert);
+    LMSStore.addHoliday({
+      id: alert.id,
+      title: `🚨 ${title}`,
+      date,
+      type: "Emergency",
+      description: message,
+      isUrgent: true,
+    });
+    sendServerAction("declare_emergency_holiday", alert);
+  },
+  getEmergencyAlert: (): EmergencyAlert | null => {
+    return getStored<EmergencyAlert | null>("lms_emergency_alert", DEFAULT_EMERGENCY_ALERT);
+  },
+  dismissEmergencyAlert: () => {
+    const current = LMSStore.getEmergencyAlert();
+    if (current) {
+      const updated = { ...current, isActive: false };
+      setStored("lms_emergency_alert", updated);
+    }
+  },
+
+  // --- DEMO REGISTRATION & 7-DAY FREE TRIAL ---
+  getDemoLeads: (): DemoLead[] => getStored("lms_demo_leads", DEFAULT_DEMO_LEADS),
+  registerDemo: (lead: Omit<DemoLead, "id" | "trialStartDate" | "trialEndDate" | "status" | "trialDaysLeft">) => {
+    const current = LMSStore.getDemoLeads();
+    const now = new Date();
+    const end = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const newLead: DemoLead = {
+      ...lead,
+      id: `lead-${Date.now()}`,
+      trialStartDate: now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      trialEndDate: end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      status: "Trial Active",
+      trialDaysLeft: 7,
+    };
+    const updated = [newLead, ...current];
+    setStored("lms_demo_leads", updated);
+    sendServerAction("register_demo", newLead);
+    return newLead;
+  },
+  updateTrialStatus: (id: string, status: DemoLead["status"], extendDays: number = 0) => {
+    const current = LMSStore.getDemoLeads();
+    const updated = current.map((l) => {
+      if (l.id !== id) return l;
+      return {
+        ...l,
+        status,
+        trialDaysLeft: extendDays > 0 ? l.trialDaysLeft + extendDays : l.trialDaysLeft,
+      };
+    });
+    setStored("lms_demo_leads", updated);
+    sendServerAction("update_trial_status", { id, status, extendDays });
+  },
+
+  // --- PERFORMANCE & REPORTS ---
+  getPerformance: (studentId?: string): StudentPerformanceRecord => {
+    return getStored<StudentPerformanceRecord>("lms_performance", SAMPLE_STUDENT_PERFORMANCE);
+  },
+  updatePerformance: (record: StudentPerformanceRecord) => {
+    setStored("lms_performance", record);
+    sendServerAction("update_performance", record);
+  },
+
+  // --- RATINGS & FEEDBACK ---
+  getFeedback: (): StudentFeedbackEntry[] => getStored("lms_feedback", SAMPLE_FEEDBACK_LIST),
+  addFeedback: (entry: Omit<StudentFeedbackEntry, "id" | "createdAt" | "status">) => {
+    const current = LMSStore.getFeedback();
+    const newEntry: StudentFeedbackEntry = {
+      ...entry,
+      id: `fb-${Date.now()}`,
+      createdAt: "Just now",
+      status: "published",
+    };
+    const updated = [newEntry, ...current];
+    setStored("lms_feedback", updated);
+    sendServerAction("add_feedback", newEntry);
+  },
+  replyFeedback: (id: string, reply: string) => {
+    const current = LMSStore.getFeedback();
+    const updated = current.map((f) => (f.id === id ? { ...f, adminReply: reply } : f));
+    setStored("lms_feedback", updated);
+    sendServerAction("reply_feedback", { id, reply });
+  },
+
+  // --- PRICING & COUPONS ---
+  getCoupons: (): CouponCode[] => getStored("lms_coupons", ACTIVE_COUPONS),
+  addCoupon: (coupon: CouponCode) => {
+    const current = LMSStore.getCoupons();
+    const updated = [coupon, ...current.filter((c) => c.code !== coupon.code)];
+    setStored("lms_coupons", updated);
+    sendServerAction("add_coupon", coupon);
+  },
+  applyCoupon: (code: string, originalAmount: number) => {
+    const coupons = LMSStore.getCoupons();
+    const found = coupons.find((c) => c.code.toUpperCase() === code.trim().toUpperCase());
+    if (!found) {
+      return { valid: false, discountPercent: 0, discountAmount: 0, finalPrice: originalAmount, message: "Invalid or expired coupon code." };
+    }
+    const discountAmount = Math.round((originalAmount * found.discountPercent) / 100);
+    const finalPrice = Math.max(0, originalAmount - discountAmount);
+    return {
+      valid: true,
+      discountPercent: found.discountPercent,
+      discountAmount,
+      finalPrice,
+      message: `Yay! ${found.discountPercent}% discount applied successfully! 🎉`,
+    };
+  },
+
+  // --- PROFILE CUSTOMIZATION EXTRAS (AVATAR, FRAME, TITLE, PARENTS) ---
+  getProfileExtras: (studentId: string = "STD-1001"): StudentProfileExtra => {
+    const map = getStored<Record<string, StudentProfileExtra>>("lms_profile_extras", DEFAULT_PROFILE_EXTRAS);
+    return map[studentId] || DEFAULT_PROFILE_EXTRAS["STD-1001"] || {
+      studentId,
+      avatarId: "astro-leo",
+      frameId: "frame-gold",
+      titleId: "t-2",
+      school: "Springdales School, Delhi",
+      parentName: "Rajesh Sharma",
+      parentPhone: "+91 9876543210",
+      parentEmail: "rajesh.parent@gmail.com",
+      coins: 480,
+      xp: 1250,
+      level: 7,
+      streakDays: 5,
+      unlockedBadges: ["Space Hero", "Speedy Solver", "Math Magician", "Streak Champion"],
+    };
+  },
+  saveProfileExtras: (studentId: string, extras: Partial<StudentProfileExtra>) => {
+    const map = getStored<Record<string, StudentProfileExtra>>("lms_profile_extras", DEFAULT_PROFILE_EXTRAS);
+    const current = map[studentId] || LMSStore.getProfileExtras(studentId);
+    map[studentId] = { ...current, ...extras };
+    setStored("lms_profile_extras", map);
+    sendServerAction("save_profile_extras", { studentId, extras: map[studentId] });
+  },
+
   // Reset Everything to Default Sample Data
   resetAll: () => {
     if (typeof window === "undefined") return;
@@ -960,6 +1396,19 @@ export function useLMSData() {
   const [tests, setTests] = useState<LMSTest[]>([]);
   const [announcements, setAnnouncements] = useState<LMSAnnouncement[]>([]);
   const [enquiries, setEnquiries] = useState<LMSEnquiry[]>([]);
+
+  // Cartoon LMS States
+  const [cartoonCourses, setCartoonCourses] = useState<CartoonCourse[]>([]);
+  const [bookmarks, setBookmarks] = useState<StudentBookmark[]>([]);
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+  const [holidays, setHolidays] = useState<AcademicHoliday[]>([]);
+  const [emergencyAlert, setEmergencyAlert] = useState<EmergencyAlert | null>(null);
+  const [demoLeads, setDemoLeads] = useState<DemoLead[]>([]);
+  const [performance, setPerformance] = useState<StudentPerformanceRecord>(SAMPLE_STUDENT_PERFORMANCE);
+  const [feedback, setFeedback] = useState<StudentFeedbackEntry[]>([]);
+  const [coupons, setCoupons] = useState<CouponCode[]>([]);
+  const [profileExtras, setProfileExtras] = useState<StudentProfileExtra>(LMSStore.getProfileExtras());
+
   const [lastSyncedAt, setLastSyncedAt] = useState<number>(Date.now());
   const [isServerConnected, setIsServerConnected] = useState<boolean>(true);
 
@@ -973,6 +1422,19 @@ export function useLMSData() {
     setTests(LMSStore.getTests());
     setAnnouncements(LMSStore.getAnnouncements());
     setEnquiries(LMSStore.getEnquiries());
+
+    // Cartoon LMS Refreshes
+    setCartoonCourses(LMSStore.getCartoonCourses());
+    setBookmarks(LMSStore.getBookmarks());
+    setAttendance(LMSStore.getAttendance());
+    setHolidays(LMSStore.getHolidays());
+    setEmergencyAlert(LMSStore.getEmergencyAlert());
+    setDemoLeads(LMSStore.getDemoLeads());
+    setPerformance(LMSStore.getPerformance());
+    setFeedback(LMSStore.getFeedback());
+    setCoupons(LMSStore.getCoupons());
+    setProfileExtras(LMSStore.getProfileExtras());
+
     setLastSyncedAt(Date.now());
   }, []);
 
@@ -1052,6 +1514,16 @@ export function useLMSData() {
     tests,
     announcements,
     enquiries,
+    cartoonCourses,
+    bookmarks,
+    attendance,
+    holidays,
+    emergencyAlert,
+    demoLeads,
+    performance,
+    feedback,
+    coupons,
+    profileExtras,
     lastSyncedAt,
     isLiveSynced: true,
     isServerConnected,

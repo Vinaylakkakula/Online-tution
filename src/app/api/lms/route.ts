@@ -429,6 +429,16 @@ export async function GET(request: NextRequest) {
           tests: store.tests || [],
           announcements: store.announcements || [],
           enquiries: store.enquiries || [],
+          cartoonCourses: store.cartoonCourses || [],
+          bookmarks: store.bookmarks || [],
+          attendance: store.attendance || [],
+          holidays: store.holidays || [],
+          emergencyAlert: store.emergencyAlert || null,
+          demoLeads: store.demoLeads || [],
+          performance: store.performance || null,
+          feedback: store.feedback || [],
+          coupons: store.coupons || [],
+          profileExtras: store.profileExtras || {},
         },
       },
       { headers: NO_CACHE_HEADERS }
@@ -671,6 +681,88 @@ export async function POST(request: NextRequest) {
           break;
         }
 
+        // --- CARTOON LMS ACTIONS ---
+        case "save_cartoon_courses": {
+          store.cartoonCourses = payload;
+          modified = true;
+          break;
+        }
+        case "sync_bookmarks": {
+          store.bookmarks = payload;
+          modified = true;
+          break;
+        }
+        case "mark_attendance": {
+          const current = store.attendance || [];
+          const idx = current.findIndex((a: any) => a.studentId === payload.studentId && a.date === payload.date);
+          if (idx >= 0) current[idx] = payload;
+          else current.unshift(payload);
+          store.attendance = [...current];
+          modified = true;
+          break;
+        }
+        case "add_holiday": {
+          const current = store.holidays || [];
+          store.holidays = [payload, ...current.filter((h: any) => h.id !== payload.id)];
+          modified = true;
+          break;
+        }
+        case "delete_holiday": {
+          store.holidays = (store.holidays || []).filter((h: any) => h.id !== payload.id);
+          modified = true;
+          break;
+        }
+        case "declare_emergency_holiday": {
+          store.emergencyAlert = payload;
+          modified = true;
+          break;
+        }
+        case "register_demo": {
+          store.demoLeads = [payload, ...(store.demoLeads || []).filter((l: any) => l.id !== payload.id)];
+          modified = true;
+          break;
+        }
+        case "update_trial_status": {
+          store.demoLeads = (store.demoLeads || []).map((l: any) =>
+            l.id === payload.id
+              ? {
+                  ...l,
+                  status: payload.status,
+                  trialDaysLeft: payload.extendDays ? l.trialDaysLeft + payload.extendDays : l.trialDaysLeft,
+                }
+              : l
+          );
+          modified = true;
+          break;
+        }
+        case "update_performance": {
+          store.performance = payload;
+          modified = true;
+          break;
+        }
+        case "add_feedback": {
+          store.feedback = [payload, ...(store.feedback || []).filter((f: any) => f.id !== payload.id)];
+          modified = true;
+          break;
+        }
+        case "reply_feedback": {
+          store.feedback = (store.feedback || []).map((f: any) =>
+            f.id === payload.id ? { ...f, adminReply: payload.reply } : f
+          );
+          modified = true;
+          break;
+        }
+        case "add_coupon": {
+          store.coupons = [payload, ...(store.coupons || []).filter((c: any) => c.code !== payload.code)];
+          modified = true;
+          break;
+        }
+        case "save_profile_extras": {
+          store.profileExtras = { ...(store.profileExtras || {}), [payload.studentId]: payload.extras };
+          modified = true;
+          break;
+        }
+
         default:
           break;
       }
@@ -697,6 +789,16 @@ export async function POST(request: NextRequest) {
           tests: store.tests || [],
           announcements: store.announcements || [],
           enquiries: store.enquiries || [],
+          cartoonCourses: store.cartoonCourses || [],
+          bookmarks: store.bookmarks || [],
+          attendance: store.attendance || [],
+          holidays: store.holidays || [],
+          emergencyAlert: store.emergencyAlert || null,
+          demoLeads: store.demoLeads || [],
+          performance: store.performance || null,
+          feedback: store.feedback || [],
+          coupons: store.coupons || [],
+          profileExtras: store.profileExtras || {},
         },
       },
       { headers: NO_CACHE_HEADERS }

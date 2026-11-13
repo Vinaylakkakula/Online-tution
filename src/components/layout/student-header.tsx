@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
+import { useLMSData } from "@/lib/lms-store";
+import { getAvatarById } from "@/lib/cartoon-avatars";
 import {
   Bell,
   Search,
@@ -16,6 +18,9 @@ import {
   LayoutDashboard,
   Radio,
   RefreshCw,
+  FolderOpen,
+  Bookmark,
+  CalendarDays,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,10 +42,12 @@ export function StudentHeader({
   onMenuClick: () => void;
 }) {
   const { user, role, logout } = useAuth();
+  const { profileExtras } = useLMSData();
   const router = useRouter();
-  const [selectedExamCategory, setSelectedExamCategory] = useState("IIT-JEE & Foundation");
+  const [selectedExamCategory, setSelectedExamCategory] = useState("Class 6 to 10 Champions");
 
-  const displayName = user?.full_name || "Student Learner";
+  const currentAvatar = getAvatarById(profileExtras.avatarId || "astro-leo");
+  const displayName = user?.full_name || "Aryan Sharma";
   const displayEmail = user?.email || "student@deepsiddhi.org";
 
   return (
@@ -149,26 +156,28 @@ export function StudentHeader({
           {/* User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-[#004B87]/20 transition-all">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#004B87] to-[#16A6A1] text-white text-xs font-bold flex items-center justify-center shadow-xs">
-                  {displayName.charAt(0).toUpperCase()}
+              <button className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-indigo-300 transition-all cursor-pointer">
+                <div
+                  className={`w-9 h-9 rounded-full bg-gradient-to-tr ${currentAvatar.bgColor} text-white text-lg font-bold flex items-center justify-center shadow-md`}
+                >
+                  {currentAvatar.emoji}
                 </div>
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-xl border border-gray-100">
+            <DropdownMenuContent align="end" className="w-60 p-2 rounded-2xl shadow-xl border border-gray-100">
               <DropdownMenuLabel className="p-2">
-                <p className="text-xs font-bold text-gray-900 truncate">
+                <p className="text-xs font-black text-gray-900 truncate">
                   {displayName}
                 </p>
                 <p className="text-[11px] text-gray-500 truncate">
                   {displayEmail}
                 </p>
-                <div className="flex items-center gap-1 mt-1">
-                  <span className="px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-md">
-                    {user?.class_level || "Class 11"}
+                <div className="flex items-center gap-1 mt-1.5">
+                  <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 rounded-md">
+                    {user?.class_level || "Class 8"}
                   </span>
-                  <span className="px-2 py-0.5 text-[10px] font-semibold bg-blue-50 text-blue-700 rounded-md capitalize">
-                    {user?.role || "Student"}
+                  <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-50 text-amber-800 rounded-md">
+                    Hero: {currentAvatar.name}
                   </span>
                 </div>
               </DropdownMenuLabel>
@@ -180,15 +189,21 @@ export function StudentHeader({
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/my-courses" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
-                  <BookOpen className="w-4 h-4 text-gray-500" />
-                  My Enrolled Courses
+                <Link href="/dashboard/subfolders" className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-indigo-700">
+                  <FolderOpen className="w-4 h-4 text-indigo-600" />
+                  Subfolder Explorer
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/bookmarks" className="flex items-center gap-2 text-xs py-2 cursor-pointer font-bold text-amber-700">
+                  <Bookmark className="w-4 h-4 text-amber-500" />
+                  My Bookmarks
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/profile" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
                   <User className="w-4 h-4 text-gray-500" />
-                  My Profile & Settings
+                  Cartoon Avatar & Profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

@@ -23,6 +23,11 @@ import {
   LogOut,
   ChevronRight,
   ExternalLink,
+  Gift,
+  Trophy,
+  Percent,
+  Star,
+  Calendar,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -44,9 +49,9 @@ const adminNavGroups: NavGroup[] = [
     ],
   },
   {
-    groupName: "Academics & Content",
+    groupName: "Curriculum & Subfolders",
     items: [
-      { href: "/admin/courses", label: "Courses", icon: BookOpen },
+      { href: "/admin/courses", label: "Courses & Subfolders", icon: BookOpen },
       { href: "/admin/materials", label: "Study Materials", icon: FileText },
       { href: "/admin/live-classes", label: "Live Classes", icon: Radio, badge: "Live" },
       { href: "/admin/recorded-classes", label: "Recorded Lectures", icon: Video },
@@ -54,9 +59,15 @@ const adminNavGroups: NavGroup[] = [
     ],
   },
   {
-    groupName: "Students & Batches",
+    groupName: "Students & Academic Operations",
     items: [
-      { href: "/admin/students", label: "Students", icon: Users, badge: "842" },
+      { href: "/admin/students", label: "Students (Classes 6-10)", icon: Users, badge: "842" },
+      { href: "/admin/attendance", label: "Attendance Manager", icon: CalendarDays },
+      { href: "/admin/performance", label: "Performance & Marks", icon: Trophy },
+      { href: "/admin/trials", label: "Demo & Free Trials", icon: Gift, badge: "Active" },
+      { href: "/admin/pricing", label: "Pricing & Discounts", icon: Percent },
+      { href: "/admin/calendar", label: "Academic Holidays", icon: Calendar, badge: "Alert" },
+      { href: "/admin/feedback", label: "Ratings & Reviews", icon: Star },
       { href: "/admin/batches", label: "Batches", icon: CalendarDays },
       { href: "/admin/enquiries", label: "Enquiries & Leads", icon: UserCheck, badge: "18 New" },
       { href: "/admin/faculty", label: "Faculty Mentors", icon: GraduationCap },

@@ -32,16 +32,18 @@ const navLinks = [
   { href: "/", label: "Home" },
   {
     href: "/courses",
-    label: "Courses",
+    label: "Courses (6th–10th)",
     children: [
-      { href: "/courses?category=IIT-JEE", label: "IIT-JEE" },
-      { href: "/courses?category=Olympiad", label: "Olympiad" },
-      { href: "/courses?category=NTSE", label: "NTSE" },
-      { href: "/courses?category=Foundation", label: "Foundation" },
+      { href: "/courses?class=Class+6", label: "Class 6th Junior Champs 🚀" },
+      { href: "/courses?class=Class+7", label: "Class 7th Junior Prodigy 🦖" },
+      { href: "/courses?class=Class+8", label: "Class 8th Foundation 🤖" },
+      { href: "/courses?class=Class+9", label: "Class 9th Board Champions 🦉" },
+      { href: "/courses?class=Class+10", label: "Class 10th Board Toppers 🥷" },
     ],
   },
-  { href: "/faculty", label: "Faculty" },
-  { href: "/contact", label: "Contact" },
+  { href: "/demo", label: "Free Demo (7-Day Trial) 🎁" },
+  { href: "/pricing", label: "Monthly Pricing & Discounts 🏷️" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function Navbar() {

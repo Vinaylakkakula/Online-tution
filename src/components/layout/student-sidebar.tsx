@@ -22,6 +22,10 @@ import {
   LogOut,
   ShieldCheck,
   Sparkles,
+  FolderOpen,
+  CalendarDays,
+  Calendar,
+  Star,
 } from "lucide-react";
 
 interface NavItem {
@@ -34,14 +38,17 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/subfolders", label: "Subfolders", icon: FolderOpen },
   { href: "/dashboard/my-courses", label: "Courses", icon: BookOpen },
-  { href: "/dashboard/tests", label: "Tests", icon: FileCheck2 },
-  { href: "/dashboard/live-classes", label: "Live Classes", icon: Radio, isLive: true },
+  { href: "/dashboard/bookmarks", label: "Bookmarks", icon: Bookmark },
+  { href: "/dashboard/live-classes", label: "Live", icon: Radio, isLive: true },
   { href: "/dashboard/recorded-classes", label: "Recorded", icon: Video },
+  { href: "/dashboard/attendance", label: "Attendance", icon: CalendarDays },
+  { href: "/dashboard/performance", label: "Report Card", icon: Trophy },
+  { href: "/dashboard/calendar", label: "Calendar", icon: Calendar },
+  { href: "/dashboard/feedback", label: "Reviews", icon: Star },
+  { href: "/dashboard/tests", label: "Tests", icon: FileCheck2 },
   { href: "/dashboard/materials", label: "Materials", icon: FileText },
-  { href: "/dashboard/progress", label: "Progress", icon: BarChart3 },
-  { href: "/dashboard/leaderboard", label: "Rankings", icon: Trophy },
-  { href: "/dashboard/community", label: "Community", icon: Users },
   { href: "/dashboard/notifications", label: "Alerts", icon: Bell, badge: "3" },
   { href: "/dashboard/support", label: "Help & FAQ", icon: HelpCircle },
 ];

@@ -73,6 +73,11 @@ export default function AdminOverviewPage() {
     announcements,
     students,
     batches,
+    cartoonCourses,
+    demoLeads,
+    attendance,
+    feedback,
+    coupons,
     store,
   } = useLMSData();
 
@@ -429,6 +434,63 @@ export default function AdminOverviewPage() {
               <span className="text-2xl font-black text-purple-900">842 Students</span>
               <span className="text-[11px] text-purple-600 font-bold block">Pratham 2026 Batch</span>
             </div>
+          </div>
+
+          {/* Operations & Pipeline Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <Link
+              href="/admin/trials"
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 hover:shadow-md transition-shadow block"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-xs text-gray-500 font-bold">7-Day Free Trials</span>
+                <span className="text-sm">🎁</span>
+              </div>
+              <span className="text-2xl font-black text-amber-600">{demoLeads.length} Leads</span>
+              <span className="text-[11px] text-emerald-600 font-bold block">
+                Active Demo Trials
+              </span>
+            </Link>
+
+            <Link
+              href="/admin/attendance"
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 hover:shadow-md transition-shadow block"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-xs text-gray-500 font-bold">Attendance Register</span>
+                <span className="text-sm">📅</span>
+              </div>
+              <span className="text-2xl font-black text-emerald-600">86% Today</span>
+              <span className="text-[11px] text-gray-400 block">Classes 6th to 10th</span>
+            </Link>
+
+            <Link
+              href="/admin/pricing"
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 hover:shadow-md transition-shadow block"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-xs text-gray-500 font-bold">Pricing & Coupons</span>
+                <span className="text-sm">🏷️</span>
+              </div>
+              <span className="text-2xl font-black text-indigo-700">{coupons.length} Active</span>
+              <span className="text-[11px] text-indigo-600 font-bold block">
+                Monthly & Annual Plans
+              </span>
+            </Link>
+
+            <Link
+              href="/admin/feedback"
+              className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-2xs space-y-1 hover:shadow-md transition-shadow block"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-xs text-gray-500 font-bold">Student Ratings</span>
+                <span className="text-sm">⭐</span>
+              </div>
+              <span className="text-2xl font-black text-rose-600">{feedback.length} Reviews</span>
+              <span className="text-[11px] text-amber-600 font-bold block">
+                4.9 / 5.0 Average
+              </span>
+            </Link>
           </div>
 
           {/* Clean Unified Action Strip */}

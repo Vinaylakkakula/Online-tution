@@ -3,436 +3,481 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
-import { useLMSData } from "@/lib/lms-store";
+import { useLMSData, VideoItem } from "@/lib/lms-store";
+import { getAvatarById, getFrameById, STUDENT_TITLES } from "@/lib/cartoon-avatars";
+import { CartoonAvatarModal } from "@/components/modals/cartoon-avatar-modal";
+import { CartoonVideoPlayer } from "@/components/media/cartoon-video-player";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
-  Atom,
   Trophy,
-  Lightbulb,
-  ClipboardList,
   BookOpen,
-  Tv2,
-  Medal,
-  ChevronRight,
   Play,
-  Radio,
   Clock,
   Sparkles,
   CheckCircle2,
-  FileCheck2,
   Flame,
   ArrowRight,
-  GraduationCap,
-  AlertCircle,
+  FolderOpen,
+  Bookmark,
+  Calendar,
+  Star,
+  Award,
+  Video,
+  FileText,
+  AlertTriangle,
+  Gift,
+  Palette,
+  Compass,
 } from "lucide-react";
 
 export default function StudentDashboardPage() {
   const { user } = useAuth();
   const studentName = user?.full_name || "Aryan Sharma";
-  const { courses, materials, liveClasses, tests, announcements } = useLMSData();
-  const [selectedLanguage, setSelectedLanguage] = useState<"all" | "english" | "hinglish">("all");
+  const studentId = user?.id || "STD-1001";
+  const classLevel = user?.class_level || "Class 8";
 
-  const activeLiveClass = liveClasses.find((l) => l.status === "live") || liveClasses[0];
+  const {
+    cartoonCourses,
+    bookmarks,
+    attendance,
+    emergencyAlert,
+    performance,
+    profileExtras,
+    refreshAll,
+  } = useLMSData();
+
+  // Avatar Modal State
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+
+  // Video Player Modal
+  const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+
+  const currentAvatar = getAvatarById(profileExtras.avatarId || "astro-leo");
+  const currentFrame = getFrameById(profileExtras.frameId || "frame-gold");
+  const currentTitle =
+    STUDENT_TITLES.find((t) => t.id === profileExtras.titleId) || STUDENT_TITLES[1];
+
+  // Current enrolled course for the student's class
+  const studentCourse =
+    cartoonCourses.find((c) => c.classLevel.toLowerCase() === classLevel.toLowerCase()) ||
+    cartoonCourses[0];
+
+  const presentDays = attendance.filter((a) => a.status === "present").length || 19;
+  const attendanceRate = Math.round((presentDays / 22) * 100);
+
+  const handlePlayRecentlyWatched = () => {
+    const firstVid = studentCourse?.subjects[0]?.chapters[0]?.videos[0];
+    if (firstVid) {
+      setActiveVideo(firstVid);
+      setVideoModalOpen(true);
+    }
+  };
 
   return (
-    <div className="space-y-6 pb-10">
-      {/* Welcome & Sync Bar */}
-      <div className="bg-gradient-to-r from-[#004B87] via-[#104375] to-[#16A6A1] text-white p-5 sm:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-[11px] font-bold backdrop-blur-xs">
-              {user?.class_level || "Class 11"}
-            </span>
-            <span className="text-cyan-200 text-xs font-semibold">
-              • Academic Session 2026-27
-            </span>
+    <div className="space-y-6 pb-12">
+      {/* 1. Cartoon Welcome & Gamified Hero HUD */}
+      <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 sm:p-8 rounded-3xl shadow-xl overflow-hidden">
+        {/* Playful background stars */}
+        <div className="absolute top-2 right-12 text-3xl opacity-30 select-none animate-bounce">
+          ✨
+        </div>
+        <div className="absolute bottom-2 right-4 text-7xl sm:text-8xl opacity-15 select-none pointer-events-none">
+          {currentAvatar.emoji}
+        </div>
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          {/* Avatar & Greetings */}
+          <div className="flex items-center gap-4">
+            <div className="relative shrink-0">
+              <div
+                onClick={() => setAvatarModalOpen(true)}
+                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-4xl sm:text-5xl bg-gradient-to-tr ${currentAvatar.bgColor} text-white cursor-pointer hover:scale-105 transition-transform shadow-lg ${currentFrame.borderClass} ${currentFrame.glowClass}`}
+                title="Click to change your cartoon avatar!"
+              >
+                <span>{currentAvatar.emoji}</span>
+              </div>
+              <button
+                onClick={() => setAvatarModalOpen(true)}
+                className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-amber-400 text-gray-950 hover:bg-amber-300 shadow-md transition-transform hover:scale-110"
+                title="Customize Avatar & Frame"
+              >
+                <Palette className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-0.5 rounded-full bg-white/20 text-xs font-black backdrop-blur-xs">
+                  {classLevel}
+                </span>
+                <span className="text-amber-300 text-xs font-bold flex items-center gap-1">
+                  <span>{currentTitle.icon}</span>
+                  <span>{currentTitle.title}</span>
+                </span>
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                Hey, {studentName}! 🚀
+              </h1>
+
+              <p className="text-xs sm:text-sm text-white/80 max-w-lg font-medium">
+                Hero <span className="font-bold text-amber-300">{currentAvatar.name}</span> is ready! You have completed 82% of this week's science quests.
+              </p>
+            </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight">
-            Welcome back, {studentName}!
-          </h1>
-          <p className="text-xs text-white/80 max-w-xl">
-            Your personalized learning track is active. Access your courses, test series, and live classes below.
+
+          {/* Gamification Counters HUD */}
+          <div className="flex items-center gap-3 bg-black/25 backdrop-blur-md p-3 rounded-2xl border border-white/10 shrink-0">
+            <div className="text-center px-3 border-r border-white/15">
+              <div className="flex items-center justify-center gap-1 text-amber-300 font-black text-sm">
+                <span>⭐</span>
+                <span>{profileExtras.xp || 1250}</span>
+              </div>
+              <span className="text-[10px] text-white/70 font-semibold uppercase">Scholar XP</span>
+            </div>
+
+            <div className="text-center px-3 border-r border-white/15">
+              <div className="flex items-center justify-center gap-1 text-orange-400 font-black text-sm">
+                <span>🔥</span>
+                <span>{profileExtras.streakDays || 5}</span>
+              </div>
+              <span className="text-[10px] text-white/70 font-semibold uppercase">Day Streak</span>
+            </div>
+
+            <div className="text-center px-3">
+              <div className="text-emerald-400 font-black text-sm">
+                Lv.{profileExtras.level || 7}
+              </div>
+              <span className="text-[10px] text-white/70 font-semibold uppercase">Badge Level</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Emergency Holiday Alert Banner (Requirement 9) */}
+      {emergencyAlert && emergencyAlert.isActive && (
+        <div className="p-4 rounded-3xl bg-gradient-to-r from-red-500 via-rose-500 to-orange-500 text-white shadow-md flex items-center justify-between gap-4 border-2 border-red-300">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🚨</span>
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-amber-200">
+                Notice: {emergencyAlert.title}
+              </p>
+              <p className="text-xs text-white/95 line-clamp-1 font-medium">
+                {emergencyAlert.message}
+              </p>
+            </div>
+          </div>
+          <Link href="/dashboard/calendar" className="shrink-0">
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-xs font-bold text-gray-950 bg-white hover:bg-gray-100 border-none rounded-xl"
+            >
+              View Calendar
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {/* 2. Subfolders Quick Access Banner (Requirement 3: "Clicking a course should display its subjects as subfolders") */}
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-indigo-900 via-blue-900 to-indigo-950 text-white shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5 border-2 border-indigo-500/30">
+        <div className="space-y-1 text-center sm:text-left">
+          <span className="text-[11px] font-black uppercase text-amber-400 tracking-wider flex items-center justify-center sm:justify-start gap-1.5">
+            <Compass className="w-4 h-4" />
+            <span>Folder-Style Subject Navigation (Classes 6th to 10th)</span>
+          </span>
+          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            Explore {classLevel} Subject Subfolders 📁
+          </h2>
+          <p className="text-xs text-white/70 max-w-xl font-medium">
+            Click into Mathematics, Science, English, or Social Studies to browse chapters, recorded lessons, formula cards, assignments, and CBT tests.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-white">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Learning Portal • Online</span>
+        <Link href="/dashboard/subfolders" className="shrink-0 w-full sm:w-auto">
+          <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-gray-950 font-black text-xs h-11 px-6 rounded-2xl shadow-lg gap-2">
+            <FolderOpen className="w-4 h-4 text-gray-950" />
+            <span>Open Subfolder Explorer</span>
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </Link>
+      </div>
+
+      {/* 3. Stats Overview Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="p-5 rounded-3xl border-2 border-blue-100 bg-white shadow-sm space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase">
+            Completed Lessons
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-blue-600">68</span>
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+              +6 this week
+            </span>
           </div>
-        </div>
+          <p className="text-[11px] text-gray-500 font-medium">
+            Chapters 1 & 2 fully completed!
+          </p>
+        </Card>
+
+        <Card className="p-5 rounded-3xl border-2 border-amber-100 bg-white shadow-sm space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase">
+            Pending Lessons
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-amber-500">14</span>
+            <span className="text-xs font-bold text-gray-500">lessons left</span>
+          </div>
+          <p className="text-[11px] text-gray-500 font-medium">
+            Next: Number Line & Fractions
+          </p>
+        </Card>
+
+        <Card className="p-5 rounded-3xl border-2 border-emerald-100 bg-white shadow-sm space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase">
+            Attendance Rate
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-emerald-600">{attendanceRate}%</span>
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+              Regular
+            </span>
+          </div>
+          <p className="text-[11px] text-gray-500 font-medium">
+            {presentDays} / 22 Working Days Attended
+          </p>
+        </Card>
+
+        <Card className="p-5 rounded-3xl border-2 border-purple-100 bg-white shadow-sm space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase">
+            Bookmarked Lessons
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-black text-purple-600">{bookmarks.length}</span>
+            <Link href="/dashboard/bookmarks" className="text-xs font-bold text-indigo-600 hover:underline">
+              View All →
+            </Link>
+          </div>
+          <p className="text-[11px] text-gray-500 font-medium">
+            Saved for quick revision
+          </p>
+        </Card>
       </div>
 
-      {/* Top Language Filter Bar (Matches Oliveboard Screenshot 4) */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setSelectedLanguage("all")}
-          className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
-            selectedLanguage === "all"
-              ? "bg-[#E2F0FE] text-[#004B87] ring-1 ring-[#004B87]/30"
-              : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-          }`}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setSelectedLanguage("english")}
-          className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
-            selectedLanguage === "english"
-              ? "bg-[#E2F0FE] text-[#004B87] ring-1 ring-[#004B87]/30"
-              : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-          }`}
-        >
-          English
-        </button>
-        <button
-          onClick={() => setSelectedLanguage("hinglish")}
-          className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-2xs ${
-            selectedLanguage === "hinglish"
-              ? "bg-[#E2F0FE] text-[#004B87] ring-1 ring-[#004B87]/30"
-              : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-          }`}
-        >
-          Hinglish
-        </button>
-      </div>
-
-      {/* SECTION: IIT JEE, Olympiad & NTSE Courses (Matches Oliveboard Screenshot 4) */}
-      <div className="space-y-3.5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-            IIT JEE, Olympiad & NTSE Courses
-          </h2>
-          <Link
-            href="/dashboard/my-courses"
-            className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
-          >
-            <span>View All Programs ({courses.length})</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {/* The 3 Iconic Oliveboard-Style Wide Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Card 1: IIT JEE */}
-          <Link
-            href="/dashboard/my-courses"
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0D3B66] via-[#124B82] to-[#0A2E52] p-6 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-blue-400/20"
-          >
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-blue-500/15 blur-xl group-hover:scale-125 transition-transform" />
-            <div className="absolute bottom-0 right-0 w-36 h-36 border-t-2 border-l-2 border-amber-400/40 rounded-tl-full opacity-60 pointer-events-none" />
-
-            <div className="relative z-10 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner group-hover:rotate-12 transition-transform">
-                <Atom className="w-9 h-9 text-cyan-300 animate-[spin_12s_linear_infinite]" />
-              </div>
-
-              <div className="space-y-1.5">
-                <h3 className="text-2xl font-black tracking-tight leading-none text-white">
-                  IIT JEE
-                </h3>
-                <span className="inline-block bg-[#FDB813] text-gray-950 text-[11px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
-                  Class 6 – 12
+      {/* 4. Main Section: Enrolled Course & Subjects Progress */}
+      {studentCourse && (
+        <Card className="p-6 sm:p-8 rounded-3xl border-2 border-indigo-100 bg-white shadow-md space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl p-2 rounded-2xl bg-indigo-50">
+                {studentCourse.mascot}
+              </span>
+              <div>
+                <span className="text-[10px] font-black uppercase text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-md">
+                  Active Course Enrollment
                 </span>
-                <p className="text-xs font-medium text-cyan-100/90 pt-0.5">
-                  Foundation | Main | Advanced
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 2: Olympiad */}
-          <Link
-            href="/dashboard/my-courses"
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#5E1A84] via-[#7B249C] to-[#4A146C] p-6 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-purple-400/20"
-          >
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-purple-400/20 blur-xl group-hover:scale-125 transition-transform" />
-            <div className="absolute bottom-0 right-0 w-36 h-36 border-t-2 border-l-2 border-amber-300/40 rounded-tl-full opacity-60 pointer-events-none" />
-
-            <div className="relative z-10 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
-                <Trophy className="w-9 h-9 text-amber-300" />
-              </div>
-
-              <div className="space-y-1.5">
-                <h3 className="text-2xl font-black tracking-tight leading-none text-white">
-                  Olympiad
+                <h3 className="text-xl font-black text-gray-900 mt-0.5">
+                  {studentCourse.title}
                 </h3>
-                <span className="inline-block bg-[#FDB813] text-gray-950 text-[11px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
-                  Classes 6 – 12
-                </span>
-                <p className="text-xs font-medium text-purple-100/90 pt-0.5 truncate">
-                  Maths | Science | AI | Commerce
-                </p>
               </div>
             </div>
-          </Link>
 
-          {/* Card 3: NTSE */}
-          <Link
-            href="/dashboard/my-courses"
-            className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0B5A53] via-[#0E7067] to-[#08453F] p-6 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-teal-400/20"
-          >
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-teal-400/20 blur-xl group-hover:scale-125 transition-transform" />
-            <div className="absolute bottom-0 right-0 w-36 h-36 border-t-2 border-l-2 border-amber-300/40 rounded-tl-full opacity-60 pointer-events-none" />
-
-            <div className="relative z-10 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
-                <Lightbulb className="w-9 h-9 text-amber-300" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-500">Course Progress:</span>
+              <div className="w-28 bg-gray-100 h-3 rounded-full overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-500 to-emerald-500 h-full rounded-full" style={{ width: "72%" }} />
               </div>
-
-              <div className="space-y-1.5">
-                <h3 className="text-2xl font-black tracking-tight leading-none text-white">
-                  NTSE
-                </h3>
-                <span className="inline-block bg-[#FDB813] text-gray-950 text-[11px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
-                  Class 8 – 10
-                </span>
-                <p className="text-xs font-medium text-teal-100/90 pt-0.5">
-                  Stage 1 & Stage 2 Preparation
-                </p>
-              </div>
+              <span className="text-xs font-black text-emerald-600">72%</span>
             </div>
-          </Link>
-        </div>
-      </div>
+          </div>
 
-      {/* SECTION: Test Categories (Matches Oliveboard Screenshot 1 & 4) */}
-      <div className="space-y-3.5 pt-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-            Test Categories
-          </h2>
-          <Link
-            href="/dashboard/tests"
-            className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
-          >
-            <span>Practice Tests ({tests.length})</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {/* 4 Pastel Category Cards matching Oliveboard */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link
-            href="/dashboard/tests"
-            className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#EAF5FE] hover:bg-[#D9EDFD] border border-[#CDE5FC] transition-all hover:shadow-md group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-xs text-[#0066CC] group-hover:scale-105 transition-transform">
-                <ClipboardList className="w-6 h-6 stroke-[2.2]" />
-              </div>
-              <span className="font-extrabold text-sm text-gray-900">
-                Sectional Test
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all" />
-          </Link>
-
-          <Link
-            href="/dashboard/tests"
-            className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#E8F8F2] hover:bg-[#D4F4E6] border border-[#CAEDE0] transition-all hover:shadow-md group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-xs text-[#107C41] group-hover:scale-105 transition-transform">
-                <BookOpen className="w-6 h-6 stroke-[2.2]" />
-              </div>
-              <span className="font-extrabold text-sm text-gray-900">
-                Topic Test
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all" />
-          </Link>
-
-          <Link
-            href="/dashboard/tests"
-            className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#F3ECFB] hover:bg-[#E8DCF7] border border-[#DFCEF2] transition-all hover:shadow-md group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-xs text-[#6B3FA0] group-hover:scale-105 transition-transform">
-                <Tv2 className="w-6 h-6 stroke-[2.2]" />
-              </div>
-              <span className="font-extrabold text-sm text-gray-900">
-                Mock Test
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all" />
-          </Link>
-
-          <Link
-            href="/dashboard/tests"
-            className="flex items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#FDF0E6] hover:bg-[#FCE3D2] border border-[#FAD4BA] transition-all hover:shadow-md group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-xs text-[#C65D28] group-hover:scale-105 transition-transform">
-                <Medal className="w-6 h-6 stroke-[2.2]" />
-              </div>
-              <span className="font-extrabold text-sm text-gray-900">
-                Grand Test
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all" />
-          </Link>
-        </div>
-      </div>
-
-      {/* Main Grid: Continue Learning + Live Session Alerts & Announcements */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
-        {/* Left Column: Continue Learning Card (8 cols) */}
-        <div className="lg:col-span-8 space-y-6">
-          <Card className="rounded-2xl border-gray-200/90 shadow-sm bg-white overflow-hidden p-6">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-5">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#EAF4FF] text-[#004B87] flex items-center justify-center">
-                  <Play className="w-4 h-4 fill-[#004B87]" />
+          {/* Subjects Cards in Course */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {studentCourse.subjects.map((sub) => (
+              <div
+                key={sub.id}
+                className="p-5 rounded-2xl border-2 border-gray-100 hover:border-indigo-300 bg-gradient-to-b from-white to-gray-50/70 hover:shadow-md transition-all space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xl text-white shadow-xs"
+                    style={{ backgroundColor: sub.accentColor }}
+                  >
+                    {sub.icon}
+                  </span>
+                  <span className="text-[11px] font-bold text-gray-500">
+                    {sub.chapters.length} Chapters
+                  </span>
                 </div>
+
                 <div>
-                  <h3 className="text-base font-extrabold text-gray-900 leading-none">
-                    Continue Learning
-                  </h3>
-                  <p className="text-[11px] text-gray-500 mt-0.5">
-                    Pick up right where you left off
+                  <h4 className="text-sm font-black text-gray-900">{sub.name}</h4>
+                  <p className="text-[11px] text-gray-500 font-medium">
+                    {sub.teacherAvatar} {sub.teacherName}
                   </p>
                 </div>
+
+                <Link
+                  href="/dashboard/subfolders"
+                  className="text-xs font-black text-indigo-600 hover:text-indigo-800 flex items-center gap-1 pt-1"
+                >
+                  <span>Open Folder</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
-
-              <Link
-                href="/dashboard/recorded-classes"
-                className="text-xs font-bold text-[#004B87] hover:underline flex items-center gap-1"
-              >
-                <span>Full Playlist</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-              <div className="relative w-full sm:w-52 h-32 rounded-xl bg-gradient-to-br from-gray-900 via-[#0D3B66] to-gray-800 flex items-center justify-center shrink-0 overflow-hidden group cursor-pointer shadow-sm">
-                <div className="w-12 h-12 rounded-full bg-[#16A6A1] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Play className="w-5 h-5 fill-white ml-0.5" />
-                </div>
-                <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-[10px] text-white font-mono font-semibold">
-                  32:40 / 48:00
-                </span>
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-[#004B87] text-[10px] text-white font-bold">
-                  Physics
-                </span>
-              </div>
-
-              <div className="flex-1 space-y-2 w-full">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-teal-500 text-teal-800 bg-teal-50 text-[10px] font-bold">
-                    Class 11 • Chapter 4
-                  </Badge>
-                  <span className="text-xs text-gray-500 font-semibold">68% Watched</span>
-                </div>
-
-                <h4 className="text-base font-black text-gray-900 leading-snug">
-                  Rotational Dynamics: Moment of Inertia & Parallel Axis Theorem
-                </h4>
-
-                <p className="text-xs text-gray-500">
-                  Lead Faculty: <strong>Dr. Rahul Sharma</strong> • IIT-JEE Comprehensive Track
-                </p>
-
-                <div className="space-y-1 pt-1.5">
-                  <Progress value={68} className="h-2.5 bg-gray-100" />
-                  <div className="flex justify-between text-[11px] text-gray-400 font-medium">
-                    <span>Current timestamp: 32m 40s</span>
-                    <span className="text-[#004B87] font-semibold">15m remaining</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-            <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
-              <span className="text-[11px] text-gray-500 font-bold block">Active Programs</span>
-              <span className="text-xl font-black text-[#004B87]">{courses.length} Courses</span>
-            </div>
-            <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
-              <span className="text-[11px] text-gray-500 font-bold block">Materials Available</span>
-              <span className="text-xl font-black text-emerald-600">{materials.length} PDFs</span>
-            </div>
-            <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
-              <span className="text-[11px] text-gray-500 font-bold block">Mock Tests</span>
-              <span className="text-xl font-black text-gray-800">{tests.length} CBTs</span>
-            </div>
-            <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-2xs">
-              <span className="text-[11px] text-gray-500 font-bold block">Learning Streak</span>
-              <span className="text-xl font-black text-rose-500 flex items-center gap-1">
-                <Flame className="w-5 h-5 fill-rose-500 text-rose-500" />
-                12 Days
-              </span>
-            </div>
+            ))}
           </div>
-        </div>
+        </Card>
+      )}
 
-        {/* Right Column: Live Class Spotlight & Today's Schedule (4 cols) */}
-        <div className="lg:col-span-4 space-y-5">
-          {/* Urgent Live Class Spotlight Card */}
-          {activeLiveClass && (
-            <Card className="rounded-2xl border-2 border-red-200 bg-gradient-to-br from-red-50/70 to-rose-50/40 p-5 shadow-xs space-y-3.5">
-              <div className="flex items-center justify-between">
-                <span className="inline-flex items-center gap-1.5 text-xs font-black text-red-600 tracking-wide uppercase">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                  {activeLiveClass.status === "live" ? "Live Right Now" : "Live Session"}
+      {/* 5. Recently Watched Recorded Classes & Upcoming Live Lecture */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Recently Watched */}
+        <Card className="lg:col-span-7 p-6 rounded-3xl border-2 border-indigo-100 bg-white shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
+              <Video className="w-4 h-4 text-rose-500" />
+              <span>Recently Watched Recorded Class</span>
+            </h3>
+            <span className="text-xs font-bold text-gray-400">Resume playback</span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/70 to-purple-50/40 border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 to-orange-500 text-white flex items-center justify-center text-xl shrink-0 shadow-xs">
+                ▶
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-black uppercase text-indigo-700 bg-indigo-100/70 px-2 py-0.5 rounded-md">
+                  Mathematics • Class 6th
                 </span>
-                <Badge className="bg-red-600 text-white text-[10px] font-bold">Today</Badge>
-              </div>
-
-              <div>
-                <h4 className="text-base font-black text-gray-900 leading-snug">
-                  {activeLiveClass.title}
+                <h4 className="text-sm font-black text-gray-900">
+                  Fun with Large Numbers & Comparing Digits
                 </h4>
-                <p className="text-xs text-gray-600 mt-1">
-                  Faculty: <strong>{activeLiveClass.faculty}</strong>
+                <p className="text-[11px] text-gray-500 font-medium">
+                  Paused at 14:20 of 24 mins
                 </p>
-                <div className="flex items-center gap-2 text-xs text-gray-500 mt-2 font-medium">
-                  <Clock className="w-4 h-4 text-red-500" />
-                  <span>{activeLiveClass.scheduledAt}</span>
-                </div>
               </div>
+            </div>
 
-              <Link href="/dashboard/live-classes" className="block pt-1">
-                <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs h-10 rounded-xl shadow-md flex items-center justify-center gap-2">
-                  <Radio className="w-4 h-4" />
-                  <span>Join Live Classroom</span>
+            <Button
+              size="sm"
+              onClick={handlePlayRecentlyWatched}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs h-9 px-5 rounded-xl shadow-xs shrink-0 gap-1.5"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Resume Lesson</span>
+            </Button>
+          </div>
+        </Card>
+
+        {/* Upcoming Live Lecture */}
+        <Card className="lg:col-span-5 p-6 rounded-3xl border-2 border-indigo-100 bg-white shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-emerald-500" />
+              <span>Upcoming Live Lecture</span>
+            </h3>
+            <Badge className="bg-emerald-500 text-white text-[10px] font-bold">
+              Today
+            </Badge>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+            <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wider">
+              Today, 5:00 PM – 6:30 PM IST
+            </span>
+            <h4 className="text-sm font-black text-gray-900">
+              Science Explorer: Components of Food & Lab Demonstrations
+            </h4>
+            <p className="text-xs text-gray-600 font-medium">
+              Mentor: Dr. Neha Sen 🦉 (Interactive Live Zoom Room)
+            </p>
+
+            <div className="pt-2">
+              <Link href="/dashboard/live-classes">
+                <Button
+                  size="sm"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-xs gap-1.5"
+                >
+                  <span>Join Live Lecture Room</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Button>
               </Link>
-            </Card>
-          )}
-
-          {/* Real-time Announcements from LMSStore */}
-          <Card className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-500" />
-                Latest Announcements
-              </h3>
-              <Badge variant="outline" className="border-blue-300 text-blue-900 bg-blue-50 text-[10px] font-bold">
-                Notice Board
-              </Badge>
             </div>
+          </div>
+        </Card>
+      </div>
 
-            <div className="space-y-2.5">
-              {announcements.slice(0, 3).map((ann) => (
-                <div key={ann.id} className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-gray-900">{ann.title}</span>
-                    <span className="text-[10px] text-gray-400">{ann.date}</span>
-                  </div>
-                  <p className="text-[11px] text-gray-600 leading-relaxed">{ann.message}</p>
-                </div>
-              ))}
+      {/* 6. Quick Launchers: Bookmarks, Attendance, Report Card, Feedback */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Link href="/dashboard/bookmarks">
+          <Card className="p-4 rounded-2xl border-2 border-amber-200 bg-amber-50/40 hover:bg-amber-100/50 hover:shadow-md transition-all flex items-center gap-3">
+            <span className="text-2xl">⭐</span>
+            <div>
+              <h4 className="text-xs font-black text-gray-900">My Bookmarks</h4>
+              <p className="text-[10px] text-gray-500">Saved videos & PDFs</p>
             </div>
           </Card>
-        </div>
+        </Link>
+
+        <Link href="/dashboard/attendance">
+          <Card className="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/40 hover:bg-emerald-100/50 hover:shadow-md transition-all flex items-center gap-3">
+            <span className="text-2xl">📅</span>
+            <div>
+              <h4 className="text-xs font-black text-gray-900">Attendance Grid</h4>
+              <p className="text-[10px] text-gray-500">Monthly calendar</p>
+            </div>
+          </Card>
+        </Link>
+
+        <Link href="/dashboard/performance">
+          <Card className="p-4 rounded-2xl border-2 border-purple-200 bg-purple-50/40 hover:bg-purple-100/50 hover:shadow-md transition-all flex items-center gap-3">
+            <span className="text-2xl">📊</span>
+            <div>
+              <h4 className="text-xs font-black text-gray-900">Report Card</h4>
+              <p className="text-[10px] text-gray-500">Scores & badges</p>
+            </div>
+          </Card>
+        </Link>
+
+        <Link href="/dashboard/feedback">
+          <Card className="p-4 rounded-2xl border-2 border-pink-200 bg-pink-50/40 hover:bg-pink-100/50 hover:shadow-md transition-all flex items-center gap-3">
+            <span className="text-2xl">💬</span>
+            <div>
+              <h4 className="text-xs font-black text-gray-900">Rate & Review</h4>
+              <p className="text-[10px] text-gray-500">Share your thoughts</p>
+            </div>
+          </Card>
+        </Link>
       </div>
+
+      {/* Avatar Customization Modal */}
+      <CartoonAvatarModal
+        open={avatarModalOpen}
+        onOpenChange={setAvatarModalOpen}
+        studentId={studentId}
+        studentName={studentName}
+        currentExtras={profileExtras}
+        onSave={refreshAll}
+      />
+
+      {/* Video Player Modal */}
+      <CartoonVideoPlayer
+        open={videoModalOpen}
+        onOpenChange={setVideoModalOpen}
+        video={activeVideo}
+        courseTitle={studentCourse?.title || "Class Course"}
+        subjectName={studentCourse?.subjects[0]?.name || "Mathematics"}
+        chapterTitle="Chapter 1: Knowing Our Numbers"
+        studentId={studentId}
+        onBookmarkChange={refreshAll}
+      />
     </div>
   );
 }
