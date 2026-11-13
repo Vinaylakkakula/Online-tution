@@ -29,7 +29,10 @@ import {
   ShieldCheck,
   Zap,
   ChevronRight,
+  FolderTree,
+  Rocket,
 } from "lucide-react";
+import { CartoonHeroVisual } from "@/components/home/cartoon-hero-visual";
 
 // Featured courses data (seed)
 const featuredCourses = [
@@ -250,61 +253,75 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             {/* Left Content */}
             <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/90 text-sm px-4 py-2 rounded-full mb-6 border border-white/10">
-                <Sparkles className="w-4 h-4 text-[#16A6A1]" />
-                Trusted by 50,000+ Students Across India
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400/20 via-cyan-400/20 to-purple-400/20 backdrop-blur-sm text-cyan-200 text-xs sm:text-sm px-4 py-2 rounded-full mb-6 border border-cyan-400/30 shadow-md">
+                <Rocket className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span className="font-bold text-white">Fun & Interactive Learning • Classes 6th to 10th</span>
+                <span className="bg-amber-400 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">NEW</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                Learn Today.
-                <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#16A6A1] to-[#1bbfb9]">
-                  Lead Tomorrow.
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                Learn, Play &<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-cyan-300 to-teal-200">
+                  Score Top Ranks! 📚✨
                 </span>
               </h1>
 
-              <p className="mt-6 text-lg text-white/70 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                DeepSiddhi Foundation offers expert-led preparation for IIT-JEE,
-                Olympiad, NTSE, and Foundation courses. Transform your academic
-                journey with India&apos;s most trusted educators.
+              <p className="mt-5 text-base sm:text-lg text-white/80 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+                Transform school into an adventure! Explore colorful subject subfolders, watch recorded video lessons at your own pace, unlock cartoon avatars & badges, and enjoy a <strong className="text-amber-300 font-bold">7-Day Free Trial</strong> with India&apos;s best educators.
               </p>
 
+              {/* CTAs */}
               <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                <Link href="/demo">
+                  <Button
+                    size="xl"
+                    className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 font-extrabold shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all text-base px-6 border-0"
+                  >
+                    <Rocket className="w-5 h-5 mr-1" />
+                    Start Free Demo (7 Days)
+                  </Button>
+                </Link>
                 <Link href="/courses">
                   <Button
                     size="xl"
-                    variant="secondary"
-                    className="shadow-lg shadow-[#16A6A1]/25 hover:shadow-xl hover:shadow-[#16A6A1]/30 transition-all"
-                  >
-                    <BookOpen className="w-5 h-5" />
-                    Explore Courses
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button
-                    size="xl"
                     variant="outline"
-                    className="border-white/20 text-white hover:bg-white/10 hover:text-white bg-transparent"
+                    className="border-white/30 text-white hover:bg-white/10 hover:text-white bg-white/5 backdrop-blur-sm text-base px-6 transition-all hover:scale-105"
                   >
-                    Register Free
-                    <ArrowRight className="w-4 h-4" />
+                    <BookOpen className="w-5 h-5 mr-1 text-cyan-300" />
+                    Explore Subfolders
                   </Button>
                 </Link>
               </div>
 
+              {/* Mini Feature Highlights */}
+              <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-2.5 text-xs text-cyan-100 font-medium">
+                <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-full border border-white/10">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Subject Folders
+                </span>
+                <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-full border border-white/10">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" /> Recorded Classes
+                </span>
+                <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-full border border-white/10">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Cartoon Avatars
+                </span>
+                <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-full border border-white/10">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-pink-400" /> Free Trial
+                </span>
+              </div>
+
               {/* Trust indicators */}
-              <div className="mt-10 flex items-center gap-6 justify-center lg:justify-start">
+              <div className="mt-8 flex items-center gap-4 justify-center lg:justify-start">
                 <div className="flex -space-x-2">
-                  {["AK", "SR", "VP", "PM"].map((initials, i) => (
+                  {["🚀", "🦖", "🤖", "🦉"].map((emoji, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-gradient-to-br from-[#16A6A1] to-[#163B65] border-2 border-[#163B65] flex items-center justify-center text-[10px] font-bold text-white"
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 border-2 border-slate-900 flex items-center justify-center text-sm shadow"
                     >
-                      {initials}
+                      {emoji}
                     </div>
                   ))}
                 </div>
@@ -313,33 +330,20 @@ export default function HomePage() {
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400"
+                        className="w-4 h-4 fill-amber-400 text-amber-400"
                       />
                     ))}
                   </div>
-                  <p className="text-white/50 mt-0.5">
-                    4.9/5 from 2,500+ reviews
+                  <p className="text-white/70 text-xs mt-0.5 font-medium">
+                    <strong className="text-white font-bold">4.9/5</strong> by 2,500+ happy young scholars & parents
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Right Content - Stats Cards */}
-            <div className="hidden lg:grid grid-cols-2 gap-4">
-              {stats.map((stat, i) => (
-                <div
-                  key={i}
-                  className={`bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 ${
-                    i === 1 ? "translate-y-6" : ""
-                  } ${i === 3 ? "translate-y-6" : ""}`}
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[#16A6A1]/20 flex items-center justify-center mb-4">
-                    <stat.icon className="w-5 h-5 text-[#16A6A1]" />
-                  </div>
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-sm text-white/50 mt-1">{stat.label}</p>
-                </div>
-              ))}
+            {/* Right Content - Cartoon Hero Visual with Paper Rockets & Magic Books */}
+            <div className="w-full">
+              <CartoonHeroVisual />
             </div>
           </div>
         </div>
@@ -360,19 +364,35 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Mobile Stats */}
-      <section className="lg:hidden py-8 bg-white">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 gap-4">
-          {stats.map((stat, i) => (
-            <div
-              key={i}
-              className="bg-[#F6F8FC] rounded-xl p-4 text-center"
-            >
-              <stat.icon className="w-6 h-6 text-[#16A6A1] mx-auto mb-2" />
-              <p className="text-xl font-bold text-[#163B65]">{stat.value}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{stat.label}</p>
+      {/* Grade Quick Selector Banner */}
+      <section className="py-6 bg-gradient-to-r from-cyan-50 via-blue-50 to-amber-50 border-b border-blue-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3 text-center md:text-left">
+              <span className="text-3xl animate-bounce">🚀</span>
+              <div>
+                <p className="font-extrabold text-[#163B65] text-base">Select Your Grade & Jump In!</p>
+                <p className="text-xs text-gray-500">Subject-wise folder system • Recorded Classes • Homework & Tests</p>
+              </div>
             </div>
-          ))}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {["Class 6th 🎒", "Class 7th 📗", "Class 8th 🔬", "Class 9th 📐", "Class 10th 🏆"].map((grade) => (
+                <Link
+                  key={grade}
+                  href="/courses"
+                  className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#163B65] hover:text-white text-[#163B65] font-bold text-xs shadow-sm hover:shadow border border-blue-200 transition-all hover:scale-105"
+                >
+                  {grade}
+                </Link>
+              ))}
+              <Link
+                href="/demo"
+                className="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-sm hover:shadow transition-all hover:scale-105"
+              >
+                7-Day Free Demo 🎁
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

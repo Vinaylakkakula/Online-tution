@@ -21,6 +21,44 @@
   --animate-scale-in: scale-in 0.2s ease-out;
   --animate-float: float 6s ease-in-out infinite;
   --animate-shimmer: shimmer 2s linear infinite;
+  --animate-rocket-swoop: rocket-swoop 4s ease-in-out infinite;
+  --animate-book-float: book-float 5s ease-in-out infinite;
+  --animate-float-slow: float-slow 7s ease-in-out infinite;
+}
+
+@keyframes rocket-swoop {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-4deg); }
+}
+
+@keyframes book-float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(-12deg); }
+  50% { transform: translateY(-12px) rotate(-6deg); }
+}
+
+@keyframes dash-move {
+  to { stroke-dashoffset: -40; }
+}
+
+.animate-rocket-swoop {
+  animation: rocket-swoop 4s ease-in-out infinite;
+}
+
+.animate-book-float {
+  animation: book-float 5s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.animate-dash-move {
+  animation: dash-move 3s linear infinite;
 }
 
 @keyframes accordion-down {
