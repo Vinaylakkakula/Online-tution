@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Sparkles, Star, Trophy, Play, BookOpen, Rocket, CheckCircle2, Heart, Award } from "lucide-react";
+import { Sparkles, Star, Trophy, Play, BookOpen, Rocket } from "lucide-react";
 
 export function CartoonHeroVisual() {
   const [activeBubble, setActiveBubble] = useState<string | null>("rocket");

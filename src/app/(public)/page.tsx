@@ -29,7 +29,6 @@ import {
   ShieldCheck,
   Zap,
   ChevronRight,
-  FolderTree,
   Rocket,
 } from "lucide-react";
 import { CartoonHeroVisual } from "@/components/home/cartoon-hero-visual";
