@@ -167,10 +167,10 @@ export function SubfolderExplorer({
                 setSelectedClass(cls);
                 resetToCourses();
               }}
-              className={`px-4 py-2 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 isSelected
-                  ? "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-md scale-102"
-                  : "bg-gray-100 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
+                  ? "bg-[#004B87] text-white shadow-xs scale-102"
+                  : "bg-gray-100/80 text-gray-700 hover:bg-blue-50 hover:text-[#004B87]"
               }`}
             >
               <span>{cls === "Class 6" ? "🚀" : cls === "Class 7" ? "🦖" : cls === "Class 8" ? "🤖" : cls === "Class 9" ? "🦉" : "🥷"}</span>
@@ -216,19 +216,19 @@ export function SubfolderExplorer({
       {/* LEVEL 1: SUBJECT SUBFOLDERS VIEW (When no subject is clicked yet) */}
       {!selectedSubjectId && currentCourse && (
         <div className="space-y-6">
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
+          <div className="bg-gradient-to-br from-white via-blue-50/40 to-slate-50 border border-gray-200/90 rounded-3xl p-6 sm:p-8 text-gray-900 relative overflow-hidden shadow-xs">
             <div className="relative z-10 space-y-2">
-              <span className="text-xs font-black uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full backdrop-blur-md">
+              <span className="text-xs font-bold uppercase tracking-wider bg-blue-100 text-[#004B87] px-3 py-1 rounded-full">
                 {currentCourse.badgeTitle}
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#163B65] tracking-tight">
                 {currentCourse.title}
               </h2>
-              <p className="text-xs sm:text-sm text-white/80 max-w-2xl font-medium">
+              <p className="text-xs sm:text-sm text-gray-600 max-w-2xl font-normal">
                 {currentCourse.subtitle} Click any subject subfolder below to explore its chapters, recorded videos, formula sheets & CBT tests!
               </p>
             </div>
-            <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-25 select-none pointer-events-none">
+            <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-10 select-none pointer-events-none">
               {currentCourse.mascot}
             </div>
           </div>

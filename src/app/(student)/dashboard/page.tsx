@@ -79,13 +79,10 @@ export default function StudentDashboardPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. Cartoon Welcome & Gamified Hero HUD */}
-      <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 sm:p-8 rounded-3xl shadow-xl overflow-hidden">
-        {/* Playful background stars */}
-        <div className="absolute top-2 right-12 text-3xl opacity-30 select-none animate-bounce">
-          ✨
-        </div>
-        <div className="absolute bottom-2 right-4 text-7xl sm:text-8xl opacity-15 select-none pointer-events-none">
+      {/* 1. Clean Professional Welcome & Gamified Hero HUD */}
+      <div className="relative bg-gradient-to-br from-white via-blue-50/25 to-slate-50 text-gray-900 p-6 sm:p-8 rounded-3xl border border-gray-200/90 shadow-xs overflow-hidden">
+        {/* Soft background watermark */}
+        <div className="absolute bottom-2 right-4 text-7xl sm:text-8xl opacity-10 select-none pointer-events-none">
           {currentAvatar.emoji}
         </div>
 
@@ -95,64 +92,64 @@ export default function StudentDashboardPage() {
             <div className="relative shrink-0">
               <div
                 onClick={() => setAvatarModalOpen(true)}
-                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-4xl sm:text-5xl bg-gradient-to-tr ${currentAvatar.bgColor} text-white cursor-pointer hover:scale-105 transition-transform shadow-lg ${currentFrame.borderClass} ${currentFrame.glowClass}`}
-                title="Click to change your cartoon avatar!"
+                className={`w-20 h-20 sm:w-22 sm:h-22 rounded-full flex items-center justify-center text-4xl sm:text-5xl bg-gradient-to-tr ${currentAvatar.bgColor} text-white cursor-pointer hover:scale-105 transition-transform shadow-md ${currentFrame.borderClass} ${currentFrame.glowClass}`}
+                title="Click to customize your cartoon avatar!"
               >
                 <span>{currentAvatar.emoji}</span>
               </div>
               <button
                 onClick={() => setAvatarModalOpen(true)}
-                className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-amber-400 text-gray-950 hover:bg-amber-300 shadow-md transition-transform hover:scale-110"
+                className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-white text-gray-700 hover:text-gray-950 border border-gray-200 shadow-sm transition-transform hover:scale-110"
                 title="Customize Avatar & Frame"
               >
-                <Palette className="w-3.5 h-3.5" />
+                <Palette className="w-3.5 h-3.5 text-[#163B65]" />
               </button>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="px-3 py-0.5 rounded-full bg-white/20 text-xs font-black backdrop-blur-xs">
+                <span className="px-3 py-0.5 rounded-full bg-blue-50 text-[#004B87] border border-blue-200/80 text-xs font-bold">
                   {classLevel}
                 </span>
-                <span className="text-amber-300 text-xs font-bold flex items-center gap-1">
+                <span className="text-amber-800 bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
                   <span>{currentTitle.icon}</span>
                   <span>{currentTitle.title}</span>
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                Hey, {studentName}! 🚀
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#163B65]">
+                Hey, {studentName}! 👋
               </h1>
 
-              <p className="text-xs sm:text-sm text-white/80 max-w-lg font-medium">
-                Hero <span className="font-bold text-amber-300">{currentAvatar.name}</span> is ready! You have completed 82% of this week's science quests.
+              <p className="text-xs sm:text-sm text-gray-600 max-w-lg font-normal">
+                Hero <span className="font-bold text-[#163B65]">{currentAvatar.name}</span> is active! You have completed 82% of this week's learning quests.
               </p>
             </div>
           </div>
 
           {/* Gamification Counters HUD */}
-          <div className="flex items-center gap-3 bg-black/25 backdrop-blur-md p-3 rounded-2xl border border-white/10 shrink-0">
-            <div className="text-center px-3 border-r border-white/15">
-              <div className="flex items-center justify-center gap-1 text-amber-300 font-black text-sm">
+          <div className="flex items-center gap-2 bg-white border border-gray-200/90 shadow-2xs p-2.5 rounded-2xl shrink-0">
+            <div className="text-center px-3 border-r border-gray-100">
+              <div className="flex items-center justify-center gap-1 text-amber-500 font-extrabold text-sm">
                 <span>⭐</span>
                 <span>{profileExtras.xp || 1250}</span>
               </div>
-              <span className="text-[10px] text-white/70 font-semibold uppercase">Scholar XP</span>
+              <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Scholar XP</span>
             </div>
 
-            <div className="text-center px-3 border-r border-white/15">
-              <div className="flex items-center justify-center gap-1 text-orange-400 font-black text-sm">
+            <div className="text-center px-3 border-r border-gray-100">
+              <div className="flex items-center justify-center gap-1 text-orange-500 font-extrabold text-sm">
                 <span>🔥</span>
                 <span>{profileExtras.streakDays || 5}</span>
               </div>
-              <span className="text-[10px] text-white/70 font-semibold uppercase">Day Streak</span>
+              <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Day Streak</span>
             </div>
 
             <div className="text-center px-3">
-              <div className="text-emerald-400 font-black text-sm">
+              <div className="text-emerald-600 font-extrabold text-sm">
                 Lv.{profileExtras.level || 7}
               </div>
-              <span className="text-[10px] text-white/70 font-semibold uppercase">Badge Level</span>
+              <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Badge Level</span>
             </div>
           </div>
         </div>
@@ -160,14 +157,14 @@ export default function StudentDashboardPage() {
 
       {/* Emergency Holiday Alert Banner (Requirement 9) */}
       {emergencyAlert && emergencyAlert.isActive && (
-        <div className="p-4 rounded-3xl bg-gradient-to-r from-red-500 via-rose-500 to-orange-500 text-white shadow-md flex items-center justify-between gap-4 border-2 border-red-300">
+        <div className="p-4 rounded-2xl bg-rose-50/80 border border-rose-200 text-rose-950 shadow-2xs flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🚨</span>
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-amber-200">
+              <p className="text-xs font-black uppercase tracking-wider text-rose-700">
                 Notice: {emergencyAlert.title}
               </p>
-              <p className="text-xs text-white/95 line-clamp-1 font-medium">
+              <p className="text-xs text-rose-900 line-clamp-1 font-medium">
                 {emergencyAlert.message}
               </p>
             </div>
@@ -176,7 +173,7 @@ export default function StudentDashboardPage() {
             <Button
               size="sm"
               variant="outline"
-              className="text-xs font-bold text-gray-950 bg-white hover:bg-gray-100 border-none rounded-xl"
+              className="text-xs font-bold text-rose-900 bg-white hover:bg-rose-100 border border-rose-300 rounded-xl"
             >
               View Calendar
             </Button>
@@ -184,24 +181,24 @@ export default function StudentDashboardPage() {
         </div>
       )}
 
-      {/* 2. Subfolders Quick Access Banner (Requirement 3: "Clicking a course should display its subjects as subfolders") */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-indigo-900 via-blue-900 to-indigo-950 text-white shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5 border-2 border-indigo-500/30">
+      {/* 2. Subfolders Quick Access Banner */}
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-blue-50/60 via-indigo-50/30 to-white border-2 border-blue-200/80 text-gray-900 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-5">
         <div className="space-y-1 text-center sm:text-left">
-          <span className="text-[11px] font-black uppercase text-amber-400 tracking-wider flex items-center justify-center sm:justify-start gap-1.5">
-            <Compass className="w-4 h-4" />
+          <span className="text-[11px] font-bold uppercase text-[#004B87] tracking-wider flex items-center justify-center sm:justify-start gap-1.5">
+            <Compass className="w-4 h-4 text-[#004B87]" />
             <span>Folder-Style Subject Navigation (Classes 6th to 10th)</span>
           </span>
-          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-[#163B65] tracking-tight">
             Explore {classLevel} Subject Subfolders 📁
           </h2>
-          <p className="text-xs text-white/70 max-w-xl font-medium">
+          <p className="text-xs text-gray-600 max-w-xl font-normal">
             Click into Mathematics, Science, English, or Social Studies to browse chapters, recorded lessons, formula cards, assignments, and CBT tests.
           </p>
         </div>
 
         <Link href="/dashboard/subfolders" className="shrink-0 w-full sm:w-auto">
-          <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-gray-950 font-black text-xs h-11 px-6 rounded-2xl shadow-lg gap-2">
-            <FolderOpen className="w-4 h-4 text-gray-950" />
+          <Button className="w-full sm:w-auto bg-[#004B87] hover:bg-[#003866] text-white font-bold text-xs h-11 px-6 rounded-2xl shadow-sm gap-2">
+            <FolderOpen className="w-4 h-4 text-white" />
             <span>Open Subfolder Explorer</span>
             <ArrowRight className="w-4 h-4" />
           </Button>
@@ -210,12 +207,12 @@ export default function StudentDashboardPage() {
 
       {/* 3. Stats Overview Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-5 rounded-3xl border-2 border-blue-100 bg-white shadow-sm space-y-1">
-          <span className="text-[11px] font-bold text-gray-500 uppercase">
+        <Card className="p-5 rounded-2xl border border-gray-200/80 bg-white shadow-2xs space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
             Completed Lessons
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-blue-600">68</span>
+            <span className="text-3xl font-black text-[#004B87]">68</span>
             <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
               +6 this week
             </span>
@@ -225,8 +222,8 @@ export default function StudentDashboardPage() {
           </p>
         </Card>
 
-        <Card className="p-5 rounded-3xl border-2 border-amber-100 bg-white shadow-sm space-y-1">
-          <span className="text-[11px] font-bold text-gray-500 uppercase">
+        <Card className="p-5 rounded-2xl border border-gray-200/80 bg-white shadow-2xs space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
             Pending Lessons
           </span>
           <div className="flex items-baseline gap-2">
@@ -238,8 +235,8 @@ export default function StudentDashboardPage() {
           </p>
         </Card>
 
-        <Card className="p-5 rounded-3xl border-2 border-emerald-100 bg-white shadow-sm space-y-1">
-          <span className="text-[11px] font-bold text-gray-500 uppercase">
+        <Card className="p-5 rounded-2xl border border-gray-200/80 bg-white shadow-2xs space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
             Attendance Rate
           </span>
           <div className="flex items-baseline gap-2">
@@ -253,13 +250,13 @@ export default function StudentDashboardPage() {
           </p>
         </Card>
 
-        <Card className="p-5 rounded-3xl border-2 border-purple-100 bg-white shadow-sm space-y-1">
-          <span className="text-[11px] font-bold text-gray-500 uppercase">
+        <Card className="p-5 rounded-2xl border border-gray-200/80 bg-white shadow-2xs space-y-1">
+          <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
             Bookmarked Lessons
           </span>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-purple-600">{bookmarks.length}</span>
-            <Link href="/dashboard/bookmarks" className="text-xs font-bold text-indigo-600 hover:underline">
+            <Link href="/dashboard/bookmarks" className="text-xs font-bold text-[#004B87] hover:underline">
               View All →
             </Link>
           </div>
@@ -271,28 +268,28 @@ export default function StudentDashboardPage() {
 
       {/* 4. Main Section: Enrolled Course & Subjects Progress */}
       {studentCourse && (
-        <Card className="p-6 sm:p-8 rounded-3xl border-2 border-indigo-100 bg-white shadow-md space-y-6">
+        <Card className="p-6 sm:p-8 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
             <div className="flex items-center gap-3">
-              <span className="text-3xl p-2 rounded-2xl bg-indigo-50">
+              <span className="text-3xl p-2 rounded-2xl bg-blue-50/80">
                 {studentCourse.mascot}
               </span>
               <div>
-                <span className="text-[10px] font-black uppercase text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-md">
+                <span className="text-[10px] font-bold uppercase text-[#004B87] bg-blue-50 px-2.5 py-0.5 rounded-md">
                   Active Course Enrollment
                 </span>
-                <h3 className="text-xl font-black text-gray-900 mt-0.5">
+                <h3 className="text-xl font-extrabold text-[#163B65] mt-0.5">
                   {studentCourse.title}
                 </h3>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-gray-500">Course Progress:</span>
-              <div className="w-28 bg-gray-100 h-3 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-500 to-emerald-500 h-full rounded-full" style={{ width: "72%" }} />
+              <span className="text-xs font-medium text-gray-500">Course Progress:</span>
+              <div className="w-28 bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-teal-500 h-full rounded-full" style={{ width: "72%" }} />
               </div>
-              <span className="text-xs font-black text-emerald-600">72%</span>
+              <span className="text-xs font-bold text-emerald-600">72%</span>
             </div>
           </div>
 
@@ -301,33 +298,33 @@ export default function StudentDashboardPage() {
             {studentCourse.subjects.map((sub) => (
               <div
                 key={sub.id}
-                className="p-5 rounded-2xl border-2 border-gray-100 hover:border-indigo-300 bg-gradient-to-b from-white to-gray-50/70 hover:shadow-md transition-all space-y-3"
+                className="p-5 rounded-2xl border border-gray-200/90 hover:border-blue-300 bg-white hover:bg-blue-50/20 hover:shadow-xs transition-all space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <span
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xl text-white shadow-xs"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xl text-white shadow-2xs"
                     style={{ backgroundColor: sub.accentColor }}
                   >
                     {sub.icon}
                   </span>
-                  <span className="text-[11px] font-bold text-gray-500">
+                  <span className="text-[11px] font-semibold text-gray-500">
                     {sub.chapters.length} Chapters
                   </span>
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-black text-gray-900">{sub.name}</h4>
-                  <p className="text-[11px] text-gray-500 font-medium">
+                  <h4 className="text-sm font-bold text-[#163B65]">{sub.name}</h4>
+                  <p className="text-[11px] text-gray-500 font-medium mt-0.5">
                     {sub.teacherAvatar} {sub.teacherName}
                   </p>
                 </div>
 
                 <Link
                   href="/dashboard/subfolders"
-                  className="text-xs font-black text-indigo-600 hover:text-indigo-800 flex items-center gap-1 pt-1"
+                  className="text-xs font-bold text-[#004B87] hover:text-[#003866] flex items-center gap-1 pt-1 group"
                 >
-                  <span>Open Folder</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Open Subject Folder</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </div>
             ))}
@@ -338,25 +335,25 @@ export default function StudentDashboardPage() {
       {/* 5. Recently Watched Recorded Classes & Upcoming Live Lecture */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Recently Watched */}
-        <Card className="lg:col-span-7 p-6 rounded-3xl border-2 border-indigo-100 bg-white shadow-sm space-y-4">
+        <Card className="lg:col-span-7 p-6 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
-              <Video className="w-4 h-4 text-rose-500" />
+            <h3 className="text-base font-extrabold text-[#163B65] flex items-center gap-2">
+              <Video className="w-4 h-4 text-blue-600" />
               <span>Recently Watched Recorded Class</span>
             </h3>
-            <span className="text-xs font-bold text-gray-400">Resume playback</span>
+            <span className="text-xs font-medium text-gray-400">Resume playback</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/70 to-purple-50/40 border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-gray-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 to-orange-500 text-white flex items-center justify-center text-xl shrink-0 shadow-xs">
+              <div className="w-11 h-11 rounded-2xl bg-[#004B87] text-white flex items-center justify-center text-base shrink-0 shadow-2xs">
                 ▶
               </div>
               <div className="space-y-0.5">
-                <span className="text-[10px] font-black uppercase text-indigo-700 bg-indigo-100/70 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-bold uppercase text-[#004B87] bg-blue-50 px-2 py-0.5 rounded-md">
                   Mathematics • Class 6th
                 </span>
-                <h4 className="text-sm font-black text-gray-900">
+                <h4 className="text-sm font-bold text-[#163B65]">
                   Fun with Large Numbers & Comparing Digits
                 </h4>
                 <p className="text-[11px] text-gray-500 font-medium">
@@ -368,7 +365,7 @@ export default function StudentDashboardPage() {
             <Button
               size="sm"
               onClick={handlePlayRecentlyWatched}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs h-9 px-5 rounded-xl shadow-xs shrink-0 gap-1.5"
+              className="bg-[#004B87] hover:bg-[#003866] text-white font-bold text-xs h-9 px-4 rounded-xl shadow-2xs shrink-0 gap-1.5"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Resume Lesson</span>
@@ -377,22 +374,22 @@ export default function StudentDashboardPage() {
         </Card>
 
         {/* Upcoming Live Lecture */}
-        <Card className="lg:col-span-5 p-6 rounded-3xl border-2 border-indigo-100 bg-white shadow-sm space-y-4">
+        <Card className="lg:col-span-5 p-6 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-emerald-500" />
+            <h3 className="text-base font-extrabold text-[#163B65] flex items-center gap-2">
+              <Clock className="w-4 h-4 text-emerald-600" />
               <span>Upcoming Live Lecture</span>
             </h3>
-            <Badge className="bg-emerald-500 text-white text-[10px] font-bold">
+            <Badge className="bg-emerald-600 text-white text-[10px] font-bold">
               Today
             </Badge>
           </div>
 
-          <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
-            <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wider">
+          <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200/80 space-y-2">
+            <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
               Today, 5:00 PM – 6:30 PM IST
             </span>
-            <h4 className="text-sm font-black text-gray-900">
+            <h4 className="text-sm font-bold text-gray-900">
               Science Explorer: Components of Food & Lab Demonstrations
             </h4>
             <p className="text-xs text-gray-600 font-medium">
@@ -403,7 +400,7 @@ export default function StudentDashboardPage() {
               <Link href="/dashboard/live-classes">
                 <Button
                   size="sm"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-xs gap-1.5"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-2xs gap-1.5"
                 >
                   <span>Join Live Lecture Room</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -417,40 +414,40 @@ export default function StudentDashboardPage() {
       {/* 6. Quick Launchers: Bookmarks, Attendance, Report Card, Feedback */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Link href="/dashboard/bookmarks">
-          <Card className="p-4 rounded-2xl border-2 border-amber-200 bg-amber-50/40 hover:bg-amber-100/50 hover:shadow-md transition-all flex items-center gap-3">
+          <Card className="p-4 rounded-2xl border border-gray-200/90 bg-white hover:bg-blue-50/30 hover:border-blue-200 hover:shadow-xs transition-all flex items-center gap-3">
             <span className="text-2xl">⭐</span>
             <div>
-              <h4 className="text-xs font-black text-gray-900">My Bookmarks</h4>
+              <h4 className="text-xs font-bold text-gray-900">My Bookmarks</h4>
               <p className="text-[10px] text-gray-500">Saved videos & PDFs</p>
             </div>
           </Card>
         </Link>
 
         <Link href="/dashboard/attendance">
-          <Card className="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/40 hover:bg-emerald-100/50 hover:shadow-md transition-all flex items-center gap-3">
+          <Card className="p-4 rounded-2xl border border-gray-200/90 bg-white hover:bg-emerald-50/30 hover:border-emerald-200 hover:shadow-xs transition-all flex items-center gap-3">
             <span className="text-2xl">📅</span>
             <div>
-              <h4 className="text-xs font-black text-gray-900">Attendance Grid</h4>
+              <h4 className="text-xs font-bold text-gray-900">Attendance Grid</h4>
               <p className="text-[10px] text-gray-500">Monthly calendar</p>
             </div>
           </Card>
         </Link>
 
         <Link href="/dashboard/performance">
-          <Card className="p-4 rounded-2xl border-2 border-purple-200 bg-purple-50/40 hover:bg-purple-100/50 hover:shadow-md transition-all flex items-center gap-3">
+          <Card className="p-4 rounded-2xl border border-gray-200/90 bg-white hover:bg-purple-50/30 hover:border-purple-200 hover:shadow-xs transition-all flex items-center gap-3">
             <span className="text-2xl">📊</span>
             <div>
-              <h4 className="text-xs font-black text-gray-900">Report Card</h4>
+              <h4 className="text-xs font-bold text-gray-900">Report Card</h4>
               <p className="text-[10px] text-gray-500">Scores & badges</p>
             </div>
           </Card>
         </Link>
 
         <Link href="/dashboard/feedback">
-          <Card className="p-4 rounded-2xl border-2 border-pink-200 bg-pink-50/40 hover:bg-pink-100/50 hover:shadow-md transition-all flex items-center gap-3">
+          <Card className="p-4 rounded-2xl border border-gray-200/90 bg-white hover:bg-pink-50/30 hover:border-pink-200 hover:shadow-xs transition-all flex items-center gap-3">
             <span className="text-2xl">💬</span>
             <div>
-              <h4 className="text-xs font-black text-gray-900">Rate & Review</h4>
+              <h4 className="text-xs font-bold text-gray-900">Rate & Review</h4>
               <p className="text-[10px] text-gray-500">Share your thoughts</p>
             </div>
           </Card>

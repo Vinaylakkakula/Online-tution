@@ -79,33 +79,36 @@ export function StudentSidebar({
         />
       )}
 
-      {/* Oliveboard-Style Deep Blue Sidebar */}
+      {/* Clean Modern Professional Light Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-24 sm:w-28 lg:w-28 bg-[#004B87] text-white flex flex-col justify-between transition-transform duration-300 ease-in-out border-r border-[#003866] shadow-xl lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-24 sm:w-28 lg:w-28 bg-white text-gray-700 flex flex-col justify-between transition-transform duration-300 ease-in-out border-r border-gray-200/90 shadow-sm lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Top: Logo */}
-        <div className="flex flex-col items-center pt-4 pb-2 border-b border-white/10 px-2 text-center">
+        <div className="flex flex-col items-center pt-4 pb-3 border-b border-gray-100 px-2 text-center bg-gray-50/40">
           <Link
             href="/dashboard"
             onClick={() => setMobileOpen?.(false)}
             className="flex flex-col items-center group"
           >
-            {/* Spiral / Ring Logo Icon like Oliveboard */}
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#16A6A1] via-[#0099FF] to-[#EAF4FF] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform p-0.5">
-              <div className="w-full h-full bg-[#004B87] rounded-[14px] flex items-center justify-center">
+            {/* Gradient Logo Icon */}
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#16A6A1] via-[#004B87] to-[#0099FF] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform p-0.5">
+              <div className="w-full h-full bg-[#163B65] rounded-[14px] flex items-center justify-center">
                 <span className="font-black text-white text-base tracking-tighter">DS</span>
               </div>
             </div>
-            <span className="text-[11px] font-extrabold text-white mt-1.5 tracking-tight leading-none">
+            <span className="text-[11px] font-extrabold text-[#163B65] mt-1.5 tracking-tight leading-none">
               DeepSiddhi
+            </span>
+            <span className="text-[9px] font-bold text-[#16A6A1] tracking-wider uppercase mt-0.5">
+              LMS Portal
             </span>
           </Link>
         </div>
 
         {/* Middle Navigation - Stack of Icon + Label Buttons */}
-        <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1.5 scrollbar-none flex flex-col items-center">
+        <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1 scrollbar-none flex flex-col items-center">
           {mainNavItems.map((item) => {
             const isActive =
               item.href === "/dashboard"
@@ -119,8 +122,8 @@ export function StudentSidebar({
                 onClick={() => setMobileOpen?.(false)}
                 className={`w-full py-2.5 px-1 rounded-xl flex flex-col items-center justify-center text-center transition-all group relative ${
                   isActive
-                    ? "bg-white text-[#004B87] shadow-md font-bold"
-                    : "text-white/80 hover:bg-white/10 hover:text-white font-medium"
+                    ? "bg-[#EAF4FF] text-[#004B87] font-bold shadow-2xs border border-blue-200/80"
+                    : "text-gray-600 hover:bg-gray-100/80 hover:text-gray-950 font-medium"
                 }`}
               >
                 {/* Live pulsing dot */}
@@ -140,7 +143,7 @@ export function StudentSidebar({
 
                 <item.icon
                   className={`w-5 h-5 mb-1 transition-transform group-hover:scale-110 ${
-                    isActive ? "text-[#004B87]" : "text-white/90"
+                    isActive ? "text-[#004B87]" : "text-gray-500 group-hover:text-gray-900"
                   }`}
                 />
                 <span className="text-[10px] leading-tight line-clamp-1">
@@ -152,21 +155,21 @@ export function StudentSidebar({
         </div>
 
         {/* Bottom Actions: Profile, Logout */}
-        <div className="p-2 border-t border-white/10 space-y-1.5 flex flex-col items-center w-full">
+        <div className="p-2 border-t border-gray-100 space-y-1 flex flex-col items-center w-full bg-gray-50/40">
           <Link
             href="/dashboard/profile"
             onClick={() => setMobileOpen?.(false)}
-            className="w-full py-2 rounded-xl text-white/80 hover:bg-white/10 flex flex-col items-center text-[10px] transition-colors"
+            className="w-full py-2 rounded-xl text-gray-600 hover:bg-gray-200/60 hover:text-gray-900 flex flex-col items-center text-[10px] font-medium transition-colors"
           >
-            <User className="w-4 h-4 mb-0.5" />
+            <User className="w-4 h-4 mb-0.5 text-gray-500" />
             <span>Profile</span>
           </Link>
 
           <button
             onClick={handleLogout}
-            className="w-full py-2 rounded-xl text-red-200 hover:bg-red-500/20 flex flex-col items-center text-[10px] transition-colors cursor-pointer"
+            className="w-full py-2 rounded-xl text-red-600 hover:bg-red-50 flex flex-col items-center text-[10px] font-medium transition-colors cursor-pointer"
           >
-            <LogOut className="w-4 h-4 mb-0.5" />
+            <LogOut className="w-4 h-4 mb-0.5 text-red-500" />
             <span>Logout</span>
           </button>
         </div>

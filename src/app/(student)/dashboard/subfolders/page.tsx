@@ -12,7 +12,7 @@ export default function SubfoldersPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Top Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border-2 border-indigo-100 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-gray-200/90 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="px-3 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-black flex items-center gap-1">
