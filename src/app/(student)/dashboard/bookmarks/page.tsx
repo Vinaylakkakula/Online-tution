@@ -148,7 +148,7 @@ export default function BookmarksPage() {
           <p className="text-xs text-gray-500 max-w-md mx-auto font-medium">
             Whenever you are watching a video in your Courses or Subfolders, click the Star or Bookmark icon to save it here for fast revision!
           </p>
-        </div>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredBookmarks.map((b) => (
