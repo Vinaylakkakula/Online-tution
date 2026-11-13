@@ -11,21 +11,21 @@ export function CartoonHeroVisual() {
     <div className="relative w-full max-w-xl mx-auto lg:max-w-none select-none">
       {/* Background Soft Glow & Orbit Ring */}
       <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
-        <div className="w-[340px] sm:w-[480px] h-[340px] sm:h-[480px] rounded-full bg-gradient-to-tr from-cyan-400/20 via-blue-500/10 to-amber-400/20 blur-2xl animate-pulse" />
-        <div className="absolute w-[320px] sm:w-[460px] h-[320px] sm:h-[460px] rounded-full border border-dashed border-white/20 animate-[spin_60s_linear_infinite]" />
+        <div className="w-[340px] sm:w-[480px] h-[340px] sm:h-[480px] rounded-full bg-gradient-to-tr from-cyan-300/30 via-blue-400/20 to-amber-200/30 blur-3xl animate-pulse" />
+        <div className="absolute w-[320px] sm:w-[460px] h-[320px] sm:h-[460px] rounded-full border border-dashed border-blue-200/60 animate-[spin_60s_linear_infinite]" />
       </div>
 
-      {/* Main Illustration Container */}
-      <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-4 sm:p-6 lg:p-8 border-2 border-white/20 shadow-2xl shadow-cyan-950/40 overflow-hidden">
+      {/* Main Illustration Container - Light Premium 3D Glass Card */}
+      <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl p-4 sm:p-6 lg:p-8 border-2 border-blue-100 shadow-2xl shadow-blue-900/10 overflow-hidden">
         {/* Playful Floating Speech Bubble / Interactive Banner */}
         <div className="absolute top-3 left-4 right-4 z-20 flex justify-between items-center pointer-events-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-400 text-slate-900 font-bold text-xs shadow-lg shadow-amber-500/30 animate-bounce">
-            <Sparkles className="w-3.5 h-3.5 fill-slate-900" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FFD447] text-slate-950 font-extrabold text-xs shadow-md shadow-amber-400/30 animate-bounce">
+            <Sparkles className="w-3.5 h-3.5 fill-slate-950" />
             <span>Classes 6th - 10th Super LMS!</span>
           </div>
 
           {activeBubble && (
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 text-cyan-300 border border-cyan-400/40 text-xs font-semibold backdrop-blur-sm animate-fade-in shadow-md">
+            <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 text-cyan-300 border border-cyan-400/40 text-xs font-semibold backdrop-blur-sm animate-fade-in shadow-md">
               {activeBubble === "rocket" && "🚀 Paper Rocket Soaring High!"}
               {activeBubble === "book" && "📖 Magic Book: Chapter 1 Ready!"}
               {activeBubble === "pencil" && "✏️ Pencil Champ: A+ in Maths!"}
@@ -371,9 +371,9 @@ export function CartoonHeroVisual() {
         {/* ======================================================== */}
         {/* FOUR KID-ATTRACTIVE FLOATING STAT & FEATURE BADGES */}
         {/* ======================================================== */}
-        <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+        <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
           {/* Card 1: 50,000+ Young Learners with Avatars */}
-          <div className="bg-white/15 hover:bg-white/25 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 border border-white/20 transition-all hover:-translate-y-1 group">
+          <div className="bg-gray-50/80 hover:bg-white rounded-2xl p-2.5 sm:p-3 border border-gray-200/90 shadow-2xs transition-all hover:-translate-y-0.5 group">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="text-base sm:text-lg">🎒</span>
               <div className="flex -space-x-1.5">
@@ -382,51 +382,51 @@ export function CartoonHeroVisual() {
                 <span className="w-5 h-5 rounded-full bg-purple-500 border border-white flex items-center justify-center text-[10px]">🤖</span>
               </div>
             </div>
-            <p className="text-base sm:text-lg font-black text-white leading-tight">50,000+</p>
-            <p className="text-[11px] text-cyan-200 font-medium">Students Enrolled</p>
+            <p className="text-base sm:text-lg font-black text-[#102C50] leading-tight">50,000+</p>
+            <p className="text-[11px] text-gray-500 font-medium">Students Enrolled</p>
           </div>
 
           {/* Card 2: 5,000+ Video Lessons */}
-          <div className="bg-white/15 hover:bg-white/25 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 border border-white/20 transition-all hover:-translate-y-1 group">
-            <div className="w-7 h-7 rounded-xl bg-amber-400/30 flex items-center justify-center mb-1.5 text-amber-300">
-              <Play className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
+          <div className="bg-gray-50/80 hover:bg-white rounded-2xl p-2.5 sm:p-3 border border-gray-200/90 shadow-2xs transition-all hover:-translate-y-0.5 group">
+            <div className="w-7 h-7 rounded-xl bg-amber-100 flex items-center justify-center mb-1.5 text-amber-600">
+              <Play className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
             </div>
-            <p className="text-base sm:text-lg font-black text-white leading-tight">5,000+</p>
-            <p className="text-[11px] text-amber-200 font-medium">Recorded Lessons</p>
+            <p className="text-base sm:text-lg font-black text-[#102C50] leading-tight">5,000+</p>
+            <p className="text-[11px] text-gray-500 font-medium">Recorded Lessons</p>
           </div>
 
           {/* Card 3: 95%+ Top Grades */}
-          <div className="bg-white/15 hover:bg-white/25 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 border border-white/20 transition-all hover:-translate-y-1 group">
-            <div className="w-7 h-7 rounded-xl bg-emerald-400/30 flex items-center justify-center mb-1.5 text-emerald-300">
+          <div className="bg-gray-50/80 hover:bg-white rounded-2xl p-2.5 sm:p-3 border border-gray-200/90 shadow-2xs transition-all hover:-translate-y-0.5 group">
+            <div className="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center mb-1.5 text-emerald-600">
               <Trophy className="w-3.5 h-3.5" />
             </div>
-            <p className="text-base sm:text-lg font-black text-white leading-tight">95%+</p>
-            <p className="text-[11px] text-emerald-200 font-medium">Score Improvement</p>
+            <p className="text-base sm:text-lg font-black text-[#102C50] leading-tight">95%+</p>
+            <p className="text-[11px] text-gray-500 font-medium">Score Improvement</p>
           </div>
 
           {/* Card 4: Chapter Subfolders */}
           <Link
             href="/courses"
-            className="bg-gradient-to-br from-cyan-500/30 to-blue-600/30 hover:from-cyan-500/40 hover:to-blue-600/40 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 border border-cyan-300/40 transition-all hover:-translate-y-1 block group"
+            className="bg-blue-50/80 hover:bg-blue-50 rounded-2xl p-2.5 sm:p-3 border border-blue-200 transition-all hover:-translate-y-0.5 block group shadow-2xs"
           >
-            <div className="w-7 h-7 rounded-xl bg-cyan-400/30 flex items-center justify-center mb-1.5 text-cyan-300">
+            <div className="w-7 h-7 rounded-xl bg-[#1769AA]/15 flex items-center justify-center mb-1.5 text-[#1769AA]">
               <BookOpen className="w-3.5 h-3.5" />
             </div>
-            <p className="text-base sm:text-lg font-black text-cyan-100 leading-tight">Classes 6-10</p>
-            <p className="text-[11px] text-cyan-300 font-semibold group-hover:underline">Subfolder Explorer →</p>
+            <p className="text-base sm:text-lg font-black text-[#102C50] leading-tight">Classes 6-10</p>
+            <p className="text-[11px] text-[#1769AA] font-bold group-hover:underline">Subfolder Explorer →</p>
           </Link>
         </div>
 
         {/* Free Trial Banner Pill at bottom */}
-        <div className="mt-3 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-cyan-500/20 border border-white/15 flex items-center justify-between text-xs text-white/90">
+        <div className="mt-3 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-50 via-sky-50 to-blue-50 border border-blue-200/70 flex items-center justify-between text-xs text-gray-800">
           <div className="flex items-center gap-1.5">
             <span className="text-sm">🎁</span>
-            <span className="font-semibold text-white">7-Day Free Trial Available!</span>
-            <span className="hidden sm:inline text-white/70">Select your class & attend demo live!</span>
+            <span className="font-bold text-[#102C50]">7-Day Free Trial Available!</span>
+            <span className="hidden sm:inline text-gray-600 font-normal">Select your class & attend demo live!</span>
           </div>
           <Link
             href="/demo"
-            className="text-[11px] font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-2.5 py-1 rounded-lg transition-colors shadow"
+            className="text-[11px] font-bold bg-[#FFD447] hover:bg-amber-300 text-slate-950 px-2.5 py-1 rounded-lg transition-colors shadow-xs"
           >
             Claim Free Demo →
           </Link>

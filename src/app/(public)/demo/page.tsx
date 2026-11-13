@@ -119,13 +119,13 @@ export default function DemoPage() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link href="/dashboard" className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs h-11 px-8 rounded-2xl shadow-lg gap-2">
+                <Button className="w-full sm:w-auto bg-[#1769AA] hover:bg-[#102C50] text-white font-bold text-xs h-11 px-8 rounded-2xl shadow-sm gap-2">
                   <span>Enter Student Dashboard</span>
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
               <Link href="/dashboard/subfolders" className="w-full sm:w-auto">
-                <Button variant="outline" className="w-full sm:w-auto text-xs font-bold h-11 rounded-2xl">
+                <Button variant="outline" className="w-full sm:w-auto text-xs font-bold h-11 rounded-2xl border-gray-300">
                   <span>Explore Course Subfolders</span>
                 </Button>
               </Link>
@@ -134,7 +134,7 @@ export default function DemoPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Form Column */}
-            <Card className="lg:col-span-7 p-6 sm:p-8 rounded-3xl border-2 border-indigo-100 bg-white shadow-xl space-y-6">
+            <Card className="lg:col-span-7 p-6 sm:p-8 rounded-3xl border border-gray-200/90 bg-white shadow-sm space-y-6">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -261,9 +261,9 @@ export default function DemoPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs h-11 rounded-2xl shadow-md gap-2"
+                  className="w-full bg-[#1769AA] hover:bg-[#102C50] text-white font-bold text-xs h-11 rounded-2xl shadow-sm gap-2"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <Sparkles className="w-4 h-4 text-[#FFD447]" />
                   <span>Start 7-Day FREE Adventure Trial Now!</span>
                 </Button>
               </form>
@@ -271,7 +271,7 @@ export default function DemoPage() {
 
             {/* Perks Column */}
             <div className="lg:col-span-5 space-y-4">
-              <Card className="p-6 rounded-3xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50/70 to-purple-50/50 space-y-4">
+              <Card className="p-6 rounded-3xl border border-blue-200/80 bg-blue-50/40 space-y-4 shadow-2xs">
                 <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
                   <span>🎁</span>
                   <span>Included in Your 7-Day Trial:</span>

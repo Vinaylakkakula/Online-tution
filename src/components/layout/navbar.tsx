@@ -41,8 +41,10 @@ const navLinks = [
       { href: "/courses?class=Class+10", label: "Class 10th Board Toppers 🥷" },
     ],
   },
+  { href: "/courses#subjects", label: "Subjects" },
   { href: "/demo", label: "Free Demo (7-Day Trial) 🎁" },
-  { href: "/pricing", label: "Monthly Pricing & Discounts 🏷️" },
+  { href: "/pricing", label: "Monthly Pricing & Discounts" },
+  { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact Us" },
 ];
 

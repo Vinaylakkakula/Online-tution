@@ -7,6 +7,11 @@ import {
   Phone,
   MapPin,
   ArrowRight,
+  Sparkles,
+  BookOpen,
+  FolderOpen,
+  ShieldCheck,
+  Heart,
 } from "lucide-react";
 
 function FacebookIcon({ className }: { className?: string }) {
@@ -42,23 +47,32 @@ function YoutubeIcon({ className }: { className?: string }) {
 }
 
 const footerLinks = {
-  courses: [
-    { href: "/courses?category=IIT-JEE", label: "IIT-JEE Preparation" },
-    { href: "/courses?category=Olympiad", label: "Olympiad Coaching" },
-    { href: "/courses?category=NTSE", label: "NTSE Preparation" },
-    { href: "/courses?category=Foundation", label: "Foundation Courses" },
+  classes: [
+    { href: "/courses?class=Class+6", label: "Class 6th Junior Champs 🚀" },
+    { href: "/courses?class=Class+7", label: "Class 7th Junior Prodigy 🦖" },
+    { href: "/courses?class=Class+8", label: "Class 8th Foundation 🤖" },
+    { href: "/courses?class=Class+9", label: "Class 9th Board Champions 🦉" },
+    { href: "/courses?class=Class+10", label: "Class 10th Board Toppers 🥷" },
   ],
-  company: [
-    { href: "/about", label: "About Us" },
-    { href: "/faculty", label: "Our Faculty" },
-    { href: "/results", label: "Results" },
-    { href: "/contact", label: "Contact Us" },
+  subjects: [
+    { href: "/courses#subjects", label: "Mathematics & Logic 📐" },
+    { href: "/courses#subjects", label: "General Science (Phy/Chem/Bio) 🔬" },
+    { href: "/courses#subjects", label: "English Grammar & Reading 📖" },
+    { href: "/courses#subjects", label: "Social Science & Civics 🌍" },
+    { href: "/courses#subjects", label: "Chapter & Video Subfolders 📁" },
   ],
-  support: [
-    { href: "/faq", label: "FAQ" },
+  features: [
+    { href: "/demo", label: "7-Day Free Trial (No Card) 🎁" },
+    { href: "/pricing", label: "Monthly Pricing & Coupons 🏷️" },
+    { href: "/dashboard/subfolders", label: "Interactive Subfolder Explorer 📂" },
+    { href: "/about", label: "About DeepSiddhi Foundation" },
+    { href: "/contact", label: "Contact Us & Support" },
+  ],
+  legal: [
     { href: "/privacy", label: "Privacy Policy" },
     { href: "/terms", label: "Terms of Service" },
-    { href: "/refund", label: "Refund Policy" },
+    { href: "/honor-code", label: "Student Honor Code" },
+    { href: "/refund", label: "7-Day Refund Policy" },
   ],
 };
 
@@ -71,86 +85,133 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-[#163B65] text-white">
-      {/* CTA Banner */}
-      <div className="bg-gradient-to-r from-[#163B65] to-[#16A6A1]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-[#102C50] text-white">
+      {/* Pre-Footer Action Card */}
+      <div className="bg-gradient-to-r from-[#1769AA] via-[#0284C7] to-[#102C50] border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-2xl font-bold text-white">
-                Ready to Start Your Journey?
+            <div className="text-center md:text-left">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-cyan-200 text-xs font-bold mb-2">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>Loved by 50,000+ Young Scholars & Parents</span>
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+                Start Your 7-Day Free Trial Today!
               </h3>
-              <p className="text-white/80 mt-1">
-                Join thousands of successful students at DeepSiddhi Foundation.
+              <p className="text-white/80 text-sm mt-1 max-w-xl font-normal">
+                No credit card required. Experience chapter-wise video classes, interactive subfolders, quizzes, and cartoon avatars.
               </p>
             </div>
-            <Link
-              href="/register"
-              className="inline-flex items-center gap-2 bg-white text-[#163B65] font-semibold px-6 py-3 rounded-xl hover:bg-[#EAF4FF] transition-colors shadow-lg"
-            >
-              Register Now
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/demo"
+                className="inline-flex items-center gap-2 bg-[#FFD447] text-slate-950 font-black px-6 py-3.5 rounded-xl hover:bg-amber-300 transition-all shadow-lg hover:scale-105 text-sm"
+              >
+                <span>Claim Free Demo 🎁</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/courses"
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-3.5 rounded-xl transition-all border border-white/20 text-sm"
+              >
+                <span>Browse Classes 6-10</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Footer */}
+      {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#38D9E6] to-[#1769AA] flex items-center justify-center shadow-md">
                 <GraduationCap className="w-5 h-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-bold leading-tight text-white">
+                <span className="text-lg font-black leading-tight text-white tracking-tight">
                   DeepSiddhi
                 </span>
-                <span className="text-[10px] font-medium text-[#16A6A1] tracking-wider uppercase -mt-0.5">
-                  Foundation
+                <span className="text-[10px] font-bold text-[#38D9E6] tracking-wider uppercase -mt-0.5">
+                  Foundation • Classes 6-10
                 </span>
               </div>
             </Link>
-            <p className="mt-4 text-white/60 text-sm leading-relaxed max-w-sm">
-              Empowering students with expert-led preparation for IIT-JEE,
-              Olympiad, NTSE, and Foundation courses. Building tomorrow&apos;s
-              leaders through academic excellence.
+            <p className="mt-4 text-white/70 text-sm leading-relaxed max-w-sm font-normal">
+              DeepSiddhi Foundation makes learning an exciting adventure for Classes 6th to 10th. Combining structured curriculum with animated videos, chapter subfolders, quizzes, and friendly cartoon mentors.
             </p>
-            <div className="mt-6 space-y-3">
+
+            <div className="mt-6 space-y-2.5 text-sm text-white/75 font-normal">
               <a
-                href="tel:+919999999999"
-                className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"
+                href="tel:+919876543210"
+                className="flex items-center gap-2.5 hover:text-white transition-colors"
               >
-                <Phone className="w-4 h-4 text-[#16A6A1]" />
-                +91 99999 99999
+                <Phone className="w-4 h-4 text-[#38D9E6]" />
+                <span>+91 98765 43210 (Toll Free Demo Line)</span>
               </a>
               <a
-                href="mailto:info@deepsiddhi.com"
-                className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"
+                href="mailto:learn@deepsiddhi.org"
+                className="flex items-center gap-2.5 hover:text-white transition-colors"
               >
-                <Mail className="w-4 h-4 text-[#16A6A1]" />
-                info@deepsiddhi.com
+                <Mail className="w-4 h-4 text-[#38D9E6]" />
+                <span>learn@deepsiddhi.org</span>
               </a>
-              <div className="flex items-start gap-3 text-sm text-white/60">
-                <MapPin className="w-4 h-4 text-[#16A6A1] mt-0.5 shrink-0" />
-                <span>New Delhi, India</span>
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#38D9E6] mt-0.5 shrink-0" />
+                <span>DeepSiddhi Learning Hub, New Delhi, India</span>
               </div>
+            </div>
+
+            {/* Social Icons */}
+            <div className="mt-6 flex items-center gap-3">
+              {socialLinks.map((s, i) => {
+                const Icon = s.icon;
+                return (
+                  <a
+                    key={i}
+                    href={s.href}
+                    aria-label={s.label}
+                    className="w-9 h-9 rounded-lg bg-white/10 hover:bg-[#1769AA] text-white flex items-center justify-center transition-all hover:scale-110"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
-          {/* Courses */}
+          {/* Classes Column */}
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Courses
+            <h4 className="text-xs font-black text-[#38D9E6] uppercase tracking-wider mb-4">
+              Classes 6th to 10th
             </h4>
-            <ul className="space-y-3">
-              {footerLinks.courses.map((link) => (
+            <ul className="space-y-2.5 text-sm">
+              {footerLinks.classes.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
+                    className="text-white/70 hover:text-white transition-colors flex items-center gap-1.5"
+                  >
+                    <span>{link.label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Subjects Column */}
+          <div>
+            <h4 className="text-xs font-black text-[#38D9E6] uppercase tracking-wider mb-4">
+              Subjects & Folders
+            </h4>
+            <ul className="space-y-2.5 text-sm">
+              {footerLinks.subjects.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-white/70 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -159,36 +220,33 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Platform & Legal */}
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Company
+            <h4 className="text-xs font-black text-[#38D9E6] uppercase tracking-wider mb-4">
+              Quick Links & Policy
             </h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
+            <ul className="space-y-2.5 text-sm mb-6">
+              {footerLinks.features.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
+                    className="text-white/70 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
 
-          {/* Support */}
-          <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Support
+            <h4 className="text-xs font-black text-white/50 uppercase tracking-wider mb-2">
+              Legal & Trust
             </h4>
-            <ul className="space-y-3">
-              {footerLinks.support.map((link) => (
+            <ul className="space-y-1.5 text-xs">
+              {footerLinks.legal.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
+                    className="text-white/50 hover:text-white/80 transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -197,25 +255,17 @@ export function Footer() {
             </ul>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-white/40">
-            © 2026 DeepSiddhi Foundation. All rights reserved.
-          </p>
+        {/* Bottom Bar */}
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50 font-normal">
+          <p>© 2026 DeepSiddhi Foundation. All rights reserved. Built for young leaders & classroom champions.</p>
           <div className="flex items-center gap-4">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
-                aria-label={social.label}
-              >
-                <social.icon className="w-4 h-4 text-white/60" />
-              </a>
-            ))}
+            <span className="flex items-center gap-1 text-white/60">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Safe & Verified for Children</span>
+            </span>
+            <span>•</span>
+            <span>ISO 9001:2015 Certified EdTech</span>
           </div>
         </div>
       </div>

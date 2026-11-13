@@ -67,9 +67,9 @@ export default function CoursesPage() {
               <button
                 key={grade.id}
                 onClick={() => setSelectedGrade(grade.id)}
-                className={`px-4 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                   selectedGrade === grade.id
-                    ? "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-md scale-105"
+                    ? "bg-[#1769AA] text-white shadow-xs scale-105"
                     : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
               >
@@ -95,7 +95,7 @@ export default function CoursesPage() {
           {filteredCourses.map((crs) => (
             <Card
               key={crs.id}
-              className="p-6 rounded-3xl border-2 border-indigo-100 hover:border-indigo-400 bg-white hover:shadow-2xl transition-all flex flex-col justify-between group transform hover:-translate-y-1 relative overflow-hidden"
+              className="p-6 rounded-3xl border border-gray-200/90 hover:border-blue-300 bg-white shadow-2xs hover:shadow-lg transition-all flex flex-col justify-between group transform hover:-translate-y-0.5 relative overflow-hidden"
             >
               {/* Discount Badge */}
               <div className="absolute top-0 right-0 bg-gradient-to-l from-rose-500 to-pink-500 text-white text-[10px] font-black uppercase px-3 py-1 rounded-bl-xl shadow-xs">
@@ -175,7 +175,7 @@ export default function CoursesPage() {
                 </Link>
 
                 <Link href="/demo" className="block">
-                  <Button className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs rounded-xl h-10 shadow-md gap-1">
+                  <Button className="w-full bg-[#1769AA] hover:bg-[#102C50] text-white font-bold text-xs rounded-xl h-10 shadow-xs gap-1">
                     <Gift className="w-3.5 h-3.5" />
                     <span>Free Trial</span>
                   </Button>

@@ -61,26 +61,26 @@ export default function StudentFeedbackPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
+      <div className="bg-gradient-to-br from-white via-rose-50/20 to-slate-50 rounded-3xl p-6 sm:p-8 text-[#102C50] relative overflow-hidden border border-gray-200/90 shadow-xs">
         <div className="relative z-10 space-y-2">
-          <span className="text-xs font-black uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full backdrop-blur-md">
+          <span className="text-xs font-black uppercase tracking-wider bg-rose-100/80 text-rose-900 border border-rose-200/80 px-3 py-1 rounded-full w-fit block">
             ⭐ Your Voice Matters!
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#102C50]">
             Ratings & Feedback Center 💬
           </h1>
-          <p className="text-xs sm:text-sm text-white/90 max-w-xl font-medium">
+          <p className="text-xs sm:text-sm text-gray-600 max-w-xl font-normal">
             Rate your cartoon video lectures, mentors, and practice quizzes. Help us make learning even more fun!
           </p>
         </div>
-        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-20 select-none pointer-events-none">
+        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-10 select-none pointer-events-none">
           ⭐
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Rating Form Column */}
-        <Card className="lg:col-span-5 p-6 rounded-3xl border-2 border-indigo-100 bg-white shadow-lg space-y-5">
+        <Card className="lg:col-span-5 p-6 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-5">
           <div className="space-y-1">
             <h3 className="text-base font-black text-gray-900">
               Leave a Review or Report an Issue

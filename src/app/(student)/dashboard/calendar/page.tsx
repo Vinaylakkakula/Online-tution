@@ -27,19 +27,19 @@ export default function StudentCalendarPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
+      <div className="bg-gradient-to-br from-white via-blue-50/30 to-slate-50 rounded-3xl p-6 sm:p-8 text-[#102C50] relative overflow-hidden border border-gray-200/90 shadow-xs">
         <div className="relative z-10 space-y-2">
-          <span className="text-xs font-black uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full backdrop-blur-md">
+          <span className="text-xs font-black uppercase tracking-wider bg-blue-100/80 text-[#102C50] border border-blue-200/80 px-3 py-1 rounded-full w-fit block">
             Academic Year 2026-27
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#102C50]">
             Academic Calendar & Holiday Schedules 🗓️
           </h1>
-          <p className="text-xs sm:text-sm text-white/80 max-w-xl font-medium">
+          <p className="text-xs sm:text-sm text-gray-600 max-w-xl font-normal">
             Stay prepared with exam dates, festival breaks, special weekend marathons, and urgent weather advisories.
           </p>
         </div>
-        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-20 select-none pointer-events-none">
+        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-10 select-none pointer-events-none">
           🗓️
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function StudentCalendarPage() {
       )}
 
       {/* Type Filter Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 bg-white p-3 rounded-2xl border-2 border-indigo-100 shadow-sm">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 bg-white p-3 rounded-2xl border border-gray-200/90 shadow-xs">
         {["all", "Festival", "Government", "Emergency", "Special Class", "Exam Day"].map(
           (type) => (
             <button
@@ -76,7 +76,7 @@ export default function StudentCalendarPage() {
               onClick={() => setFilterType(type)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer shrink-0 ${
                 filterType === type
-                  ? "bg-indigo-600 text-white shadow-xs"
+                  ? "bg-[#1769AA] text-white shadow-xs"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >

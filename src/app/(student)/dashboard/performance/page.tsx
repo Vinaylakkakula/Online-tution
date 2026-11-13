@@ -31,26 +31,26 @@ export default function StudentPerformancePage() {
   return (
     <div className="space-y-6 pb-12 print:p-0">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl print:hidden">
+      <div className="bg-gradient-to-br from-white via-blue-50/30 to-slate-50 rounded-3xl p-6 sm:p-8 text-[#102C50] relative overflow-hidden border border-gray-200/90 shadow-xs print:hidden">
         <div className="relative z-10 space-y-2">
-          <span className="text-xs font-black uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 w-fit">
-            <Trophy className="w-3.5 h-3.5 text-amber-300" />
+          <span className="text-xs font-black uppercase tracking-wider bg-blue-100/80 text-[#102C50] px-3 py-1 rounded-full border border-blue-200/80 flex items-center gap-1.5 w-fit">
+            <Trophy className="w-3.5 h-3.5 text-amber-500" />
             <span>Academic Performance Rank: #{performance.rankInBatch} in Batch</span>
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#102C50]">
             My Report Card & Performance Analytics 📊
           </h1>
-          <p className="text-xs sm:text-sm text-white/80 max-w-xl font-medium">
+          <p className="text-xs sm:text-sm text-gray-600 max-w-xl font-normal">
             Track your scores across all subjects, celebrate unlocked achievement badges, and review improvement suggestions!
           </p>
         </div>
-        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-20 select-none pointer-events-none">
+        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-10 select-none pointer-events-none">
           🏆
         </div>
       </div>
 
       {/* Top Action Row: Print Report */}
-      <div className="flex items-center justify-between bg-white p-4 rounded-3xl border-2 border-indigo-100 shadow-sm print:hidden">
+      <div className="flex items-center justify-between bg-white p-4 rounded-3xl border border-gray-200/90 shadow-xs print:hidden">
         <div className="flex items-center gap-2">
           <span className="text-xl">🎓</span>
           <div>
@@ -66,7 +66,7 @@ export default function StudentPerformancePage() {
         <Button
           onClick={handlePrintReport}
           size="sm"
-          className="rounded-xl text-xs font-black bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-xs"
+          className="rounded-xl text-xs font-black bg-[#1769AA] hover:bg-[#102C50] text-white gap-2 shadow-xs transition-colors"
         >
           <Printer className="w-4 h-4" />
           <span>Print / Download Report Card</span>
@@ -75,12 +75,12 @@ export default function StudentPerformancePage() {
 
       {/* Score Overview Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="p-5 rounded-3xl border-2 border-indigo-100 bg-white shadow-md space-y-1">
+        <Card className="p-5 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-1">
           <span className="text-[11px] font-bold text-gray-500 uppercase">
             Overall Score
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-indigo-700">
+            <span className="text-3xl font-black text-[#1769AA]">
               {performance.overallPercentage}%
             </span>
             <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
@@ -92,7 +92,7 @@ export default function StudentPerformancePage() {
           </p>
         </Card>
 
-        <Card className="p-5 rounded-3xl border-2 border-amber-100 bg-white shadow-md space-y-1">
+        <Card className="p-5 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-1">
           <span className="text-[11px] font-bold text-gray-500 uppercase">
             Batch Standing
           </span>
@@ -109,7 +109,7 @@ export default function StudentPerformancePage() {
           </p>
         </Card>
 
-        <Card className="p-5 rounded-3xl border-2 border-emerald-100 bg-white shadow-md space-y-1">
+        <Card className="p-5 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-1">
           <span className="text-[11px] font-bold text-gray-500 uppercase">
             Scholar XP Points
           </span>
@@ -126,7 +126,7 @@ export default function StudentPerformancePage() {
           </p>
         </Card>
 
-        <Card className="p-5 rounded-3xl border-2 border-purple-100 bg-white shadow-md space-y-1">
+        <Card className="p-5 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-1">
           <span className="text-[11px] font-bold text-gray-500 uppercase">
             Active Streak
           </span>
@@ -145,13 +145,13 @@ export default function StudentPerformancePage() {
       </div>
 
       {/* Printable Report Card Container */}
-      <Card className="p-6 sm:p-8 rounded-3xl border-2 border-indigo-100 bg-white shadow-lg space-y-6">
+      <Card className="p-6 sm:p-8 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-6">
         <div className="border-b-2 border-dashed border-gray-200 pb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <span className="text-[10px] font-black uppercase text-indigo-700 tracking-wider">
+            <span className="text-[10px] font-black uppercase text-[#1769AA] tracking-wider">
               DeepSiddhi Online Tuition • Institutional Report
             </span>
-            <h3 className="text-xl font-black text-gray-900 mt-0.5">
+            <h3 className="text-xl font-black text-[#102C50] mt-0.5">
               Official Student Performance Card
             </h3>
             <p className="text-xs text-gray-500">
@@ -159,9 +159,9 @@ export default function StudentPerformancePage() {
             </p>
           </div>
 
-          <div className="p-2.5 rounded-2xl bg-indigo-50 border border-indigo-200 text-right">
+          <div className="p-2.5 rounded-2xl bg-blue-50 border border-blue-200 text-right">
             <span className="text-[10px] text-gray-500 font-bold block">Overall Standing</span>
-            <span className="text-lg font-black text-indigo-700">Grade A1 (88.5%)</span>
+            <span className="text-lg font-black text-[#1769AA]">Grade A1 (88.5%)</span>
           </div>
         </div>
 

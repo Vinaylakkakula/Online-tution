@@ -63,27 +63,27 @@ export default function StudentAttendancePage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
+      <div className="bg-gradient-to-br from-white via-teal-50/30 to-slate-50 rounded-3xl p-6 sm:p-8 text-[#102C50] relative overflow-hidden border border-gray-200/90 shadow-xs">
         <div className="relative z-10 space-y-2">
-          <span className="text-xs font-black uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 w-fit">
-            <Flame className="w-3.5 h-3.5 text-amber-300 fill-current" />
+          <span className="text-xs font-black uppercase tracking-wider bg-teal-100/80 text-teal-900 border border-teal-200/80 px-3 py-1 rounded-full flex items-center gap-1.5 w-fit">
+            <Flame className="w-3.5 h-3.5 text-amber-500 fill-current" />
             <span>Attendance Streak: 8 Consecutive Days!</span>
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#102C50]">
             My Attendance Calendar 📅
           </h1>
-          <p className="text-xs sm:text-sm text-white/80 max-w-xl font-medium">
+          <p className="text-xs sm:text-sm text-gray-600 max-w-xl font-normal">
             Regular attendance helps you unlock monthly cartoon medals, bonus XP, and top rank badges in your batch!
           </p>
         </div>
-        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-20 select-none pointer-events-none">
+        <div className="absolute -right-4 -bottom-6 text-8xl sm:text-9xl opacity-10 select-none pointer-events-none">
           📅
         </div>
       </div>
 
       {/* Stats Cards Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="p-5 rounded-3xl border-2 border-emerald-100 bg-white shadow-md space-y-1">
+        <Card className="p-5 rounded-3xl border border-gray-200/90 bg-white shadow-xs space-y-1">
           <span className="text-[11px] font-bold text-gray-500 uppercase">
             Attendance Rate
           </span>

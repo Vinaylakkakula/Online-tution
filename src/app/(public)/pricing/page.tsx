@@ -53,15 +53,15 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50/50 via-white to-purple-50/40 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F5F8FF] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-10">
         {/* Top Header */}
         <div className="text-center space-y-4">
-          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-100 text-indigo-900 font-black text-xs">
+          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-100/80 text-[#102C50] font-black text-xs border border-blue-200">
             <Sparkles className="w-4 h-4 text-amber-500" />
             <span>Pocket-Friendly Monthly & Annual Learning Passes</span>
           </span>
-          <h1 className="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-[#102C50] tracking-tight">
             Simple & Transparent Course Pricing 🏷️
           </h1>
           <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto font-medium">
@@ -70,12 +70,12 @@ export default function PricingPage() {
 
           {/* Monthly vs Annual Toggle */}
           <div className="flex items-center justify-center pt-2">
-            <div className="bg-gray-100 p-1.5 rounded-2xl flex items-center gap-1 border border-gray-200">
+            <div className="bg-white p-1.5 rounded-2xl flex items-center gap-1 border border-gray-200 shadow-xs">
               <button
                 onClick={() => setBillingCycle("monthly")}
                 className={`px-5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
                   billingCycle === "monthly"
-                    ? "bg-white text-indigo-700 shadow-sm"
+                    ? "bg-[#1769AA] text-white shadow-xs"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -85,12 +85,12 @@ export default function PricingPage() {
                 onClick={() => setBillingCycle("annual")}
                 className={`px-5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
                   billingCycle === "annual"
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm"
+                    ? "bg-[#102C50] text-white shadow-xs"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 <span>Annual Pass</span>
-                <span className="bg-amber-400 text-gray-950 text-[10px] px-1.5 py-0.5 rounded-md font-bold">
+                <span className="bg-[#FFD447] text-slate-950 text-[10px] px-1.5 py-0.5 rounded-md font-extrabold">
                   Save 40%
                 </span>
               </button>
@@ -99,7 +99,7 @@ export default function PricingPage() {
         </div>
 
         {/* Coupon Code Banner */}
-        <Card className="p-5 rounded-3xl border-2 border-dashed border-amber-300 bg-amber-50/50 max-w-xl mx-auto">
+        <Card className="p-5 rounded-3xl border-2 border-dashed border-amber-300 bg-amber-50/70 max-w-xl mx-auto shadow-xs">
           <form onSubmit={handleApplyCoupon} className="flex flex-col sm:flex-row items-center gap-2">
             <div className="relative flex-1 w-full">
               <Tag className="w-4 h-4 text-amber-600 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -112,14 +112,14 @@ export default function PricingPage() {
             </div>
             <Button
               type="submit"
-              className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-xs h-10 px-6 rounded-xl shadow-xs"
+              className="w-full sm:w-auto bg-[#FFD447] hover:bg-amber-400 text-slate-950 font-black text-xs h-10 px-6 rounded-xl shadow-xs"
             >
               Apply Voucher
             </Button>
           </form>
 
           {appliedCoupon && (
-            <div className="mt-3 flex items-center justify-between text-xs text-emerald-700 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
+            <div className="mt-3 flex items-center justify-between text-xs text-emerald-800 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 {appliedCoupon.message}
@@ -167,24 +167,24 @@ export default function PricingPage() {
             return (
               <Card
                 key={crs.id}
-                className="p-6 rounded-3xl border-2 border-indigo-100 hover:border-indigo-400 bg-white hover:shadow-2xl transition-all flex flex-col justify-between group transform hover:-translate-y-1 relative overflow-hidden"
+                className="p-6 rounded-3xl border-2 border-blue-100 hover:border-[#1769AA]/50 bg-white hover:shadow-xl transition-all flex flex-col justify-between group transform hover:-translate-y-1 relative overflow-hidden"
               >
                 {/* Offer Ribbon */}
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-rose-500 to-pink-500 text-white text-[9px] font-black uppercase px-3 py-1 rounded-bl-xl shadow-xs">
+                <div className="absolute top-0 right-0 bg-[#FF914D] text-white text-[9px] font-black uppercase px-3 py-1 rounded-bl-xl shadow-xs">
                   {crs.discountPercent}% OFF
                 </div>
 
                 <div className="space-y-4">
                   {/* Mascot Icon */}
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-3xl shadow-xs group-hover:scale-110 transition-transform">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-3xl shadow-2xs group-hover:scale-110 transition-transform">
                     {crs.mascot}
                   </div>
 
                   <div>
-                    <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                    <span className="text-[10px] font-bold text-[#1769AA] bg-blue-50 px-2 py-0.5 rounded-md uppercase tracking-wider">
                       {crs.classLevel}
                     </span>
-                    <h3 className="text-base font-black text-gray-900 mt-1">
+                    <h3 className="text-base font-black text-[#102C50] mt-1">
                       {crs.title}
                     </h3>
                     <p className="text-xs text-gray-500 font-medium line-clamp-2 mt-1">
@@ -195,7 +195,7 @@ export default function PricingPage() {
                   {/* Pricing Display */}
                   <div className="pt-2 border-t border-gray-100 space-y-1">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl sm:text-3xl font-black text-gray-900">
+                      <span className="text-2xl sm:text-3xl font-black text-[#102C50]">
                         ₹{finalPrice.toLocaleString()}
                       </span>
                       <span className="text-xs text-gray-400 line-through">
@@ -230,7 +230,7 @@ export default function PricingPage() {
 
                 <div className="pt-5 space-y-2">
                   <Link href={`/demo`} className="block">
-                    <Button className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs h-10 rounded-xl shadow-md gap-1.5">
+                    <Button className="w-full bg-[#1769AA] hover:bg-[#102C50] text-white font-black text-xs h-10 rounded-xl shadow-xs gap-1.5 transition-colors">
                       <span>Enroll / Free Demo</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Button>
